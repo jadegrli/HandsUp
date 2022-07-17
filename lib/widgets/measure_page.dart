@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hands_up/widgets/home_page.dart';
+import 'package:intl/intl.dart';
 
+import '../bloc_database/db_bloc_repetition.dart';
+import '../bloc_database/db_bloc_score.dart';
 import '../bloc_measure/bloc_measure.dart';
 import '../models/measure.dart';
+import '../models/score.dart';
 import '../score_calculation/angle_score_live.dart';
 import '../score_calculation/p_score_live.dart';
 
@@ -56,6 +61,9 @@ class _Measure extends State<MeasurePage> {
   double elevationInjured = 0;
   double elevationHealthy = 0;
 
+  final DataBaseBlocScore blocScore = DataBaseBlocScore();
+  final DataBaseBlocRepetition blocRepetition = DataBaseBlocRepetition();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,7 +82,6 @@ class _Measure extends State<MeasurePage> {
                   child: ElevatedButton(
                       onPressed: () {
                         context.read<MeasureBloc>().add(EventLaunchFirstSide(nbRepetition: widget.nbRepetition, movementDuration: widget.duration));
-
                       },
                       child: const Text("Launch")),
                 );
@@ -117,9 +124,9 @@ class _Measure extends State<MeasurePage> {
                             onPressed: () {
                               context
                                   .read<MeasureBloc>()
-                                  .add(const EventLaunchSecondSide(
-                                  nbRepetition: 2,
-                                  movementDuration: 3));
+                                  .add(EventLaunchSecondSide(
+                                  nbRepetition: widget.nbRepetition,
+                                  movementDuration: widget.duration));
                             },
                             child: const Text("Continue measure")),
                         midResult(state.allMeasures),
@@ -141,13 +148,37 @@ class _Measure extends State<MeasurePage> {
                               context
                                   .read<MeasureBloc>()
                                   .add(EventEnd());
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const HomePage()));
                             },
                             child: const Text("Validate")),
                         ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
+                              final newScore = Score(
+                                  creationDate: DateFormat("yyyy-MM-dd").format(DateTime.now()),
+                                  elevationAngleInjured: elevationInjured,
+                                  elevationAngleHealthy: elevationHealthy,
+                                  bbScore: bbScore,
+                                  patientId: widget.patientID,
+                                  notes: "");
+                              //TODO tester avec et sans le await
+                              await blocScore.addScoreWithRepetition(
+                                  newScore,
+                                  List.from(allRangesAcc),
+                                  List.from(allRangesGyro),
+                                  elevationInjured,
+                                  elevationHealthy);
+
                               context
                                   .read<MeasureBloc>()
                                   .add(EventEnd());
+
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const HomePage()));
                             },
                             child: const Text("Cancel")),
                       ],
@@ -179,14 +210,14 @@ class _Measure extends State<MeasurePage> {
     final score = PScoreLive(allMeasures: measure);
     final String length = measure.length.toString();
 
-    if (2 * 2 == measure.length) {
-      for (int i = 0; i < 2 * 2; i++) {
+    if (widget.nbRepetition * 2 == measure.length) {
+      for (int i = 0; i < widget.nbRepetition * 2; i++) {
         allResultsAcc.add(score.getRanges(measure[i].accelValues));
         allResultsGyro.add(score.getRanges(measure[i].gyroValues));
       }
       return Column(
         children: [
-          for (int i = 0; i < 2 * 2 - 1; i += 2)
+          for (int i = 0; i < widget.nbRepetition * 2 - 1; i += 2)
             Column(
               children: [
                 Text(allResultsAcc.toString()),
@@ -212,18 +243,18 @@ class _Measure extends State<MeasurePage> {
                 Text("Hand Up, Gyroscope, Z Axis : ${allResultsGyro[i + 1][2]}",
                     style: const TextStyle(fontSize: 20.0)),
               ],
-            )
+            ),
         ],
       );
     }
     return Text(
-        "Error while calculating middle score, length : $length, nbRepet : 2");
+        "Error while calculating middle score, length : $length, nbRepetition : ${widget.nbRepetition}");
   }
 
   bool _calculateScores(List<Measure> measures) {
-    if (2 * 4 == measures.length) {
+    if (widget.nbRepetition * 4 == measures.length) {
       final mpScoreLive = PScoreLive(allMeasures: measures);
-      for (int i = 0; i < 2 * 4; i++) {
+      for (int i = 0; i < widget.nbRepetition * 4; i++) {
         allRangesAcc.add(mpScoreLive.getRanges(measures[i].accelValues));
         allRangesGyro.add(mpScoreLive.getRanges(measures[i].gyroValues));
       }
@@ -241,7 +272,7 @@ class _Measure extends State<MeasurePage> {
 
   Widget finalResults(List<Measure> measures) {
     if (_calculateScores(measures)) {
-      _calculateScores(measures);
+      //_calculateScores(measures);
       return Column(
         children: [
           Text("BBScore : $bbScore", style: const TextStyle(fontSize: 20.0)),

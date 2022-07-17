@@ -5,6 +5,7 @@ import 'package:hands_up/widgets/patient_page.dart';
 import '../bloc_database/db_bloc_patient.dart';
 import '../models/patient.dart';
 import 'add_patient_page.dart';
+import 'all_scores_page.dart';
 import 'measure_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -297,6 +298,11 @@ class _HomePage extends State<HomePage> {
                               const EdgeInsets.only(left: 50, right: 50))),
                       onPressed: () {
                         //TODO pages with all score with id patient = 0 -> no patient
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AllScoresPage()),
+                        );
                       },
                     ),
                   ],
