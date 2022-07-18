@@ -16,15 +16,15 @@ class Score {
   final double elevationAngleHealthy;
   final double bbScore;
   final String notes;
-  final int patientId;
+  final int? patientId;
 
   Score(
       {this.id,
+      this.patientId,
       required this.creationDate,
       required this.elevationAngleInjured,
       required this.elevationAngleHealthy,
       required this.bbScore,
-      required this.patientId,
       required this.notes});
 
   factory Score.fromDatabaseJson(Map<String, dynamic> data) => Score(

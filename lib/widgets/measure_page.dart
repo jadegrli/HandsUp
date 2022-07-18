@@ -57,7 +57,7 @@ class _Measure extends State<MeasurePage> {
 
   final allRangesAcc = <List<double>>[];
   final allRangesGyro = <List<double>>[];
-  double bbScore = 20;
+  double bbScore = 0;
   double elevationInjured = 0;
   double elevationHealthy = 0;
 
@@ -145,23 +145,11 @@ class _Measure extends State<MeasurePage> {
                         finalResults(state.allMeasures),
                         ElevatedButton(
                             onPressed: () async {
-                              context
-                                  .read<MeasureBloc>()
-                                  .add(EventEnd());
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const HomePage()));
-                            },
-                            child: const Text("Validate")),
-                        ElevatedButton(
-                            onPressed: () async {
                               final newScore = Score(
                                   creationDate: DateFormat("yyyy-MM-dd").format(DateTime.now()),
                                   elevationAngleInjured: elevationInjured,
                                   elevationAngleHealthy: elevationHealthy,
                                   bbScore: bbScore,
-                                  patientId: widget.patientID,
                                   notes: "");
                               //TODO tester avec et sans le await
                               await blocScore.addScoreWithRepetition(
@@ -170,7 +158,17 @@ class _Measure extends State<MeasurePage> {
                                   List.from(allRangesGyro),
                                   elevationInjured,
                                   elevationHealthy);
-
+                              context
+                                  .read<MeasureBloc>()
+                                  .add(EventEnd());
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const HomePage()));
+                            },
+                            child: const Text("Validate")),
+                        ElevatedButton(
+                            onPressed: () async {
                               context
                                   .read<MeasureBloc>()
                                   .add(EventEnd());

@@ -20,7 +20,7 @@ class _ScorePage extends State<ScorePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Profil score"),
+        title: const Text("Score profile"),
         automaticallyImplyLeading: true,
       ),
       body: SingleChildScrollView(

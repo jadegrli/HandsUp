@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:hands_up/widgets/score_page.dart';
 
 import '../bloc_database/db_bloc_score.dart';
 import '../models/score.dart';
@@ -42,7 +43,12 @@ class _AllScoresPage extends State<AllScoresPage> {
                   return ListTile(
                     title: Text(snapshot.data![index].id.toString()),
                     onTap: () {
-                      bloc.deleteScoreById(snapshot.data![index].id!);
+                      //bloc.deleteScoreById(snapshot.data![index].id!);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ScorePage(score: snapshot.data![index])),
+                      );
                     },
                   );
                 },
