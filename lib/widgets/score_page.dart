@@ -49,6 +49,7 @@ class _ScorePage extends State<ScorePage> {
             ElevatedButton(
                 onPressed: () {
                   bloc.deleteScoreById(widget.score.id!);
+                  Navigator.of(context).pop(true);
                 },
                 child: const Text("Delete score")),
           ],

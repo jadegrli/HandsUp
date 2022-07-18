@@ -27,7 +27,8 @@ class _AllScoresWithoutPatientPage extends State<AllScoresWithoutPatientPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: Column(
+        child: Center (
+          child : Column(
           children: <Widget>[
             StreamBuilder<List<dynamic>>(
                 stream: bloc.data,
@@ -60,6 +61,7 @@ class _AllScoresWithoutPatientPage extends State<AllScoresWithoutPatientPage> {
                 }),
           ],
         ),
+      ),
       ),
     );
   }

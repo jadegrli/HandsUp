@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:hands_up/widgets/modify_patient.dart';
 
 import '../bloc_database/db_bloc_patient.dart';
 import '../graph/graph.dart';
 import 'all_scores_of_patient_page.dart';
+import 'home_page.dart';
 import 'measure_page.dart';
 
 class PatientPage extends StatefulWidget {
   //final Patient patient;
   final int patientId;
 
-  const PatientPage({Key? key, required this.patientId, patientID}) : super(key: key);
+  const PatientPage({Key? key, required this.patientId, patientID})
+      : super(key: key);
 
   @override
   State<PatientPage> createState() => _PatientPage();
@@ -68,9 +71,9 @@ class _PatientPage extends State<PatientPage> {
                             Text("ID : ${snapshot.data!.first.id.toString()}"),
                             Text("Name : ${snapshot.data!.first.name}"),
                             Text(
-                                "First name : ${snapshot.data!.first..firstName}"),
+                                "First name : ${snapshot.data!.first.firstName}"),
                             Text(
-                                "Birth date : ${snapshot.data!.first..dateOfBirth}"),
+                                "Birth date : ${snapshot.data!.first.dateOfBirth}"),
                             Text("Email : ${snapshot.data!.first.email}"),
                             Text(
                                 "Creation date : ${snapshot.data!.first.creationDate}"),
@@ -301,15 +304,15 @@ class _PatientPage extends State<PatientPage> {
                           ],
                         ),
                       ),
-                      /*ElevatedButton(
-                onPressed: () {
-                  bloc.deletePatientById(widget.patient.id!);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const FinalMyHomePage()));
-                },
-                child: const Text("Delete this patient")),*/
+                      ElevatedButton(
+                          onPressed: () {
+                            bloc.deletePatientById(widget.patientId);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const HomePage()));
+                          },
+                          child: const Text("Delete this patient")),
                       ElevatedButton(
                           onPressed: () {
                             Navigator.push(
@@ -319,6 +322,15 @@ class _PatientPage extends State<PatientPage> {
                                         patientId: snapshot.data!.first.id)));
                           },
                           child: const Text("Plot values")),
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ModifyPatientPage(
+                                        patientId: widget.patientId)));
+                          },
+                          child: const Text("Modify patient")),
                     ]);
                   } else {
                     return const Align(

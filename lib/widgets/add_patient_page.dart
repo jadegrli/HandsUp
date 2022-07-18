@@ -24,7 +24,6 @@ class _CreatePatientPage extends State<CreatePatientPage> {
   bool isLeftShoulder = false;
   bool isRightShoulder = false;
 
-  final birthDateTextController = TextEditingController();
   DateTime date = DateTime.now();
   final DateTime todayDate = DateTime.now();
 
@@ -89,7 +88,6 @@ class _CreatePatientPage extends State<CreatePatientPage> {
     super.dispose();
     firstNameTextController.dispose();
     nameTextController.dispose();
-    birthDateTextController.dispose();
     emailTextController.dispose();
     otherPathologyTextController.dispose();
     notesTextController.dispose();
@@ -219,7 +217,7 @@ class _CreatePatientPage extends State<CreatePatientPage> {
               final newPatient = Patient(
                   name: nameTextController.text,
                   firstName: firstNameTextController.text,
-                  dateOfBirth: birthDateTextController.text,
+                  dateOfBirth: DateFormat("yyyy-MM-dd").format(date),
                   email: emailTextController.text,
                   notes: notesTextController.text,
                   creationDate: DateFormat("yyyy-MM-dd").format(DateTime.now()),
