@@ -6,6 +6,7 @@ import '../bloc_database/db_bloc_patient.dart';
 import '../models/patient.dart';
 import 'add_patient_page.dart';
 import 'all_scores_page.dart';
+import 'all_scores_without_patient.dart';
 import 'measure_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -301,7 +302,7 @@ class _HomePage extends State<HomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const AllScoresPage()),
+                              builder: (context) => const AllScoresWithoutPatientPage()),
                         );
                       },
                     ),

@@ -62,7 +62,7 @@ class ScoreDao {
 
     List<Map<String, dynamic>> result = [];
     result = await db.query(scoreTABLE,
-        columns: Score.columns, where: 'HasPatient = ? ', whereArgs: ["0"]);
+        columns: Score.columns, where: 'Patient_id IS NULL ');
 
     List<Score> scoresList = result.isNotEmpty
         ? result.map((item) => Score.fromDatabaseJson(item)).toList()
