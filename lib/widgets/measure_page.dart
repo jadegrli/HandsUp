@@ -62,7 +62,6 @@ class _Measure extends State<MeasurePage> {
   double elevationHealthy = 0;
 
   final DataBaseBlocScore blocScore = DataBaseBlocScore();
-  final DataBaseBlocPatient blocPatient = DataBaseBlocPatient();
 
   @override
   Widget build(BuildContext context) {
@@ -123,11 +122,10 @@ class _Measure extends State<MeasurePage> {
                                   MaterialPageRoute(
                                       builder: (context) => const HomePage()));
                             } else {
-                              final patient = blocPatient.getPatientByID(id: widget.patientID);
                               Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => PatientPage(patient: patient)));
+                                      builder: (context) => PatientPage(patientId: widget.patientID)));
                             }
                           },
                           child: const Text("Cancel")),
@@ -179,17 +177,17 @@ class _Measure extends State<MeasurePage> {
                                 elevationHealthy);
 
                             context.read<MeasureBloc>().add(EventEnd());
+
                             if (widget.patientID == 0) {
                               Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => const HomePage()));
                             } else {
-                              final patient = blocPatient.getPatientByID(id: widget.patientID);
                               Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => PatientPage(patient: patient)));
+                                      builder: (context) => PatientPage(patientId: widget.patientID)));
                             }
                           },
                           child: const Text("Validate")),
@@ -203,11 +201,10 @@ class _Measure extends State<MeasurePage> {
                                   MaterialPageRoute(
                                       builder: (context) => const HomePage()));
                             } else {
-                              final patient = blocPatient.getPatientByID(id: widget.patientID);
                               Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => PatientPage(patient: patient)));
+                                      builder: (context) => PatientPage(patientId: widget.patientID)));
                             }
                           },
                           child: const Text("Cancel")),

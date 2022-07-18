@@ -486,8 +486,8 @@ class _HomePage extends State<HomePage> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => PatientPage(
-                                                patient:
-                                                    snapshot.data![index])));
+                                                patientId:
+                                                    snapshot.data![index].id!)));
                                   },
                                 );
                               },
