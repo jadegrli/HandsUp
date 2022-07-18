@@ -59,33 +59,47 @@ class _Measure extends State<MeasurePage> {
   double bbScore = 0;
   double elevationInjured = 0;
   double elevationHealthy = 0;
+  bool exceptionCalculation = false;
 
   final DataBaseBlocScore blocScore = DataBaseBlocScore();
 
   @override
   void initState() {
     super.initState();
-    //fait disparaitre barre du bas, si on touche elle revient
+    //hide the bottom system navigation bar
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
       SystemUiOverlay.top,
+    ]);
+    //prevent screen to rotate
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
     ]);
   }
 
   @override
   void dispose() {
     super.dispose();
+    //unhide the bottom system navigation bar
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+    //allows screen rotation
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            automaticallyImplyLeading:
-                false, // pour bouton de retour mettre false pour l'enlever
-            title: const Text("Measure")),
-        body: Center(
+      appBar: AppBar(
+          automaticallyImplyLeading: false, // hide back button in app bar
+          title: const Text("Measure")),
+      body: Center(
+        child: BlocListener<MeasureBloc, MeasureStates>(
+          listener: (context, state) => print(detectState(state)),
           child: BlocBuilder<MeasureBloc, MeasureStates>(
             builder: (context, state) {
               if (state is StateReady) {
@@ -164,10 +178,12 @@ class _Measure extends State<MeasurePage> {
               if (state is StateAllMeasuresSecondSide) {
                 return SingleChildScrollView(
                   child: Center(
-                    child: Column(
+                    child:
+                    Column(
                       children: [
                         const Text("All measures"),
                         finalResults(state.allMeasures),
+                        if (!exceptionCalculation)
                         ElevatedButton(
                             onPressed: () async {
                               final newScore = widget.patientID == 0
@@ -187,7 +203,6 @@ class _Measure extends State<MeasurePage> {
                                       patientId: widget.patientID,
                                       notes: "");
 
-                              //TODO tester avec et sans le await
                               await blocScore.addScoreWithRepetition(
                                   newScore,
                                   List.from(allRangesAcc),
@@ -249,6 +264,7 @@ class _Measure extends State<MeasurePage> {
             },
           ),
         ),
+      ),
     );
   }
 
@@ -259,9 +275,21 @@ class _Measure extends State<MeasurePage> {
     final String length = measure.length.toString();
 
     if (widget.nbRepetition * 2 == measure.length) {
-      for (int i = 0; i < widget.nbRepetition * 2; i++) {
-        allResultsAcc.add(score.getRanges(measure[i].accelValues));
-        allResultsGyro.add(score.getRanges(measure[i].gyroValues));
+      try {
+        for (int i = 0; i < widget.nbRepetition * 2; i++) {
+          allResultsAcc.add(score.getRanges(measure[i].accelValues));
+          allResultsGyro.add(score.getRanges(measure[i].gyroValues));
+        }
+      } catch (exception) {
+        exceptionCalculation = true;
+        return Column(
+          children: const [
+            Center(
+              child: Text(
+                  "Error in calculation, it can happen when the smartphone is not moving during the measure. Please try again."),
+            ),
+          ],
+        );
       }
       return Column(
         children: [
@@ -312,27 +340,31 @@ class _Measure extends State<MeasurePage> {
         "Error while calculating middle score, length : $length, nbRepetition : ${widget.nbRepetition}");
   }
 
-  bool _calculateScores(List<Measure> measures) {
+  int _calculateScores(List<Measure> measures) {
     if (widget.nbRepetition * 4 == measures.length) {
-      final mpScoreLive = PScoreLive(allMeasures: measures);
-      for (int i = 0; i < widget.nbRepetition * 4; i++) {
-        allRangesAcc.add(mpScoreLive.getRanges(measures[i].accelValues));
-        allRangesGyro.add(mpScoreLive.getRanges(measures[i].gyroValues));
+      try {
+        final mpScoreLive = PScoreLive(allMeasures: measures);
+        for (int i = 0; i < widget.nbRepetition * 4; i++) {
+          allRangesAcc.add(mpScoreLive.getRanges(measures[i].accelValues));
+          allRangesGyro.add(mpScoreLive.getRanges(measures[i].gyroValues));
+        }
+        mpScoreLive.computeScore();
+        bbScore = mpScoreLive.bbScore;
+        final mAngleScoreLive = AngleScoreLive(allMeasures: measures);
+        mAngleScoreLive.computeScore();
+        elevationInjured = mAngleScoreLive.elevationInjured;
+        elevationHealthy = mAngleScoreLive.elevationHealthy;
+        return 1;
+      } catch (exception) {
+        exceptionCalculation = true;
+        return -1;
       }
-      mpScoreLive.computeScore();
-      bbScore = mpScoreLive.bbScore;
-      final mAngleScoreLive = AngleScoreLive(allMeasures: measures);
-      mAngleScoreLive.computeScore();
-      elevationInjured = mAngleScoreLive.elevationInjured;
-      elevationHealthy = mAngleScoreLive.elevationHealthy;
-      return true;
     }
-    return false;
+    return 0;
   }
 
   Widget finalResults(List<Measure> measures) {
-    if (_calculateScores(measures)) {
-      //_calculateScores(measures);
+    if (_calculateScores(measures) == 1) {
       return Column(
         children: [
           Text("BBScore : $bbScore", style: const TextStyle(fontSize: 20.0)),
@@ -342,10 +374,19 @@ class _Measure extends State<MeasurePage> {
               style: const TextStyle(fontSize: 20.0)),
         ],
       );
-    } else {
+    } else if (_calculateScores(measures) == 0) {
       return Column(
         children: const [
           Text("Error in score calculation!", style: TextStyle(fontSize: 20.0)),
+        ],
+      );
+    } else {
+      return Column(
+        children: const [
+          Center(
+            child: Text(
+                "Error in calculation, it can happen when the smartphone is not moving during the measure. Please try again."),
+          ),
         ],
       );
     }
