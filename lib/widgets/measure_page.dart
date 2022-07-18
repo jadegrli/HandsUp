@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hands_up/bloc_database/db_bloc_patient.dart';
 import 'package:hands_up/widgets/home_page.dart';
+import 'package:hands_up/widgets/patient_page.dart';
 import 'package:intl/intl.dart';
 
 import '../bloc_database/db_bloc_repetition.dart';
@@ -11,13 +13,12 @@ import '../models/score.dart';
 import '../score_calculation/angle_score_live.dart';
 import '../score_calculation/p_score_live.dart';
 
-
 class MeasurePage extends StatefulWidget {
   const MeasurePage(
       {Key? key,
-        required this.nbRepetition,
-        required this.duration,
-        required this.patientID})
+      required this.nbRepetition,
+      required this.duration,
+      required this.patientID})
       : super(key: key);
 
   final int nbRepetition;
@@ -54,7 +55,6 @@ String detectState(MeasureStates state) {
 }
 
 class _Measure extends State<MeasurePage> {
-
   final allRangesAcc = <List<double>>[];
   final allRangesGyro = <List<double>>[];
   double bbScore = 0;
@@ -62,145 +62,175 @@ class _Measure extends State<MeasurePage> {
   double elevationHealthy = 0;
 
   final DataBaseBlocScore blocScore = DataBaseBlocScore();
-  final DataBaseBlocRepetition blocRepetition = DataBaseBlocRepetition();
+  final DataBaseBlocPatient blocPatient = DataBaseBlocPatient();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
           automaticallyImplyLeading:
-          false, // pour bouton de retour mettre false pour l'enlever
+              false, // pour bouton de retour mettre false pour l'enlever
           title: const Text("Measure")),
       body: Center(
-        //TODO : remove after debug
-        child: BlocListener<MeasureBloc, MeasureStates>(
-          listener: (context, state) => print(detectState(state)),
-          child: BlocBuilder<MeasureBloc, MeasureStates>(
-            builder: (context, state) {
-              if (state is StateReady) {
-                return Center(
-                  child: ElevatedButton(
-                      onPressed: () {
-                        context.read<MeasureBloc>().add(EventLaunchFirstSide(nbRepetition: widget.nbRepetition, movementDuration: widget.duration));
-                      },
-                      child: const Text("Launch")),
-                );
-              }
+        child: BlocBuilder<MeasureBloc, MeasureStates>(
+          builder: (context, state) {
+            if (state is StateReady) {
+              return Center(
+                child: ElevatedButton(
+                    onPressed: () {
+                      context.read<MeasureBloc>().add(EventLaunchFirstSide(
+                          nbRepetition: widget.nbRepetition,
+                          movementDuration: widget.duration));
+                    },
+                    child: const Text("Launch")),
+              );
+            }
 
-              if (state is StateLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
+            if (state is StateLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-              if (state is StateRest) {
-                return const Center(
-                  child: Text("Rest"),
-                );
-              }
+            if (state is StateRest) {
+              return const Center(
+                child: Text("Rest"),
+              );
+            }
 
-              if (state is StateHandBack) {
-                return const Center(
-                  child: Text("Hand back"),
-                );
-              }
+            if (state is StateHandBack) {
+              return const Center(
+                child: Text("Hand back"),
+              );
+            }
 
-              if (state is StateHandUp) {
-                return const Center(
-                  child: Text("Hand up"),
-                );
-              }
+            if (state is StateHandUp) {
+              return const Center(
+                child: Text("Hand up"),
+              );
+            }
 
-              if (state is StateAllMeasuresFirstSide) {
-                return SingleChildScrollView(
-                  child: Center(
-                    child: Column(
-                      children: [
-                        const Text("All measures"),
-                        ElevatedButton(
-                            onPressed: () {
-                              context.read<MeasureBloc>().add(EventEnd());
-                            },
-                            child: const Text("Cancel")),
-                        ElevatedButton(
-                            onPressed: () {
-                              context
-                                  .read<MeasureBloc>()
-                                  .add(EventLaunchSecondSide(
-                                  nbRepetition: widget.nbRepetition,
-                                  movementDuration: widget.duration));
-                            },
-                            child: const Text("Continue measure")),
-                        midResult(state.allMeasures),
-                      ],
-                    ),
-                  ),
-                );
-              }
-
-              if (state is StateAllMeasuresSecondSide) {
-                return SingleChildScrollView(
-                  child: Center(
-                    child: Column(
-                      children: [
-                        const Text("All measures"),
-                        finalResults(state.allMeasures),
-                        ElevatedButton(
-                            onPressed: () async {
-                              final newScore = Score(
-                                  creationDate: DateFormat("yyyy-MM-dd").format(DateTime.now()),
-                                  elevationAngleInjured: elevationInjured,
-                                  elevationAngleHealthy: elevationHealthy,
-                                  bbScore: bbScore,
-                                  notes: "");
-                              //TODO tester avec et sans le await
-                              await blocScore.addScoreWithRepetition(
-                                  newScore,
-                                  List.from(allRangesAcc),
-                                  List.from(allRangesGyro),
-                                  elevationInjured,
-                                  elevationHealthy);
-                              context
-                                  .read<MeasureBloc>()
-                                  .add(EventEnd());
+            if (state is StateAllMeasuresFirstSide) {
+              return SingleChildScrollView(
+                child: Center(
+                  child: Column(
+                    children: [
+                      const Text("All measures"),
+                      ElevatedButton(
+                          onPressed: () {
+                            context.read<MeasureBloc>().add(EventEnd());
+                            if (widget.patientID == 0) {
                               Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => const HomePage()));
-                            },
-                            child: const Text("Validate")),
-                        ElevatedButton(
-                            onPressed: () async {
-                              context
-                                  .read<MeasureBloc>()
-                                  .add(EventEnd());
+                            } else {
+                              final patient = blocPatient.getPatientByID(id: widget.patientID);
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PatientPage(patient: patient)));
+                            }
+                          },
+                          child: const Text("Cancel")),
+                      ElevatedButton(
+                          onPressed: () {
+                            context.read<MeasureBloc>().add(
+                                EventLaunchSecondSide(
+                                    nbRepetition: widget.nbRepetition,
+                                    movementDuration: widget.duration));
+                          },
+                          child: const Text("Continue measure")),
+                      midResult(state.allMeasures),
+                    ],
+                  ),
+                ),
+              );
+            }
 
-                              Navigator.push(
+            if (state is StateAllMeasuresSecondSide) {
+              return SingleChildScrollView(
+                child: Center(
+                  child: Column(
+                    children: [
+                      const Text("All measures"),
+                      finalResults(state.allMeasures),
+                      ElevatedButton(
+                          onPressed: () async {
+                            final newScore = widget.patientID == 0 ? Score(
+                                creationDate: DateFormat("yyyy-MM-dd")
+                                    .format(DateTime.now()),
+                                elevationAngleInjured: elevationInjured,
+                                elevationAngleHealthy: elevationHealthy,
+                                bbScore: bbScore,
+                                notes: "") : Score(
+                                creationDate: DateFormat("yyyy-MM-dd")
+                                    .format(DateTime.now()),
+                                elevationAngleInjured: elevationInjured,
+                                elevationAngleHealthy: elevationHealthy,
+                                bbScore: bbScore,
+                                patientId: widget.patientID,
+                                notes: "");
+
+                            //TODO tester avec et sans le await
+                            await blocScore.addScoreWithRepetition(
+                                newScore,
+                                List.from(allRangesAcc),
+                                List.from(allRangesGyro),
+                                elevationInjured,
+                                elevationHealthy);
+
+                            context.read<MeasureBloc>().add(EventEnd());
+                            if (widget.patientID == 0) {
+                              Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => const HomePage()));
-                            },
-                            child: const Text("Cancel")),
-                      ],
-                    ),
+                            } else {
+                              final patient = blocPatient.getPatientByID(id: widget.patientID);
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PatientPage(patient: patient)));
+                            }
+                          },
+                          child: const Text("Validate")),
+                      ElevatedButton(
+                          onPressed: () async {
+                            context.read<MeasureBloc>().add(EventEnd());
+
+                            if (widget.patientID == 0) {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const HomePage()));
+                            } else {
+                              final patient = blocPatient.getPatientByID(id: widget.patientID);
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PatientPage(patient: patient)));
+                            }
+                          },
+                          child: const Text("Cancel")),
+                    ],
                   ),
-                );
-              }
-
-              if (state is StateError) {
-                return const Center(
-                  child: Text("Error"),
-                );
-              }
-
-              return const Center(
-                child: Text("NO STATE !"),
+                ),
               );
-            },
-          ),
+            }
+
+            if (state is StateError) {
+              return const Center(
+                child: Text("Error"),
+              );
+            }
+
+            return const Center(
+              child: Text("NO STATE !"),
+            );
+          },
         ),
       ),
     );
   }
-
 
   Widget midResult(List<Measure> measure) {
     final allResultsAcc = <List<double>>[];
@@ -218,13 +248,12 @@ class _Measure extends State<MeasurePage> {
           for (int i = 0; i < widget.nbRepetition * 2 - 1; i += 2)
             Column(
               children: [
-                Text(allResultsAcc.toString()),
-                Text(allResultsGyro.toString()),
                 Text(
-                  "Ranges for Repetition $i",
+                  "Ranges for Repetition ${i~/2 + 1}",
                   style: const TextStyle(
                       fontSize: 18.0, fontWeight: FontWeight.w900),
                 ),
+
                 Text(
                     "Hand Back, Accelerometer, X Axis : ${allResultsAcc[i][0]}",
                     style: const TextStyle(fontSize: 20.0)),
@@ -234,6 +263,24 @@ class _Measure extends State<MeasurePage> {
                 Text(
                     "Hand Back, Accelerometer, Z Axis : ${allResultsAcc[i][2]}",
                     style: const TextStyle(fontSize: 20.0)),
+
+                Text(
+                    "Hand Back, Gyroscope, X Axis : ${allResultsGyro[i][0]}",
+                    style: const TextStyle(fontSize: 20.0)),
+                Text(
+                    "Hand Back, Gyroscope, Y Axis : ${allResultsGyro[i][1]}",
+                    style: const TextStyle(fontSize: 20.0)),
+                Text(
+                    "Hand Back, Gyroscope, Z Axis : ${allResultsGyro[i][2]}",
+                    style: const TextStyle(fontSize: 20.0)),
+
+                Text("Hand Up, Accelerometer, X Axis : ${allResultsAcc[i + 1][0]}",
+                    style: const TextStyle(fontSize: 20.0)),
+                Text("Hand Up, Accelerometer, Y Axis : ${allResultsAcc[i + 1][1]}",
+                    style: const TextStyle(fontSize: 20.0)),
+                Text("Hand Up, Accelerometer, Z Axis : ${allResultsAcc[i + 1][2]}",
+                    style: const TextStyle(fontSize: 20.0)),
+
                 Text("Hand Up, Gyroscope, X Axis : ${allResultsGyro[i + 1][0]}",
                     style: const TextStyle(fontSize: 20.0)),
                 Text("Hand Up, Gyroscope, Y Axis : ${allResultsGyro[i + 1][1]}",
@@ -266,7 +313,6 @@ class _Measure extends State<MeasurePage> {
     }
     return false;
   }
-
 
   Widget finalResults(List<Measure> measures) {
     if (_calculateScores(measures)) {
