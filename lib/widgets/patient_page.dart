@@ -517,7 +517,9 @@ class _PatientPage extends State<PatientPage> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text("Last Measure"),
+                                  const Text("Last Measure", style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold)),
                                   IconButton(
                                       onPressed: () {},
                                       icon: const Icon(
