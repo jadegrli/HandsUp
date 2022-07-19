@@ -27,9 +27,12 @@ class _ModifyPatientPage extends State<ModifyPatientPage> {
   bool isRightShoulder = false;
   String creationDate = "";
   bool canUpdate = false;
+  bool initOnce = true;
 
   DateTime date = DateTime.now();
   final DateTime todayDate = DateTime.now();
+
+  String sortChoice = "Rotator cuff";
 
   final DataBaseBlocPatient bloc = DataBaseBlocPatient();
 
@@ -50,7 +53,7 @@ class _ModifyPatientPage extends State<ModifyPatientPage> {
       return false;
     }
 
-    if (sortChoice == "Other" && otherPathologyTextController.text.isEmpty) {
+    if (hasPathology && sortChoice == "Other" && otherPathologyTextController.text.isEmpty) {
       return false;
     }
     return true;
@@ -114,22 +117,31 @@ class _ModifyPatientPage extends State<ModifyPatientPage> {
           stream: bloc.data,
           builder: (context, snapshot) {
             if (snapshot.data != null && snapshot.data!.isNotEmpty) {
-              canUpdate = true;
-              firstNameTextController.text = snapshot.data!.first.firstName;
-              nameTextController.text = snapshot.data!.first.name;
-              emailTextController.text = snapshot.data!.first.email;
-              otherPathologyTextController.text = snapshot.data!.first.otherPathology;
-              notesTextController.text = snapshot.data!.first.notes;
-              hasPathology = snapshot.data!.first.healthCondition == "Healthy" ? false : true;
-              date = DateTime.parse(snapshot.data!.first.dateOfBirth);
-              creationDate = snapshot.data!.first.creationDate;
+              if (initOnce){
+                initOnce = false;
+                firstNameTextController.text = snapshot.data!.first.firstName;
+                nameTextController.text = snapshot.data!.first.name;
+                emailTextController.text = snapshot.data!.first.email;
+                otherPathologyTextController.text =
+                    snapshot.data!.first.otherPathology == "-" ? "" : snapshot.data!.first.otherPathology;
+                notesTextController.text = snapshot.data!.first.notes;
+                hasPathology = snapshot.data!.first.healthCondition == "Healthy"
+                    ? false
+                    : true;
+                date = DateTime.parse(snapshot.data!.first.dateOfBirth);
+                creationDate = snapshot.data!.first.creationDate;
+                if (hasPathology) {
+                  sortChoice = snapshot.data!.first.healthCondition;
+                }
 
-              if (snapshot.data!.first.isRightReferenceOrHealthy) {
-                isLeftShoulder = false;
-                isRightShoulder = true;
-              } else {
-                isLeftShoulder = true;
-                isRightShoulder = false;
+                if (snapshot.data!.first.isRightReferenceOrHealthy) {
+                  isLeftShoulder = false;
+                  isRightShoulder = true;
+                } else {
+                  isLeftShoulder = true;
+                  isRightShoulder = false;
+                }
+                canUpdate = true;
               }
 
               return Column(
@@ -266,9 +278,9 @@ class _ModifyPatientPage extends State<ModifyPatientPage> {
                     creationDate: creationDate,
                     isRightReferenceOrHealthy: isRightShoulder,
                     healthCondition: hasPathology ? sortChoice : "Healthy",
-                    otherPathology: sortChoice == "Other"
+                    otherPathology: sortChoice == "Other" && hasPathology
                         ? otherPathologyTextController.text
-                        : "None");
+                        : "-");
                 bloc.updatePatient(newPatient);
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => const HomePage()));
@@ -381,7 +393,7 @@ class _ModifyPatientPage extends State<ModifyPatientPage> {
     "Other"
   ];
 
-  String sortChoice = "Rotator cuff";
+
 
   Widget selectPathology() {
     return Column(
