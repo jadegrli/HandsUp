@@ -9,7 +9,6 @@ class ScoreRepository {
 
   Future getScoreFromId({required int id}) => scoreDao.getScoreFromId(id: id);
 
-
   Future getAllScores() => scoreDao.getAllScores();
 
   Future getScoresWithNoPatient() => scoreDao.getScoresWithNoPatient();

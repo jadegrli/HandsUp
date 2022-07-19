@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,7 +32,7 @@ class MeasurePage extends StatefulWidget {
 
 String detectState(MeasureStates state) {
   if (state is StateReady) {
-    return "StateReady";
+    return "Ready";
   }
   if (state is StateLoading) {
     return "Loading";
@@ -39,10 +41,10 @@ String detectState(MeasureStates state) {
     return "Rest";
   }
   if (state is StateHandBack) {
-    return "Hand Back";
+    return "Hand back";
   }
   if (state is StateHandUp) {
-    return "Hand Up";
+    return "Hand up";
   }
   if (state is StateAllMeasuresFirstSide) {
     return "All measure";
@@ -60,8 +62,31 @@ class _Measure extends State<MeasurePage> {
   double elevationInjured = 0;
   double elevationHealthy = 0;
   bool exceptionCalculation = false;
+  late Timer _timer;
+  late int _start = widget.duration;
 
   final DataBaseBlocScore blocScore = DataBaseBlocScore();
+
+  String previousState = "Ready";
+
+  void startTimer() {
+    _start = widget.duration;
+    const oneSec = Duration(seconds: 1);
+    _timer = Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        if (_start == 0) {
+          setState(() {
+            timer.cancel();
+          });
+        } else {
+          setState(() {
+            _start--;
+          });
+        }
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -79,6 +104,7 @@ class _Measure extends State<MeasurePage> {
   @override
   void dispose() {
     super.dispose();
+    _timer.cancel();
     //unhide the bottom system navigation bar
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
@@ -94,11 +120,7 @@ class _Measure extends State<MeasurePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          automaticallyImplyLeading: false, // hide back button in app bar
-          title: const Text("Measure")),
-      body: Center(
-        child: BlocListener<MeasureBloc, MeasureStates>(
+      body: BlocListener<MeasureBloc, MeasureStates>(
           listener: (context, state) => print(detectState(state)),
           child: BlocBuilder<MeasureBloc, MeasureStates>(
             builder: (context, state) {
@@ -119,21 +141,24 @@ class _Measure extends State<MeasurePage> {
               }
 
               if (state is StateRest) {
-                return const Center(
+                return movement(context, "Rest");
+                /*return const Center(
                   child: Text("Rest"),
-                );
+                );*/
               }
 
               if (state is StateHandBack) {
-                return const Center(
+                return movement(context, "Hand back");
+                /*return const Center(
                   child: Text("Hand back"),
-                );
+                );*/
               }
 
               if (state is StateHandUp) {
-                return const Center(
+                return movement(context, "Hand up");
+                /*return const Center(
                   child: Text("Hand up"),
-                );
+                );*/
               }
 
               if (state is StateAllMeasuresFirstSide) {
@@ -178,55 +203,54 @@ class _Measure extends State<MeasurePage> {
               if (state is StateAllMeasuresSecondSide) {
                 return SingleChildScrollView(
                   child: Center(
-                    child:
-                    Column(
+                    child: Column(
                       children: [
                         const Text("All measures"),
                         finalResults(state.allMeasures),
                         if (!exceptionCalculation)
-                        ElevatedButton(
-                            onPressed: () async {
-                              final newScore = widget.patientID == 0
-                                  ? Score(
-                                      creationDate: DateFormat("yyyy-MM-dd")
-                                          .format(DateTime.now()),
-                                      elevationAngleInjured: elevationInjured,
-                                      elevationAngleHealthy: elevationHealthy,
-                                      bbScore: bbScore,
-                                      notes: "")
-                                  : Score(
-                                      creationDate: DateFormat("yyyy-MM-dd")
-                                          .format(DateTime.now()),
-                                      elevationAngleInjured: elevationInjured,
-                                      elevationAngleHealthy: elevationHealthy,
-                                      bbScore: bbScore,
-                                      patientId: widget.patientID,
-                                      notes: "");
+                          ElevatedButton(
+                              onPressed: () async {
+                                final newScore = widget.patientID == 0
+                                    ? Score(
+                                        creationDate: DateFormat("yyyy-MM-dd")
+                                            .format(DateTime.now()),
+                                        elevationAngleInjured: elevationInjured,
+                                        elevationAngleHealthy: elevationHealthy,
+                                        bbScore: bbScore,
+                                        notes: "")
+                                    : Score(
+                                        creationDate: DateFormat("yyyy-MM-dd")
+                                            .format(DateTime.now()),
+                                        elevationAngleInjured: elevationInjured,
+                                        elevationAngleHealthy: elevationHealthy,
+                                        bbScore: bbScore,
+                                        patientId: widget.patientID,
+                                        notes: "");
 
-                              await blocScore.addScoreWithRepetition(
-                                  newScore,
-                                  List.from(allRangesAcc),
-                                  List.from(allRangesGyro),
-                                  elevationInjured,
-                                  elevationHealthy);
+                                await blocScore.addScoreWithRepetition(
+                                    newScore,
+                                    List.from(allRangesAcc),
+                                    List.from(allRangesGyro),
+                                    elevationInjured,
+                                    elevationHealthy);
 
-                              context.read<MeasureBloc>().add(EventEnd());
+                                context.read<MeasureBloc>().add(EventEnd());
 
-                              if (widget.patientID == 0) {
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const HomePage()));
-                              } else {
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => PatientPage(
-                                            patientId: widget.patientID)));
-                              }
-                            },
-                            child: const Text("Validate")),
+                                if (widget.patientID == 0) {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const HomePage()));
+                                } else {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => PatientPage(
+                                              patientId: widget.patientID)));
+                                }
+                              },
+                              child: const Text("Validate")),
                         ElevatedButton(
                             onPressed: () async {
                               context.read<MeasureBloc>().add(EventEnd());
@@ -264,8 +288,136 @@ class _Measure extends State<MeasurePage> {
             },
           ),
         ),
-      ),
     );
+  }
+
+  Widget midResult2(List<Measure> measure) {
+    final allResultsAcc = <List<double>>[];
+    final allResultsGyro = <List<double>>[];
+    final score = PScoreLive(allMeasures: measure);
+    final String length = measure.length.toString();
+
+    if (widget.nbRepetition * 2 == measure.length) {
+      try {
+        for (int i = 0; i < widget.nbRepetition * 2; i++) {
+          allResultsAcc.add(score.getRanges(measure[i].accelValues));
+          allResultsGyro.add(score.getRanges(measure[i].gyroValues));
+        }
+      } catch (exception) {
+        exceptionCalculation = true;
+        return Column(
+          children: const [
+            Center(
+              child: Text(
+                  "Error in calculation, it can happen when the smartphone is not moving during the measure. Please try again."),
+            ),
+          ],
+        );
+      }
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Padding(
+            padding: EdgeInsets.all(10.0),
+            child: Text("Measure validation",
+                style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.w900)),
+          ),
+          const SizedBox(height: 20),
+          ListView(
+            children: [
+              for (int i = 0; i < widget.nbRepetition * 2 - 1; i += 2)
+                Container(
+                  margin: const EdgeInsets.all(8.0),
+                  child: Card(
+                    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                    child: Column(
+                      children: [
+                        //tab here
+                        Text(
+                          "Ranges for Repetition ${i ~/ 2 + 1}",
+                          style: const TextStyle(
+                              fontSize: 18.0, fontWeight: FontWeight.w900),
+                        ),
+                        Text(
+                            "Hand Back, Accelerometer, X Axis : ${allResultsAcc[i][0]}",
+                            style: const TextStyle(fontSize: 20.0)),
+                        Text(
+                            "Hand Back, Accelerometer, Y Axis : ${allResultsAcc[i][1]}",
+                            style: const TextStyle(fontSize: 20.0)),
+                        Text(
+                            "Hand Back, Accelerometer, Z Axis : ${allResultsAcc[i][2]}",
+                            style: const TextStyle(fontSize: 20.0)),
+                        Text("Hand Back, Gyroscope, X Axis : ${allResultsGyro[i][0]}",
+                            style: const TextStyle(fontSize: 20.0)),
+                        Text("Hand Back, Gyroscope, Y Axis : ${allResultsGyro[i][1]}",
+                            style: const TextStyle(fontSize: 20.0)),
+                        Text("Hand Back, Gyroscope, Z Axis : ${allResultsGyro[i][2]}",
+                            style: const TextStyle(fontSize: 20.0)),
+                        Text(
+                            "Hand Up, Accelerometer, X Axis : ${allResultsAcc[i + 1][0]}",
+                            style: const TextStyle(fontSize: 20.0)),
+                        Text(
+                            "Hand Up, Accelerometer, Y Axis : ${allResultsAcc[i + 1][1]}",
+                            style: const TextStyle(fontSize: 20.0)),
+                        Text(
+                            "Hand Up, Accelerometer, Z Axis : ${allResultsAcc[i + 1][2]}",
+                            style: const TextStyle(fontSize: 20.0)),
+                        Text("Hand Up, Gyroscope, X Axis : ${allResultsGyro[i + 1][0]}",
+                            style: const TextStyle(fontSize: 20.0)),
+                        Text("Hand Up, Gyroscope, Y Axis : ${allResultsGyro[i + 1][1]}",
+                            style: const TextStyle(fontSize: 20.0)),
+                        Text("Hand Up, Gyroscope, Z Axis : ${allResultsGyro[i + 1][2]}",
+                            style: const TextStyle(fontSize: 20.0)),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      primary: Colors.green,
+                      //background color of button
+                      side: const BorderSide(width: 3, color: Colors.green),
+                      //border width and color
+                      elevation: 3,
+                      //elevation of button
+                      shape: RoundedRectangleBorder(
+                          //to set border radius to button
+                          borderRadius: BorderRadius.circular(30)),
+                      padding: const EdgeInsets.all(
+                          20) //content padding inside button
+                      ),
+                  onPressed: () {},
+                  child: const Text("CONTINUE")),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      primary: Colors.red,
+                      //background color of button
+                      side: const BorderSide(width: 3, color: Colors.red),
+                      //border width and color
+                      elevation: 3,
+                      //elevation of button
+                      shape: RoundedRectangleBorder(
+                          //to set border radius to button
+                          borderRadius: BorderRadius.circular(30)),
+                      padding: const EdgeInsets.all(
+                          20) //content padding inside button
+                      ),
+                  onPressed: () {},
+                  child: const Text("CANCEL")),
+            ],
+          ),
+        ],
+      );
+    }
+    return Text(
+        "Error while calculating middle score, length : $length, nbRepetition : ${widget.nbRepetition}");
   }
 
   Widget midResult(List<Measure> measure) {
@@ -390,5 +542,90 @@ class _Measure extends State<MeasurePage> {
         ],
       );
     }
+  }
+
+  Widget movement(BuildContext context, String text) {
+    String imagePath = 'assets/images/rest.jpg';
+    Color background = Colors.white;
+    switch (text) {
+      case "Rest":
+        imagePath = 'assets/images/rest.jpg';
+        background = Colors.deepOrangeAccent;
+        break;
+      case "Hand back":
+        imagePath = 'assets/images/hand_back.jpg';
+        background = Colors.lightGreenAccent;
+        break;
+      case "Hand up":
+        imagePath = 'assets/images/hand_up.jpg';
+        background = Colors.lightBlueAccent;
+        break;
+    }
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(20)),
+        color: background,
+        boxShadow: const <BoxShadow>[
+          BoxShadow(
+              color: Colors.black54,
+              blurRadius: 15.0,
+              offset: Offset(0.0, 0.75))
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Text(text,
+                style: const TextStyle(
+                    fontSize: 30.0, fontWeight: FontWeight.w900)),
+          ),
+          const SizedBox(height: 20),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Card(
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                child: Image.asset(
+                  imagePath,
+                  height: MediaQuery.of(context).size.height / 1.5,
+                  fit: BoxFit.fitHeight,
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(/*"$_start"*/ "Counter",
+                    style: TextStyle(
+                        fontSize: 120.0,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.black)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  primary: Colors.red, //background color of button
+                  side: const BorderSide(
+                      width: 3, color: Colors.red), //border width and color
+                  elevation: 3, //elevation of button
+                  shape: RoundedRectangleBorder(
+                      //to set border radius to button
+                      borderRadius: BorderRadius.circular(30)),
+                  padding:
+                      const EdgeInsets.all(20) //content padding inside button
+                  ),
+              onPressed: () {},
+              child: const Text("CANCEL")),
+        ],
+      ),
+    );
   }
 }

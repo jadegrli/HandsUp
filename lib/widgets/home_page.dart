@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hands_up/widgets/page_test.dart';
 import 'package:hands_up/widgets/patient_page.dart';
 
 
@@ -519,6 +520,10 @@ class _HomePage extends State<HomePage> {
           width: 70.0,
           child: FloatingActionButton(
             onPressed: () {
+              /*Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const PageTest()));*/
               Navigator.push(
                   context,
                   MaterialPageRoute(

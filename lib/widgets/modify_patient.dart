@@ -110,7 +110,7 @@ class _ModifyPatientPage extends State<ModifyPatientPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create a new patient'),
+        title: const Text('Modify patient'),
       ),
       body: SingleChildScrollView(
         child: StreamBuilder<List<dynamic>>(

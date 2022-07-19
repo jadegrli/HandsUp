@@ -34,6 +34,7 @@ class DataBaseBlocScore {
     await _scoreRepository.insertScore(score);
   }
 
+
   addScoreWithRepetition(Score score, List<List<double>> allRangesAcc, List<List<double>> allRangesGyro,
       double elevationInjured, double elevationHealthy) async {
     List<int> id = await _scoreRepository.insertScore(score);
