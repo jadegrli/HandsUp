@@ -18,6 +18,8 @@ class _LineChartSample extends State<LineChartSample> {
   late bool isShowingMainData;
   final DataBaseBlocScore blocScore = DataBaseBlocScore();
   List<FlSpot> spotListBBScore = <FlSpot>[];
+  List<FlSpot> spotListAngleInjured = <FlSpot>[];
+  List<FlSpot> spotListAngleHealthy = <FlSpot>[];
   double _minXBBScore = 0;
   double _maxXBBScore = 0;
   final double _minYBBScore = 0;
@@ -74,6 +76,44 @@ class _LineChartSample extends State<LineChartSample> {
     return result;
   }
 
+  List<Score> sortScoreDayAngle(List<Score> values, bool isHealthy) {
+    List<Score> list = List.from(values);
+    List<Score> tmp = <Score>[];
+    Score score0;
+    List<Score> result = <Score>[];
+
+    while (list.isNotEmpty) {
+      score0 = list[0];
+      for (int i = 1; i < list.length; ++i) {
+        if (score0.creationDate == list[i].creationDate) {
+          tmp.add(list[i]);
+        }
+      }
+      if (tmp.isEmpty) {
+        result.add(score0);
+        list.removeAt(0);
+      } else {
+        tmp.add(score0);
+        double angleAverage = 0;
+        for (int i = 0; i < tmp.length; ++i) {
+          angleAverage += isHealthy ? tmp[i].elevationAngleHealthy : tmp[i].elevationAngleInjured;
+        }
+        angleAverage /= tmp.length;
+        result.add(Score(
+            creationDate: score0.creationDate,
+            elevationAngleInjured: angleAverage,
+            elevationAngleHealthy: angleAverage,
+            bbScore: 0,
+            patientId: 0,
+            notes: ""));
+        list.removeWhere(
+                (element) => element.creationDate == score0.creationDate);
+        tmp.clear();
+      }
+    }
+    return result;
+  }
+
   List<Score> sortScoreMonthBBScore(List<Score> values) {
     List<Score> list = List.from(values);
     List<Score> tmp = <Score>[];
@@ -105,14 +145,52 @@ class _LineChartSample extends State<LineChartSample> {
             patientId: 0,
             notes: ""));
         list.removeWhere(
-                (element) => element.creationDate == score0.creationDate);
+                (element) => element.creationDate.substring(0, 7) == score0.creationDate.substring(0, 7));
         tmp.clear();
       }
     }
     return result;
   }
 
-  void getDataFromDb(List<Score> scoreList) {
+  List<Score> sortScoreMonthAngle(List<Score> values, bool isHealthy) {
+    List<Score> list = List.from(values);
+    List<Score> tmp = <Score>[];
+    Score score0;
+    List<Score> result = <Score>[];
+
+    while (list.isNotEmpty) {
+      score0 = list[0];
+      for (int i = 1; i < list.length; ++i) {
+        if (score0.creationDate.substring(0, 7) == list[i].creationDate.substring(0, 7)) {
+          tmp.add(list[i]);
+        }
+      }
+      if (tmp.isEmpty) {
+        result.add(score0);
+        list.removeAt(0);
+      } else {
+        tmp.add(score0);
+        double angleAverage = 0;
+        for (int i = 0; i < tmp.length; ++i) {
+          angleAverage += isHealthy ?  tmp[i].elevationAngleHealthy : tmp[i].elevationAngleInjured;
+        }
+        angleAverage /= tmp.length;
+        result.add(Score(
+            creationDate: score0.creationDate,
+            elevationAngleInjured: angleAverage,
+            elevationAngleHealthy: angleAverage,
+            bbScore: 0,
+            patientId: 0,
+            notes: ""));
+        list.removeWhere(
+                (element) => element.creationDate.substring(0, 7) == score0.creationDate.substring(0, 7));
+        tmp.clear();
+      }
+    }
+    return result;
+  }
+
+  void getDataFromDbBBScore(List<Score> scoreList) {
     double minX = double.maxFinite;
     double maxX = double.minPositive;
 
@@ -136,6 +214,42 @@ class _LineChartSample extends State<LineChartSample> {
     _maxXBBScore = maxX + 86400000; //one day after in ms
   }
 
+  void getDataFromDbAngle(List<Score> scoreList) {
+    double minX = double.maxFinite;
+    double maxX = double.minPositive;
+
+    List<Score> newScoreListHealthy = sortScoreDayAngle(scoreList, true);
+    List<Score> newScoreListInjured = sortScoreDayAngle(scoreList, false);
+    final format = DateFormat("yyyy-MM-dd");
+
+    spotListAngleInjured = newScoreListInjured.map((score) {
+      var dt = format
+          .parse(score.creationDate, true)
+          .millisecondsSinceEpoch
+          .toDouble();
+      if (minX > dt) minX = dt;
+      if (maxX < dt) maxX = dt;
+      return FlSpot(
+        dt,
+        score.elevationAngleInjured > 180 ? 180 : score.elevationAngleInjured,
+      );
+    }).toList();
+
+    spotListAngleHealthy = newScoreListHealthy.map((score) {
+      var dt = format
+          .parse(score.creationDate, true)
+          .millisecondsSinceEpoch
+          .toDouble();
+      return FlSpot(
+        dt,
+        score.elevationAngleHealthy > 180 ? 180 : score.elevationAngleHealthy,
+      );
+    }).toList();
+
+    _minXAngle = minX - 86400000; //one day before in ms
+    _maxXAngle = maxX + 86400000; //one day after in ms
+  }
+
   @override
   Widget build(BuildContext context) {
     return OrientationBuilder(
@@ -148,8 +262,8 @@ class _LineChartSample extends State<LineChartSample> {
                 scrollDirection: Axis.horizontal,
                 child: Container(
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  margin: const EdgeInsets.all(45),
+                  height: orientation == Orientation.portrait ? MediaQuery.of(context).size.height/2 : MediaQuery.of(context).size.height,
+                  margin: const EdgeInsets.all(10),
                   decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(18)),
                     gradient: LinearGradient(
@@ -178,7 +292,7 @@ class _LineChartSample extends State<LineChartSample> {
                               'B-B Score',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 32,
+                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 2,
                               ),
@@ -195,12 +309,11 @@ class _LineChartSample extends State<LineChartSample> {
                               child: StreamBuilder<List<Score>>(
                                   stream: blocScore.data,
                                   builder: (context, snapshot) {
-                                    blocScore
-                                        .getScoreByPatientId(widget.patientId);
+                                    blocScore.getScoreByPatientId(widget.patientId);
                                     if (snapshot.data != null &&
                                         snapshot.data!.isNotEmpty) {
-                                      getDataFromDb(snapshot.data!);
-                                      return graph();
+                                      getDataFromDbBBScore(snapshot.data!);
+                                      return graphBBScore();
                                     } else {
                                       return const Align(
                                           child: CircularProgressIndicator(),
@@ -218,12 +331,13 @@ class _LineChartSample extends State<LineChartSample> {
                   ),
                 ),
               ),
+
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   height: orientation == Orientation.portrait ? MediaQuery.of(context).size.height/2 : MediaQuery.of(context).size.height,
-                  margin: const EdgeInsets.all(45),
+                  margin: const EdgeInsets.all(10),
                   decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(18)),
                     gradient: LinearGradient(
@@ -249,7 +363,7 @@ class _LineChartSample extends State<LineChartSample> {
                           const Padding(
                             padding: EdgeInsets.only(right: 60.0, left: 20.0),
                             child: Text(
-                              'Elevation angle',
+                              'Elevation Angle',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
@@ -272,8 +386,8 @@ class _LineChartSample extends State<LineChartSample> {
                                     blocScore.getScoreByPatientId(widget.patientId);
                                     if (snapshot.data != null &&
                                         snapshot.data!.isNotEmpty) {
-                                      getDataFromDb(snapshot.data!);
-                                      return graph();
+                                      getDataFromDbAngle(snapshot.data!);
+                                      return graphAngle();
                                     } else {
                                       return const Align(
                                           child: CircularProgressIndicator(),
@@ -299,35 +413,56 @@ class _LineChartSample extends State<LineChartSample> {
 
   }
 
-  Widget graph() {
+  Widget graphBBScore() {
     return Center(
       child: LineChart(
-        sampleData1,
+        sampleDataBBScore,
         //swapAnimationDuration: const Duration(milliseconds: 250),
       ),
     );
   }
 
-  LineChartData get sampleData1 => LineChartData(
-        lineTouchData: lineTouchData1,
+  Widget graphAngle() {
+    return Center(
+      child: LineChart(
+        sampleDataAngle,
+        //swapAnimationDuration: const Duration(milliseconds: 250),
+      ),
+    );
+  }
+
+  LineChartData get sampleDataBBScore => LineChartData(
+        lineTouchData: lineTouchData,
         gridData: gridData,
-        titlesData: titlesData1,
+        titlesData: titlesDataBBScore,
         borderData: borderData,
-        lineBarsData: lineBarsData1,
+        lineBarsData: lineBarsDataBBScore,
         minX: _minXBBScore,
         maxX: _maxXBBScore,
         minY: _minYBBScore,
         maxY: _maxYBBScore,
       );
 
-  LineTouchData get lineTouchData1 => LineTouchData(
+  LineChartData get sampleDataAngle => LineChartData(
+    lineTouchData: lineTouchData, //ok
+    gridData: gridData, //ok
+    titlesData: titlesDataAngle, //ok
+    borderData: borderData, //ok
+    lineBarsData: lineBarsDataAngle,
+    minX: _minXAngle,//ok tout ça
+    maxX: _maxXAngle,
+    minY: _minYAngle,
+    maxY: _maxYAngle,
+  );
+
+  LineTouchData get lineTouchData => LineTouchData(
         handleBuiltInTouches: true,
         touchTooltipData: LineTouchTooltipData(
           tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
         ),
       );
 
-  FlTitlesData get titlesData1 => FlTitlesData(
+  FlTitlesData get titlesDataBBScore => FlTitlesData(
         bottomTitles: AxisTitles(
           sideTitles: bottomTitles,
         ),
@@ -338,16 +473,36 @@ class _LineChartSample extends State<LineChartSample> {
           sideTitles: SideTitles(showTitles: false),
         ),
         leftTitles: AxisTitles(
-          sideTitles: leftTitles(),
+          sideTitles: leftTitlesBBScore(),
         ),
       );
 
-  List<LineChartBarData> get lineBarsData1 => [
+  FlTitlesData get titlesDataAngle => FlTitlesData(
+    bottomTitles: AxisTitles(
+      sideTitles: bottomTitles,
+    ),
+    rightTitles: AxisTitles(
+      sideTitles: SideTitles(showTitles: false),
+    ),
+    topTitles: AxisTitles(
+      sideTitles: SideTitles(showTitles: false),
+    ),
+    leftTitles: AxisTitles(
+      sideTitles: leftTitlesAngle(),
+    ),
+  );
+
+  List<LineChartBarData> get lineBarsDataBBScore => [
         /*lineChartBarData1_1,
         lineChartBarData1_2,
         lineChartBarData1_3,*/
-        lineChartBarData
+        lineChartBarDataBBScore
       ];
+
+  List<LineChartBarData> get lineBarsDataAngle => [
+    lineChartBarDataAngleInjured,
+    lineChartBarDataAngleHealthy
+  ];
 
   SideTitles get bottomTitles => SideTitles(
         showTitles: true,
@@ -381,12 +536,19 @@ class _LineChartSample extends State<LineChartSample> {
     );
   }
 
-  SideTitles leftTitles() => SideTitles(
+  SideTitles leftTitlesBBScore() => SideTitles(
         getTitlesWidget: leftTitleWidgets,
         showTitles: true,
         interval: 20,
         reservedSize: 40,
       );
+
+  SideTitles leftTitlesAngle() => SideTitles(
+    getTitlesWidget: leftTitleWidgets,
+    showTitles: true,
+    interval: 30,
+    reservedSize: 40,
+  );
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
@@ -411,7 +573,7 @@ class _LineChartSample extends State<LineChartSample> {
         ),
       );
 
-  LineChartBarData get lineChartBarData => LineChartBarData(
+  LineChartBarData get lineChartBarDataBBScore => LineChartBarData(
         isCurved: true,
         color: const Color(0xff27b6fc),
         barWidth: 5,
@@ -420,4 +582,24 @@ class _LineChartSample extends State<LineChartSample> {
         belowBarData: BarAreaData(show: false),
         spots: spotListBBScore, //getDataFromDb(),
       );
+
+  LineChartBarData get lineChartBarDataAngleInjured => LineChartBarData(
+    isCurved: true,
+    color: Colors.red,
+    barWidth: 5,
+    isStrokeCapRound: true,
+    //dotData: FlDotData(show: false),
+    belowBarData: BarAreaData(show: false),
+    spots: spotListAngleInjured, //getDataFromDb(),
+  );
+
+  LineChartBarData get lineChartBarDataAngleHealthy=> LineChartBarData(
+    isCurved: true,
+    color: Colors.green,
+    barWidth: 5,
+    isStrokeCapRound: true,
+    //dotData: FlDotData(show: false),
+    belowBarData: BarAreaData(show: false),
+    spots: spotListAngleHealthy //getDataFromDb(),
+  );
 }
