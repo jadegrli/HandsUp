@@ -71,12 +71,7 @@ class _PatientPage extends State<PatientPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Patient profile"),
-        backgroundColor: const Color(0xff9abdda),
-      ),
-      body: SingleChildScrollView(
+    return SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -469,31 +464,7 @@ class _PatientPage extends State<PatientPage> {
                                   );
                                 },
                               ),
-                              const SizedBox(height: 10),
-                              ElevatedButton.icon(
-                                icon: const Icon(
-                                    Icons.format_list_bulleted_outlined),
-                                label: const Text("All measures"),
-                                style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            const Color(0xff2c274c)),
-                                    padding:
-                                        MaterialStateProperty.all<EdgeInsets>(
-                                            const EdgeInsets.only(
-                                                left: 50, right: 50))),
-                                onPressed: () {
-                                  //go to scores page
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            AllScoresOfPatientPage(
-                                                patientID:
-                                                    snapshot.data!.first.id)),
-                                  );
-                                },
-                              ),
+                              //const SizedBox(height: 10),
                             ],
                           ),
                         ),
@@ -533,10 +504,10 @@ class _PatientPage extends State<PatientPage> {
                                         .getScoreByPatientId(widget.patientId);
                                     if (snapshot.data != null &&
                                         snapshot.data!.isNotEmpty) {
-                                      print((snapshot.data!.last.elevationAngleInjured * 100 ~/ 180).toDouble().toString());
+                                      /*print((snapshot.data!.last.elevationAngleInjured * 100 ~/ 180).toDouble().toString());
                                       print((snapshot.data!.last.elevationAngleInjured).toDouble().toString());
                                       print((100 - snapshot.data!.last.elevationAngleInjured * 100 ~/ 180).toDouble().toString());
-                                      print((180 - snapshot.data!.last.elevationAngleInjured).toDouble().toString());
+                                      print((180 - snapshot.data!.last.elevationAngleInjured).toDouble().toString());*/
                                       return Column(
                                         children: [
                                           Text(
@@ -766,15 +737,6 @@ class _PatientPage extends State<PatientPage> {
                             ],
                           ),
                         ),
-                        ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => LineChartSample(
-                                          patientId: snapshot.data!.first.id)));
-                            },
-                            child: const Text("Plot values")),
                       ],
                     );
                   } else {
@@ -785,7 +747,7 @@ class _PatientPage extends State<PatientPage> {
                 }),
           ],
         ),
-      ),
-    );
+      );
+
   }
 }

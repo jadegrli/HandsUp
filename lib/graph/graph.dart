@@ -97,11 +97,7 @@ class _LineChartSample extends State<LineChartSample> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Graph"),
-      ),
-      body: SingleChildScrollView(
+    return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: AspectRatio(
           aspectRatio: 2,
@@ -173,8 +169,7 @@ class _LineChartSample extends State<LineChartSample> {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 
   Widget graph() {

@@ -27,8 +27,7 @@ class _AllScoresOfPatientPage extends State<AllScoresOfPatientPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: StreamBuilder<List<dynamic>>(
+    return StreamBuilder<List<dynamic>>(
                 stream: bloc.data,
                 builder: (context, snapshot) {
                   bloc.getScoreByPatientId(widget.patientID);
@@ -314,9 +313,8 @@ class _AllScoresOfPatientPage extends State<AllScoresOfPatientPage> {
                         child: CircularProgressIndicator(),
                         alignment: FractionalOffset.center);
                   }
-                }),
+                });
 
-    );
   }
 
 }

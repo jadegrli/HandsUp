@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hands_up/widgets/overall_patient_page.dart';
 import 'package:hands_up/widgets/page_test.dart';
 import 'package:hands_up/widgets/patient_page.dart';
 
@@ -487,9 +488,15 @@ class _HomePage extends State<HomePage> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
+                                            builder: (context) => OverallPatientPage(
+                                                patientId:
+                                                snapshot.data![index].id!)));
+                                    /*Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
                                             builder: (context) => PatientPage(
                                                 patientId:
-                                                    snapshot.data![index].id!)));
+                                                    snapshot.data![index].id!)));*/
                                   },
                                 );
                               },

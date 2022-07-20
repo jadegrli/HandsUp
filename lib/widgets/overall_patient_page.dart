@@ -34,12 +34,8 @@ class _OverallPatientPage extends State<OverallPatientPage> {
     ];
 
     return Scaffold(
-      backgroundColor: const Color(0xffC4DFCB),
       appBar: AppBar(
-        leading: Icon(
-          Icons.menu,
-          color: Theme.of(context).primaryColor,
-        ),
+        backgroundColor: Color(0xff2c274c),
         title: const Text(
           "Patient profile",
           style: TextStyle(
@@ -48,8 +44,6 @@ class _OverallPatientPage extends State<OverallPatientPage> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
       ),
       body: pages[pageIndex],
       bottomNavigationBar: buildMyNavBar(context),
@@ -59,12 +53,8 @@ class _OverallPatientPage extends State<OverallPatientPage> {
   Container buildMyNavBar(BuildContext context) {
     return Container(
       height: 60,
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
+      decoration: const BoxDecoration(
+        color: Color(0xff2c274c),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -79,11 +69,11 @@ class _OverallPatientPage extends State<OverallPatientPage> {
             icon: pageIndex == 0
                 ? const Icon(
               Icons.person,
-              color: Colors.white,
+              color: Colors.black,
               size: 35,
             )
                 : const Icon(
-              Icons.home_outlined,
+              Icons.person,
               color: Colors.white,
               size: 35,
             ),
@@ -98,11 +88,11 @@ class _OverallPatientPage extends State<OverallPatientPage> {
             icon: pageIndex == 1
                 ? const Icon(
               Icons.format_list_bulleted_outlined,
-              color: Colors.white,
+              color: Colors.black,
               size: 35,
             )
                 : const Icon(
-              Icons.work_outline_outlined,
+              Icons.format_list_bulleted_outlined,
               color: Colors.white,
               size: 35,
             ),
@@ -116,8 +106,8 @@ class _OverallPatientPage extends State<OverallPatientPage> {
             },
             icon: pageIndex == 2
                 ? const Icon(
-              Icons.widgets_rounded,
-              color: Colors.white,
+              Icons.auto_graph,
+              color: Colors.black,
               size: 35,
             )
                 : const Icon(
