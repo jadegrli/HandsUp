@@ -17,11 +17,15 @@ class LineChartSample extends StatefulWidget {
 class _LineChartSample extends State<LineChartSample> {
   late bool isShowingMainData;
   final DataBaseBlocScore blocScore = DataBaseBlocScore();
-  List<FlSpot> spotList = <FlSpot>[];
-  double _minX = 0;
-  double _maxX = 0;
-  final double _minY = 0;
-  final double _maxY = 130;
+  List<FlSpot> spotListBBScore = <FlSpot>[];
+  double _minXBBScore = 0;
+  double _maxXBBScore = 0;
+  final double _minYBBScore = 0;
+  final double _maxYBBScore = 130;
+  double _minXAngle = 0;
+  double _maxXAngle = 0;
+  final double _minYAngle = 0;
+  final double _maxYAngle = 180;
 
   @override
   void initState() {
@@ -32,7 +36,7 @@ class _LineChartSample extends State<LineChartSample> {
 
 //for all the score took during the same day we make an average of the B-B Score and we take one of the epochDate.
 // With those two value we create a new Score and remove the 2 others from the list
-  List<Score> sortScoreDay(List<Score> values) {
+  List<Score> sortScoreDayBBScore(List<Score> values) {
     List<Score> list = List.from(values);
     List<Score> tmp = <Score>[];
     Score score0;
@@ -70,14 +74,52 @@ class _LineChartSample extends State<LineChartSample> {
     return result;
   }
 
+  List<Score> sortScoreMonthBBScore(List<Score> values) {
+    List<Score> list = List.from(values);
+    List<Score> tmp = <Score>[];
+    Score score0;
+    List<Score> result = <Score>[];
+
+    while (list.isNotEmpty) {
+      score0 = list[0];
+      for (int i = 1; i < list.length; ++i) {
+        if (score0.creationDate.substring(0, 7) == list[i].creationDate.substring(0, 7)) {
+          tmp.add(list[i]);
+        }
+      }
+      if (tmp.isEmpty) {
+        result.add(score0);
+        list.removeAt(0);
+      } else {
+        tmp.add(score0);
+        double bbScoreAverage = 0;
+        for (int i = 0; i < tmp.length; ++i) {
+          bbScoreAverage += tmp[i].bbScore;
+        }
+        bbScoreAverage /= tmp.length;
+        result.add(Score(
+            creationDate: score0.creationDate,
+            elevationAngleInjured: 0,
+            elevationAngleHealthy: 0,
+            bbScore: bbScoreAverage,
+            patientId: 0,
+            notes: ""));
+        list.removeWhere(
+                (element) => element.creationDate == score0.creationDate);
+        tmp.clear();
+      }
+    }
+    return result;
+  }
+
   void getDataFromDb(List<Score> scoreList) {
     double minX = double.maxFinite;
     double maxX = double.minPositive;
 
-    List<Score> newScoreList = sortScoreDay(scoreList);
+    List<Score> newScoreList = sortScoreDayBBScore(scoreList);
     final format = DateFormat("yyyy-MM-dd");
 
-    spotList = newScoreList.map((score) {
+    spotListBBScore = newScoreList.map((score) {
       var dt = format
           .parse(score.creationDate, true)
           .millisecondsSinceEpoch
@@ -86,168 +128,175 @@ class _LineChartSample extends State<LineChartSample> {
       if (maxX < dt) maxX = dt;
       return FlSpot(
         dt,
-        score.bbScore,
+        score.bbScore > 130 ? 130 : score.bbScore,
       );
     }).toList();
 
-    _minX = minX - 86400000; //one day before in ms
-    _maxX = maxX + 86400000; //one day after in ms
+    _minXBBScore = minX - 86400000; //one day before in ms
+    _maxXBBScore = maxX + 86400000; //one day after in ms
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(
-              children: [
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    margin: const EdgeInsets.all(45),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(18)),
-                      gradient: LinearGradient(
-                        colors: [
-                          Color(0xff2c274c),
-                          Color(0xff46426c),
-                        ],
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                      ),
-                    ),
-                    child: Stack(
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            const SizedBox(
-                              height: 37,
-                            ),
-                            const SizedBox(
-                              height: 4,
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.only(right: 60.0, left: 20.0),
-                              child: Text(
-                                'B-B Score',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 2,
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 37,
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 60.0, left: 20.0),
-                                child: StreamBuilder<List<Score>>(
-                                    stream: blocScore.data,
-                                    builder: (context, snapshot) {
-                                      blocScore.getScoreByPatientId(widget.patientId);
-                                      if (snapshot.data != null &&
-                                          snapshot.data!.isNotEmpty) {
-                                        getDataFromDb(snapshot.data!);
-                                        return graph();
-                                      } else {
-                                        return const Align(
-                                            child: CircularProgressIndicator(),
-                                            alignment: FractionalOffset.center);
-                                      }
-                                    }),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                          ],
-                        ),
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        return SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            children: [
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  margin: const EdgeInsets.all(45),
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(18)),
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xff2c274c),
+                        Color(0xff46426c),
                       ],
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
                     ),
                   ),
-                ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    margin: const EdgeInsets.all(45),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(18)),
-                      gradient: LinearGradient(
-                        colors: [
-                          Color(0xff2c274c),
-                          Color(0xff46426c),
+                  child: Stack(
+                    children: <Widget>[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          const SizedBox(
+                            height: 37,
+                          ),
+                          const SizedBox(
+                            height: 4,
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.only(right: 60.0, left: 20.0),
+                            child: Text(
+                              'B-B Score',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 2,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 37,
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding:
+                              const EdgeInsets.only(right: 60.0, left: 20.0),
+                              child: StreamBuilder<List<Score>>(
+                                  stream: blocScore.data,
+                                  builder: (context, snapshot) {
+                                    blocScore
+                                        .getScoreByPatientId(widget.patientId);
+                                    if (snapshot.data != null &&
+                                        snapshot.data!.isNotEmpty) {
+                                      getDataFromDb(snapshot.data!);
+                                      return graph();
+                                    } else {
+                                      return const Align(
+                                          child: CircularProgressIndicator(),
+                                          alignment: FractionalOffset.center);
+                                    }
+                                  }),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
                         ],
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
                       ),
-                    ),
-                    child: Stack(
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            const SizedBox(
-                              height: 37,
-                            ),
-                            const SizedBox(
-                              height: 4,
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.only(right: 60.0, left: 20.0),
-                              child: Text(
-                                'B-B Score',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 2,
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 37,
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 60.0, left: 20.0),
-                                child: StreamBuilder<List<Score>>(
-                                    stream: blocScore.data,
-                                    builder: (context, snapshot) {
-                                      blocScore.getScoreByPatientId(widget.patientId);
-                                      if (snapshot.data != null &&
-                                          snapshot.data!.isNotEmpty) {
-                                        getDataFromDb(snapshot.data!);
-                                        return graph();
-                                      } else {
-                                        return const Align(
-                                            child: CircularProgressIndicator(),
-                                            alignment: FractionalOffset.center);
-                                      }
-                                    }),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: orientation == Orientation.portrait ? MediaQuery.of(context).size.height/2 : MediaQuery.of(context).size.height,
+                  margin: const EdgeInsets.all(45),
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(18)),
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xff2c274c),
+                        Color(0xff46426c),
+                      ],
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                    ),
+                  ),
+                  child: Stack(
+                    children: <Widget>[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          const SizedBox(
+                            height: 37,
+                          ),
+                          const SizedBox(
+                            height: 4,
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.only(right: 60.0, left: 20.0),
+                            child: Text(
+                              'Elevation angle',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 2,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 37,
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding:
+                              const EdgeInsets.only(right: 60.0, left: 20.0),
+                              child: StreamBuilder<List<Score>>(
+                                  stream: blocScore.data,
+                                  builder: (context, snapshot) {
+                                    blocScore.getScoreByPatientId(widget.patientId);
+                                    if (snapshot.data != null &&
+                                        snapshot.data!.isNotEmpty) {
+                                      getDataFromDb(snapshot.data!);
+                                      return graph();
+                                    } else {
+                                      return const Align(
+                                          child: CircularProgressIndicator(),
+                                          alignment: FractionalOffset.center);
+                                    }
+                                  }),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
+
   }
 
   Widget graph() {
@@ -265,10 +314,10 @@ class _LineChartSample extends State<LineChartSample> {
         titlesData: titlesData1,
         borderData: borderData,
         lineBarsData: lineBarsData1,
-        minX: _minX,
-        maxX: _maxX,
-        minY: _minY,
-        maxY: _maxY,
+        minX: _minXBBScore,
+        maxX: _maxXBBScore,
+        minY: _minYBBScore,
+        maxY: _maxYBBScore,
       );
 
   LineTouchData get lineTouchData1 => LineTouchData(
@@ -302,7 +351,7 @@ class _LineChartSample extends State<LineChartSample> {
 
   SideTitles get bottomTitles => SideTitles(
         showTitles: true,
-        reservedSize: 130,
+        reservedSize: 80,
         interval: 86400000, //one day in ms
         getTitlesWidget: bottomTitleWidgets,
       );
@@ -311,7 +360,7 @@ class _LineChartSample extends State<LineChartSample> {
     const style = TextStyle(
       color: Color(0xff72719b),
       fontWeight: FontWeight.bold,
-      fontSize: 16,
+      fontSize: 10,
     );
 
     final DateTime date = DateTime.fromMillisecondsSinceEpoch(value.toInt());
@@ -335,7 +384,7 @@ class _LineChartSample extends State<LineChartSample> {
   SideTitles leftTitles() => SideTitles(
         getTitlesWidget: leftTitleWidgets,
         showTitles: true,
-        interval: 10,
+        interval: 20,
         reservedSize: 40,
       );
 
@@ -365,10 +414,10 @@ class _LineChartSample extends State<LineChartSample> {
   LineChartBarData get lineChartBarData => LineChartBarData(
         isCurved: true,
         color: const Color(0xff27b6fc),
-        barWidth: 8,
+        barWidth: 5,
         isStrokeCapRound: true,
         //dotData: FlDotData(show: false),
         belowBarData: BarAreaData(show: false),
-        spots: spotList, //getDataFromDb(),
+        spots: spotListBBScore, //getDataFromDb(),
       );
 }
