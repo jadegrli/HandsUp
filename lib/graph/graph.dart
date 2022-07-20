@@ -1,4 +1,3 @@
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -98,85 +97,164 @@ class _LineChartSample extends State<LineChartSample> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: AspectRatio(
-          aspectRatio: 2,
-          child: Container(
-            margin: const EdgeInsets.all(45),
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(18)),
-              gradient: LinearGradient(
-                colors: [
-                  Color(0xff2c274c),
-                  Color(0xff46426c),
-                ],
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-              ),
-            ),
-            child: Stack(
-              children: <Widget>[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    const SizedBox(
-                      height: 37,
+      scrollDirection: Axis.vertical,
+      child: Column(
+              children: [
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    margin: const EdgeInsets.all(45),
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(18)),
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0xff2c274c),
+                          Color(0xff46426c),
+                        ],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                      ),
                     ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(right: 60.0, left: 20.0),
-                      child: Text(
-                        'B-B Score',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 2,
+                    child: Stack(
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            const SizedBox(
+                              height: 37,
+                            ),
+                            const SizedBox(
+                              height: 4,
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.only(right: 60.0, left: 20.0),
+                              child: Text(
+                                'B-B Score',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 2,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 37,
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 60.0, left: 20.0),
+                                child: StreamBuilder<List<Score>>(
+                                    stream: blocScore.data,
+                                    builder: (context, snapshot) {
+                                      blocScore.getScoreByPatientId(widget.patientId);
+                                      if (snapshot.data != null &&
+                                          snapshot.data!.isNotEmpty) {
+                                        getDataFromDb(snapshot.data!);
+                                        return graph();
+                                      } else {
+                                        return const Align(
+                                            child: CircularProgressIndicator(),
+                                            alignment: FractionalOffset.center);
+                                      }
+                                    }),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                          ],
                         ),
-                        textAlign: TextAlign.left,
+                      ],
+                    ),
+                  ),
+                ),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    margin: const EdgeInsets.all(45),
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(18)),
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0xff2c274c),
+                          Color(0xff46426c),
+                        ],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
                       ),
                     ),
-                    const SizedBox(
-                      height: 37,
+                    child: Stack(
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            const SizedBox(
+                              height: 37,
+                            ),
+                            const SizedBox(
+                              height: 4,
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.only(right: 60.0, left: 20.0),
+                              child: Text(
+                                'B-B Score',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 2,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 37,
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 60.0, left: 20.0),
+                                child: StreamBuilder<List<Score>>(
+                                    stream: blocScore.data,
+                                    builder: (context, snapshot) {
+                                      blocScore.getScoreByPatientId(widget.patientId);
+                                      if (snapshot.data != null &&
+                                          snapshot.data!.isNotEmpty) {
+                                        getDataFromDb(snapshot.data!);
+                                        return graph();
+                                      } else {
+                                        return const Align(
+                                            child: CircularProgressIndicator(),
+                                            alignment: FractionalOffset.center);
+                                      }
+                                    }),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 60.0, left: 20.0),
-                        child: StreamBuilder<List<Score>>(
-                            stream: blocScore.data,
-                            builder: (context, snapshot) {
-                              blocScore.getScoreByPatientId(widget.patientId);
-                              if (snapshot.data != null &&
-                                  snapshot.data!.isNotEmpty) {
-                                getDataFromDb(snapshot.data!);
-                                return graph();
-                              } else {
-                                return const Align(
-                                    child: CircularProgressIndicator(),
-                                    alignment: FractionalOffset.center);
-                              }
-                            }),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),
-          ),
-        ),
-      );
+
+    );
   }
 
   Widget graph() {
     return Center(
       child: LineChart(
         sampleData1,
-        swapAnimationDuration: const Duration(milliseconds: 250),
+        //swapAnimationDuration: const Duration(milliseconds: 250),
       ),
     );
   }
@@ -248,8 +326,8 @@ class _LineChartSample extends State<LineChartSample> {
       axisSide: meta.axisSide,
       space: 10,
       child: RotatedBox(
-          quarterTurns: 1,
-          child: text, //your text
+        quarterTurns: 1,
+        child: text, //your text
       ),
     );
   }
