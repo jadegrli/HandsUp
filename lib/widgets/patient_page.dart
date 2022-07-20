@@ -533,7 +533,10 @@ class _PatientPage extends State<PatientPage> {
                                         .getScoreByPatientId(widget.patientId);
                                     if (snapshot.data != null &&
                                         snapshot.data!.isNotEmpty) {
-                                      //print((snapshot.data!.last.elevationAngleInjured * 100 ~/ 180).toDouble().toString());
+                                      print((snapshot.data!.last.elevationAngleInjured * 100 ~/ 180).toDouble().toString());
+                                      print((snapshot.data!.last.elevationAngleInjured).toDouble().toString());
+                                      print((100 - snapshot.data!.last.elevationAngleInjured * 100 ~/ 180).toDouble().toString());
+                                      print((180 - snapshot.data!.last.elevationAngleInjured).toDouble().toString());
                                       return Column(
                                         children: [
                                           Text(
@@ -610,7 +613,7 @@ class _PatientPage extends State<PatientPage> {
                                                                     color: Colors
                                                                         .deepPurple,
                                                                     value: (snapshot.data!.last.elevationAngleInjured *
-                                                                            100 ~/
+                                                                            100 /
                                                                             180)
                                                                         .toDouble(),
                                                                     title:
@@ -630,7 +633,7 @@ class _PatientPage extends State<PatientPage> {
                                                                         0xff7699b7),
                                                                     value: (100 -
                                                                             snapshot.data!.last.elevationAngleInjured *
-                                                                                100 ~/
+                                                                                100 /
                                                                                 180)
                                                                         .toDouble(),
                                                                     title: "",
@@ -706,7 +709,7 @@ class _PatientPage extends State<PatientPage> {
                                                                     color: Colors
                                                                         .deepPurple,
                                                                     value: (snapshot.data!.last.elevationAngleHealthy *
-                                                                            100 ~/
+                                                                            100 /
                                                                             180)
                                                                         .toDouble(),
                                                                     title:
@@ -726,7 +729,7 @@ class _PatientPage extends State<PatientPage> {
                                                                         0xff7699b7),
                                                                     value: (100 -
                                                                             snapshot.data!.last.elevationAngleHealthy *
-                                                                                100 ~/
+                                                                                100 /
                                                                                 180)
                                                                         .toDouble(),
                                                                     title: "",
