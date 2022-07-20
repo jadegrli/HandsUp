@@ -246,8 +246,8 @@ class _LineChartSample extends State<LineChartSample> {
       );
     }).toList();
 
-    _minXAngle = minX - 86400000; //one day before in ms
-    _maxXAngle = maxX + 86400000; //one day after in ms
+    _minXAngle = minX ;//- 86400000; //one day before in ms
+    _maxXAngle = maxX ;//+ 86400000; //one day after in ms
   }
 
   @override
