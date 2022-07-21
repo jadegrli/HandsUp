@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hands_up/widgets/home_page.dart';
-import 'package:hands_up/widgets/patient_page.dart';
+import 'package:hands_up/widgets/overall_patient_page.dart';
 import 'package:intl/intl.dart';
 
 import '../bloc_database/db_bloc_score.dart';
@@ -62,14 +62,14 @@ class _Measure extends State<MeasurePage> {
   double elevationInjured = 0;
   double elevationHealthy = 0;
   bool exceptionCalculation = false;
-  late Timer _timer;
-  late int _start = widget.duration;
+  /*late Timer _timer;
+  late int _start = widget.duration;*/
 
   final DataBaseBlocScore blocScore = DataBaseBlocScore();
 
   String previousState = "Ready";
 
-  void startTimer() {
+ /* void startTimer() {
     _start = widget.duration;
     const oneSec = Duration(seconds: 1);
     _timer = Timer.periodic(
@@ -87,6 +87,7 @@ class _Measure extends State<MeasurePage> {
       },
     );
   }
+*/
 
   @override
   void initState() {
@@ -104,7 +105,7 @@ class _Measure extends State<MeasurePage> {
   @override
   void dispose() {
     super.dispose();
-    _timer.cancel();
+    //_timer.cancel();
     //unhide the bottom system navigation bar
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
@@ -180,8 +181,7 @@ class _Measure extends State<MeasurePage> {
                                 Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => PatientPage(
-                                            patientId: widget.patientID)));
+                                        builder: (context) => OverallPatientPage(patientId: widget.patientID)));
                               }
                             },
                             child: const Text("Cancel")),
@@ -246,8 +246,7 @@ class _Measure extends State<MeasurePage> {
                                   Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => PatientPage(
-                                              patientId: widget.patientID)));
+                                          builder: (context) => OverallPatientPage(patientId: widget.patientID)));
                                 }
                               },
                               child: const Text("Validate")),
@@ -265,8 +264,7 @@ class _Measure extends State<MeasurePage> {
                                 Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => PatientPage(
-                                            patientId: widget.patientID)));
+                                        builder: (context) => OverallPatientPage(patientId: widget.patientID)));
                               }
                             },
                             child: const Text("Cancel")),
@@ -622,7 +620,21 @@ class _Measure extends State<MeasurePage> {
                   padding:
                       const EdgeInsets.all(20) //content padding inside button
                   ),
-              onPressed: () {},
+              onPressed: () {
+                context.read<MeasureBloc>().add(EventEnd());
+                if (widget.patientID == 0) {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                          const HomePage()));
+                } else {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => OverallPatientPage(patientId: widget.patientID)));
+                }
+              },
               child: const Text("CANCEL")),
         ],
       ),

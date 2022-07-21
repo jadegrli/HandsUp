@@ -6,16 +6,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../models/measure.dart';
 import '../repositories/sensors_repository.dart';
 
-
-
 class MeasureBloc extends Bloc<MeasureEvents, MeasureStates> {
   final SensorsRepository sensorsRepository = SensorsRepository();
 
   MeasureBloc() : super(StateReady()) {
-    on<MeasureEvents>(_onEvent, transformer: sequential());
+    on<MeasureEvents>(_onEvent, transformer: restartable());
   }
 
-  FutureOr<void> _onEvent(MeasureEvents event, Emitter<MeasureStates> emit) async {
+  FutureOr<void> _onEvent(
+      MeasureEvents event, Emitter<MeasureStates> emit) async {
     if (event is EventLaunchFirstSide) {
       emit(StateLoading());
       sensorsRepository.initSensor();
@@ -29,7 +28,8 @@ class MeasureBloc extends Bloc<MeasureEvents, MeasureStates> {
         emit(StateHandUp());
         await sensorsRepository.sensorsMeasure(event.movementDuration);
       }
-      emit(StateAllMeasuresFirstSide(allMeasures: sensorsRepository.sensorsValues));
+      emit(StateAllMeasuresFirstSide(
+          allMeasures: sensorsRepository.sensorsValues));
     } else if (event is EventLaunchSecondSide) {
       emit(StateLoading());
       sensorsRepository.initSensor();
@@ -43,16 +43,16 @@ class MeasureBloc extends Bloc<MeasureEvents, MeasureStates> {
         emit(StateHandUp());
         await sensorsRepository.sensorsMeasure(event.movementDuration);
       }
-      emit(StateAllMeasuresSecondSide(allMeasures: sensorsRepository.sensorsValues));
-
+      emit(StateAllMeasuresSecondSide(
+          allMeasures: List.from(sensorsRepository.sensorsValues)));
     } else if (event is EventEnd) {
-      sensorsRepository.reset();
+      print("END HERE");
       emit(StateReady());
+      sensorsRepository.reset();
     } else {
       emit(StateError());
     }
   }
-
 }
 
 //EVENTS
@@ -63,17 +63,18 @@ abstract class MeasureEvents {
 class EventLaunchFirstSide extends MeasureEvents {
   final int nbRepetition;
   final int movementDuration;
-  const EventLaunchFirstSide({required this.nbRepetition, required this.movementDuration});
+  const EventLaunchFirstSide(
+      {required this.nbRepetition, required this.movementDuration});
 }
 
 class EventLaunchSecondSide extends MeasureEvents {
   final int nbRepetition;
   final int movementDuration;
-  const EventLaunchSecondSide({required this.nbRepetition, required this.movementDuration});
+  const EventLaunchSecondSide(
+      {required this.nbRepetition, required this.movementDuration});
 }
 
 class EventEnd extends MeasureEvents {}
-
 
 //STATES
 abstract class MeasureStates {
@@ -81,10 +82,15 @@ abstract class MeasureStates {
 }
 
 class StateReady extends MeasureStates {}
+
 class StateLoading extends MeasureStates {}
+
 class StateRest extends MeasureStates {}
+
 class StateHandBack extends MeasureStates {}
+
 class StateHandUp extends MeasureStates {}
+
 class StateError extends MeasureStates {}
 
 class StateAllMeasuresFirstSide extends MeasureStates {

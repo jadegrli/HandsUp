@@ -29,7 +29,6 @@ class _PatientPage extends State<PatientPage> {
     super.initState();
     blocPatient.getPatientByID(id: widget.patientId);
     blocScore.getScoreByPatientId(widget.patientId);
-    print("AH");
   }
 
   bool isTextFieldPatientClear = true;
