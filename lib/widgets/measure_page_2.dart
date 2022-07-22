@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hands_up/bloc_measure/bloc_measure_2.dart';
@@ -34,15 +36,48 @@ class _Measure2 extends State<MeasurePage2> {
   double elevationInjured = 0;
   double elevationHealthy = 0;
   bool exceptionCalculation = false;
-  /*late Timer _timer;
-  late int _start = widget.duration;*/
 
   final DataBaseBlocScore blocScore = DataBaseBlocScore();
   final MeasureBloc2 measureBloc = MeasureBloc2();
 
+
+  late Timer _timer;
+  late int _start;
+
+  bool timerLaunched = false;
+  String lastState = "Ready";
+
+  void stopTimer() {
+    _timer.cancel();
+    timerLaunched = false;
+  }
+
+
+  void startTimer() {
+    timerLaunched = true;
+    _start = widget.duration;
+    const oneSec = Duration(seconds: 1);
+    _timer = Timer.periodic(
+      oneSec,
+          (Timer timer) {
+        if (_start == 0) {
+          setState(() {
+            _timer.cancel();
+            timerLaunched = false;
+          });
+        } else {
+          setState(() {
+            _start--;
+          });
+        }
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
+    _start = widget.duration;
     //hide the bottom system navigation bar
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
       SystemUiOverlay.top,
@@ -56,7 +91,7 @@ class _Measure2 extends State<MeasurePage2> {
   @override
   void dispose() {
     super.dispose();
-    //_timer.cancel();
+    _timer.cancel();
     //unhide the bottom system navigation bar
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
@@ -78,6 +113,7 @@ class _Measure2 extends State<MeasurePage2> {
           builder: (context, snapshot) {
             if (snapshot.data != null) {
               if (snapshot.data is StateReady) {
+                lastState = "Ready";
                 return Center(
                   child: ElevatedButton(
                       onPressed: () {
@@ -89,22 +125,39 @@ class _Measure2 extends State<MeasurePage2> {
               }
 
               if (snapshot.data is StateLoading) {
+                lastState = "Loading";
                 return const Center(child: CircularProgressIndicator());
               }
 
               if (snapshot.data is StateRest) {
+                if (lastState != "Rest") {
+                  if (timerLaunched) stopTimer();
+                  startTimer();
+                }
+                lastState = "Rest";
                 return movement(context, "Rest");
               }
 
               if (snapshot.data is StateHandBack) {
+                if (lastState != "Hand back") {
+                  if (timerLaunched) stopTimer();
+                  startTimer();
+                }
+                lastState = "Hand back";
                 return movement(context, "Hand back");
               }
 
               if (snapshot.data is StateHandUp) {
+                if (lastState != "Hand up") {
+                  if (timerLaunched) stopTimer();
+                  startTimer();
+                }
+                lastState = "Hand up";
                 return movement(context, "Hand up");
               }
 
               if (snapshot.data is StateAllMeasuresLoadingOfCancel) {
+                lastState = "Cancelling";
                 return Center(
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -118,6 +171,7 @@ class _Measure2 extends State<MeasurePage2> {
               }
 
               if (snapshot.data is StateAllMeasuresCanceled) {
+                lastState = "Canceled";
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -147,6 +201,7 @@ class _Measure2 extends State<MeasurePage2> {
               }
 
               if (snapshot.data is StateAllMeasuresFirstSide) {
+                lastState = "Mid result";
                 return SingleChildScrollView(
                   child: Center(
                     child: Column(
@@ -185,6 +240,7 @@ class _Measure2 extends State<MeasurePage2> {
               }
 
               if (snapshot.data is StateAllMeasuresSecondSide) {
+                lastState = "Final result";
                 return SingleChildScrollView(
                   child: Center(
                     child: Column(
@@ -584,10 +640,10 @@ class _Measure2 extends State<MeasurePage2> {
                   fit: BoxFit.fitHeight,
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text(/*"$_start"*/ "Counter",
-                    style: TextStyle(
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("$_start",
+                    style: const TextStyle(
                         fontSize: 120.0,
                         fontWeight: FontWeight.w900,
                         color: Colors.black)),
