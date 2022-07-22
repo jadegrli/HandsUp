@@ -47,11 +47,11 @@ class MeasureBloc2  {
   launchSide(int nbRepetition, int movementDuration, bool firstSide) async {
     _measureController.sink.add(StateLoading([]));
     sensorsRepository.initSensor();
-    if (isCanceled) {
-      _measureController.sink.add(StateAllMeasuresCanceled([]));
-      return;
-    }
     for (int i = 0; i < nbRepetition; ++i) {
+      if (isCanceled) {
+        _measureController.sink.add(StateAllMeasuresCanceled([]));
+        return;
+      }
       _measureController.sink.add(StateRest([]));
       await Future.delayed(Duration(seconds: movementDuration), () {});
       if (isCanceled) {
@@ -79,10 +79,6 @@ class MeasureBloc2  {
     }
     firstSide ? _measureController.sink.add(StateAllMeasuresFirstSide(List.from(sensorsRepository.sensorsValues))) :
     _measureController.sink.add(StateAllMeasuresSecondSide(List.from(sensorsRepository.sensorsValues)));
-    if (isCanceled) {
-      _measureController.sink.add(StateAllMeasuresCanceled([]));
-      return;
-    }
   }
 
   dispose() {

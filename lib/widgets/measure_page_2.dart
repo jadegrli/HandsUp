@@ -105,38 +105,44 @@ class _Measure2 extends State<MeasurePage2> {
               }
 
               if (snapshot.data is StateAllMeasuresLoadingOfCancel) {
-                return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: const [
+                return Center(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: const [
                       CircularProgressIndicator(),
                       Text("Canceling measure"),
-                    ]);
+                    ],
+                    ),
+                );
               }
 
               if (snapshot.data is StateAllMeasuresCanceled) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                        onPressed: () {
-                          measureBloc.endMeasure();
-                          if (widget.patientID == 0) {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const HomePage()));
-                          } else {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => OverallPatientPage(
-                                        patientId: widget.patientID)));
-                          }
-                        },
-                        child: const Text("Go back!"))
-                  ],
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text("The measure is canceled"),
+                      ElevatedButton(
+                          onPressed: () {
+                            measureBloc.endMeasure();
+                            if (widget.patientID == 0) {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const HomePage()));
+                            } else {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => OverallPatientPage(
+                                          patientId: widget.patientID)));
+                            }
+                          },
+                          child: const Text("Go back!"))
+                    ],
+                  ),
                 );
               }
 
