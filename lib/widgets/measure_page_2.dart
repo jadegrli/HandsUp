@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hands_up/bloc_measure/bloc_measure_2.dart';
@@ -47,6 +48,8 @@ class _Measure2 extends State<MeasurePage2> {
   bool timerLaunched = false;
   String lastState = "Ready";
 
+  final assetsAudioPlayer = AssetsAudioPlayer();
+
   void stopTimer() {
     _timer.cancel();
     timerLaunched = false;
@@ -77,6 +80,9 @@ class _Measure2 extends State<MeasurePage2> {
   @override
   void initState() {
     super.initState();
+    assetsAudioPlayer.open(Audio('assets/sounds/bip_sound.mp3'),
+      autoStart: true,
+    );
     _start = widget.duration;
     //hide the bottom system navigation bar
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
@@ -131,6 +137,7 @@ class _Measure2 extends State<MeasurePage2> {
 
               if (snapshot.data is StateRest) {
                 if (lastState != "Rest") {
+                  assetsAudioPlayer.play();
                   if (timerLaunched) stopTimer();
                   startTimer();
                 }
