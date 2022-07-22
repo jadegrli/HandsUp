@@ -56,9 +56,16 @@ class _Measure2 extends State<MeasurePage2> {
 
   final player = AudioPlayer();
 
-  playSound() async
+  playSoundTransition() async
   {
     await player.play(AssetSource('sounds/bip_sound.mp3'));
+  }
+
+  final player2 = AudioPlayer();
+
+  playSoundMeasurePages() async
+  {
+    await player2.play(AssetSource('sounds/validation_sound.mp3'));
   }
 
 
@@ -141,7 +148,7 @@ class _Measure2 extends State<MeasurePage2> {
 
               if (snapshot.data is StateRest) {
                 if (lastState != "Rest") {
-                  playSound();
+                  playSoundTransition();
                   if (timerLaunched) stopTimer();
                   startTimer();
                 }
@@ -151,7 +158,7 @@ class _Measure2 extends State<MeasurePage2> {
 
               if (snapshot.data is StateHandBack) {
                 if (lastState != "Hand back") {
-                  playSound();
+                  playSoundTransition();
                   if (timerLaunched) stopTimer();
                   startTimer();
                 }
@@ -161,7 +168,7 @@ class _Measure2 extends State<MeasurePage2> {
 
               if (snapshot.data is StateHandUp) {
                 if (lastState != "Hand up") {
-                  playSound();
+                  playSoundTransition();
                   if (timerLaunched) stopTimer();
                   startTimer();
                 }
@@ -215,6 +222,7 @@ class _Measure2 extends State<MeasurePage2> {
 
               if (snapshot.data is StateAllMeasuresFirstSide) {
                 lastState = "Mid result";
+                playSoundMeasurePages();
                 return SingleChildScrollView(
                   child: Center(
                     child: Column(
@@ -254,6 +262,7 @@ class _Measure2 extends State<MeasurePage2> {
 
               if (snapshot.data is StateAllMeasuresSecondSide) {
                 lastState = "Final result";
+                playSoundMeasurePages();
                 return SingleChildScrollView(
                   child: Center(
                     child: Column(
