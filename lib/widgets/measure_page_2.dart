@@ -1,21 +1,18 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hands_up/bloc_measure/bloc_measure_2.dart';
 import 'package:hands_up/widgets/home_page.dart';
 import 'package:hands_up/widgets/overall_patient_page.dart';
 import 'package:intl/intl.dart';
 
 import '../bloc_database/db_bloc_score.dart';
-import '../bloc_measure/bloc_measure.dart';
 import '../models/measure.dart';
 import '../models/score.dart';
 import '../score_calculation/angle_score_live.dart';
 import '../score_calculation/p_score_live.dart';
 
-class MeasurePage extends StatefulWidget {
-  const MeasurePage(
+class MeasurePage2 extends StatefulWidget {
+  const MeasurePage2(
       {Key? key,
       required this.nbRepetition,
       required this.duration,
@@ -27,35 +24,10 @@ class MeasurePage extends StatefulWidget {
   final int patientID;
 
   @override
-  State<MeasurePage> createState() => _Measure();
+  State<MeasurePage2> createState() => _Measure2();
 }
 
-String detectState(MeasureStates state) {
-  if (state is StateReady) {
-    return "Ready";
-  }
-  if (state is StateLoading) {
-    return "Loading";
-  }
-  if (state is StateRest) {
-    return "Rest";
-  }
-  if (state is StateHandBack) {
-    return "Hand back";
-  }
-  if (state is StateHandUp) {
-    return "Hand up";
-  }
-  if (state is StateAllMeasuresFirstSide) {
-    return "All measure";
-  }
-  if (state is StateError) {
-    return "Error";
-  }
-  return "No State";
-}
-
-class _Measure extends State<MeasurePage> {
+class _Measure2 extends State<MeasurePage2> {
   final allRangesAcc = <List<double>>[];
   final allRangesGyro = <List<double>>[];
   double bbScore = 0;
@@ -66,28 +38,7 @@ class _Measure extends State<MeasurePage> {
   late int _start = widget.duration;*/
 
   final DataBaseBlocScore blocScore = DataBaseBlocScore();
-
-  String previousState = "Ready";
-
- /* void startTimer() {
-    _start = widget.duration;
-    const oneSec = Duration(seconds: 1);
-    _timer = Timer.periodic(
-      oneSec,
-      (Timer timer) {
-        if (_start == 0) {
-          setState(() {
-            timer.cancel();
-          });
-        } else {
-          setState(() {
-            _start--;
-          });
-        }
-      },
-    );
-  }
-*/
+  final MeasureBloc2 measureBloc = MeasureBloc2();
 
   @override
   void initState() {
@@ -116,47 +67,80 @@ class _Measure extends State<MeasurePage> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+    //measureBloc.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocListener<MeasureBloc, MeasureStates>(
-          listener: (context, state) => print(detectState(state)),
-          child: BlocBuilder<MeasureBloc, MeasureStates>(
-            builder: (context, state) {
-              if (state is StateReady) {
+      body: StreamBuilder<MeasureStates>(
+          stream: measureBloc.measurePhase,
+          builder: (context, snapshot) {
+            if (snapshot.data != null) {
+              if (snapshot.data is StateReady) {
                 return Center(
                   child: ElevatedButton(
                       onPressed: () {
-                        context.read<MeasureBloc>().add(EventLaunchFirstSide(
-                            nbRepetition: widget.nbRepetition,
-                            movementDuration: widget.duration));
+                        measureBloc.launchSide(
+                            widget.nbRepetition, widget.duration, true);
                       },
                       child: const Text("Launch")),
                 );
               }
 
-              if (state is StateLoading) {
+              if (snapshot.data is StateLoading) {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              if (state is StateRest) {
+              if (snapshot.data is StateRest) {
                 return movement(context, "Rest");
-
               }
 
-              if (state is StateHandBack) {
+              if (snapshot.data is StateHandBack) {
                 return movement(context, "Hand back");
-
               }
 
-              if (state is StateHandUp) {
+              if (snapshot.data is StateHandUp) {
                 return movement(context, "Hand up");
-
               }
 
-              if (state is StateAllMeasuresFirstSide) {
+              if (snapshot.data is StateAllMeasuresLoadingOfCancel) {
+                return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: const [
+                      CircularProgressIndicator(),
+                      Text("Canceling measure"),
+                    ]);
+              }
+
+              if (snapshot.data is StateAllMeasuresCanceled) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                        onPressed: () {
+                          measureBloc.endMeasure();
+                          if (widget.patientID == 0) {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const HomePage()));
+                          } else {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => OverallPatientPage(
+                                        patientId: widget.patientID)));
+                          }
+                        },
+                        child: const Text("Go back!"))
+                  ],
+                );
+              }
+
+              if (snapshot.data is StateAllMeasuresFirstSide) {
                 return SingleChildScrollView(
                   child: Center(
                     child: Column(
@@ -164,7 +148,7 @@ class _Measure extends State<MeasurePage> {
                         const Text("All measures"),
                         ElevatedButton(
                             onPressed: () {
-                              context.read<MeasureBloc>().add(EventEnd());
+                              measureBloc.endMeasure();
                               if (widget.patientID == 0) {
                                 Navigator.pushReplacement(
                                     context,
@@ -175,32 +159,32 @@ class _Measure extends State<MeasurePage> {
                                 Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => OverallPatientPage(patientId: widget.patientID)));
+                                        builder: (context) =>
+                                            OverallPatientPage(
+                                                patientId: widget.patientID)));
                               }
                             },
                             child: const Text("Cancel")),
                         ElevatedButton(
                             onPressed: () {
-                              context.read<MeasureBloc>().add(
-                                  EventLaunchSecondSide(
-                                      nbRepetition: widget.nbRepetition,
-                                      movementDuration: widget.duration));
+                              measureBloc.launchSide(
+                                  widget.nbRepetition, widget.duration, false);
                             },
                             child: const Text("Continue measure")),
-                        midResult(state.allMeasures),
+                        midResult(snapshot.data!.allMeasures),
                       ],
                     ),
                   ),
                 );
               }
 
-              if (state is StateAllMeasuresSecondSide) {
+              if (snapshot.data is StateAllMeasuresSecondSide) {
                 return SingleChildScrollView(
                   child: Center(
                     child: Column(
                       children: [
                         const Text("All measures"),
-                        finalResults(state.allMeasures),
+                        finalResults(snapshot.data!.allMeasures),
                         if (!exceptionCalculation)
                           ElevatedButton(
                               onPressed: () async {
@@ -228,7 +212,7 @@ class _Measure extends State<MeasurePage> {
                                     elevationInjured,
                                     elevationHealthy);
 
-                                context.read<MeasureBloc>().add(EventEnd());
+                                measureBloc.endMeasure();
 
                                 if (widget.patientID == 0) {
                                   Navigator.pushReplacement(
@@ -240,14 +224,16 @@ class _Measure extends State<MeasurePage> {
                                   Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => OverallPatientPage(patientId: widget.patientID)));
+                                          builder: (context) =>
+                                              OverallPatientPage(
+                                                  patientId:
+                                                      widget.patientID)));
                                 }
                               },
                               child: const Text("Validate")),
                         ElevatedButton(
                             onPressed: () async {
-                              context.read<MeasureBloc>().add(EventEnd());
-
+                              measureBloc.endMeasure();
                               if (widget.patientID == 0) {
                                 Navigator.pushReplacement(
                                     context,
@@ -258,7 +244,9 @@ class _Measure extends State<MeasurePage> {
                                 Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => OverallPatientPage(patientId: widget.patientID)));
+                                        builder: (context) =>
+                                            OverallPatientPage(
+                                                patientId: widget.patientID)));
                               }
                             },
                             child: const Text("Cancel")),
@@ -267,19 +255,11 @@ class _Measure extends State<MeasurePage> {
                   ),
                 );
               }
-
-              if (state is StateError) {
-                return const Center(
-                  child: Text("Error"),
-                );
-              }
-
-              return const Center(
-                child: Text("NO STATE !"),
-              );
-            },
-          ),
-        ),
+            }
+            return const Center(
+              child: Text("NO STATE !"),
+            );
+          }),
     );
   }
 
@@ -322,7 +302,8 @@ class _Measure extends State<MeasurePage> {
                 Container(
                   margin: const EdgeInsets.all(8.0),
                   child: Card(
-                    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8.0))),
                     child: Column(
                       children: [
                         //tab here
@@ -340,11 +321,14 @@ class _Measure extends State<MeasurePage> {
                         Text(
                             "Hand Back, Accelerometer, Z Axis : ${allResultsAcc[i][2]}",
                             style: const TextStyle(fontSize: 20.0)),
-                        Text("Hand Back, Gyroscope, X Axis : ${allResultsGyro[i][0]}",
+                        Text(
+                            "Hand Back, Gyroscope, X Axis : ${allResultsGyro[i][0]}",
                             style: const TextStyle(fontSize: 20.0)),
-                        Text("Hand Back, Gyroscope, Y Axis : ${allResultsGyro[i][1]}",
+                        Text(
+                            "Hand Back, Gyroscope, Y Axis : ${allResultsGyro[i][1]}",
                             style: const TextStyle(fontSize: 20.0)),
-                        Text("Hand Back, Gyroscope, Z Axis : ${allResultsGyro[i][2]}",
+                        Text(
+                            "Hand Back, Gyroscope, Z Axis : ${allResultsGyro[i][2]}",
                             style: const TextStyle(fontSize: 20.0)),
                         Text(
                             "Hand Up, Accelerometer, X Axis : ${allResultsAcc[i + 1][0]}",
@@ -355,11 +339,14 @@ class _Measure extends State<MeasurePage> {
                         Text(
                             "Hand Up, Accelerometer, Z Axis : ${allResultsAcc[i + 1][2]}",
                             style: const TextStyle(fontSize: 20.0)),
-                        Text("Hand Up, Gyroscope, X Axis : ${allResultsGyro[i + 1][0]}",
+                        Text(
+                            "Hand Up, Gyroscope, X Axis : ${allResultsGyro[i + 1][0]}",
                             style: const TextStyle(fontSize: 20.0)),
-                        Text("Hand Up, Gyroscope, Y Axis : ${allResultsGyro[i + 1][1]}",
+                        Text(
+                            "Hand Up, Gyroscope, Y Axis : ${allResultsGyro[i + 1][1]}",
                             style: const TextStyle(fontSize: 20.0)),
-                        Text("Hand Up, Gyroscope, Z Axis : ${allResultsGyro[i + 1][2]}",
+                        Text(
+                            "Hand Up, Gyroscope, Z Axis : ${allResultsGyro[i + 1][2]}",
                             style: const TextStyle(fontSize: 20.0)),
                       ],
                     ),
@@ -615,19 +602,7 @@ class _Measure extends State<MeasurePage> {
                       const EdgeInsets.all(20) //content padding inside button
                   ),
               onPressed: () {
-                //context.read<MeasureBloc>().add(EventEnd());
-                if (widget.patientID == 0) {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                          const HomePage()));
-                } else {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => OverallPatientPage(patientId: widget.patientID)));
-                }
+                measureBloc.cancelMeasure();
               },
               child: const Text("CANCEL")),
         ],

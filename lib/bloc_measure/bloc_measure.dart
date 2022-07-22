@@ -20,6 +20,7 @@ class MeasureBloc extends Bloc<MeasureEvents, MeasureStates> {
       sensorsRepository.initSensor();
       for (int i = 0; i < event.nbRepetition; ++i) {
         emit(StateRest());
+        if (emit.isDone) {}
         await Future.delayed(Duration(seconds: event.movementDuration), () {});
         emit(StateHandBack());
         await sensorsRepository.sensorsMeasure(event.movementDuration);

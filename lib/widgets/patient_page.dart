@@ -496,6 +496,7 @@ class _PatientPage extends State<PatientPage> {
                                           Icons.question_mark_outlined)),
                                 ],
                               ),
+                              //TODO change type dynamic
                               StreamBuilder<List<dynamic>>(
                                   stream: blocScore.data,
                                   builder: (context, snapshot) {

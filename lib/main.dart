@@ -6,11 +6,12 @@ import 'bloc_measure/bloc_measure.dart';
 
 
 void main() {
-  runApp(BlocProvider(
+  runApp(const MyApp());
+  /*runApp(BlocProvider(
     create: (context) => MeasureBloc(),
     child: const MyApp(),
   ),
-  );
+  );*/
 }
 
 class MyApp extends StatelessWidget {
