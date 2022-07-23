@@ -32,9 +32,9 @@ class _HomePage extends State<HomePage> {
   var itemsSortsPatient = [
     "A-Z",
     "Z-A",
-    "rot. cuff",
-    "froz. sh.",
-    "hum. fr.",
+    "rotator cuff",
+    "frozen shoulder",
+    "humerus fracture",
     "other"
   ];
 
@@ -345,7 +345,7 @@ class _HomePage extends State<HomePage> {
                         ],
                       ),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           const Text("Patient List",
                               style: TextStyle(
@@ -381,7 +381,7 @@ class _HomePage extends State<HomePage> {
                                         (String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
-                                    child: Text(value),
+                                    child: Text(value, style: const TextStyle(fontSize: 10),),
                                   );
                                 }).toList(),
                               ),
@@ -478,13 +478,13 @@ class _HomePage extends State<HomePage> {
                             case "Z-A":
                               bloc.getAllPatientsZA();
                               break;
-                            case "rot. cuff":
+                            case "rotator cuff":
                               bloc.getAllPatientPathology("Rotator cuff");
                               break;
-                            case "froz. sh.":
+                            case "frozen shoulder":
                               bloc.getAllPatientPathology("Frozen shoulder");
                               break;
-                            case "hum. fr.":
+                            case "humerus fracture":
                               bloc.getAllPatientPathology("Humerus fracture");
                               break;
                             case "other":
