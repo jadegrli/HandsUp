@@ -5,7 +5,6 @@ import 'package:hands_up/widgets/overall_patient_page.dart';
 import 'package:hands_up/widgets/page_test.dart';
 import 'package:hands_up/widgets/patient_page.dart';
 
-
 import '../bloc_database/db_bloc_patient.dart';
 import '../models/patient.dart';
 import 'add_patient_page.dart';
@@ -290,7 +289,10 @@ class _HomePage extends State<HomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => MeasurePage2(nbRepetition: int.parse(nbRepetition), duration: int.parse(movementDuration), patientID: 0)),
+                              builder: (context) => MeasurePage2(
+                                  nbRepetition: int.parse(nbRepetition),
+                                  duration: int.parse(movementDuration),
+                                  patientID: 0)),
                         );
                       },
                     ),
@@ -306,7 +308,8 @@ class _HomePage extends State<HomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                                builder: (context) => const AllScoresWithoutPatientPage()),
+                              builder: (context) =>
+                                  const AllScoresWithoutPatientPage()),
                         );
                       },
                     ),
@@ -468,7 +471,30 @@ class _HomePage extends State<HomePage> {
                     StreamBuilder<List<Patient>>(
                         stream: bloc.data,
                         builder: (context, snapshot) {
-                          bloc.getAllPatients();
+                          switch (sortChoice) {
+                            case "A-Z":
+                              bloc.getAllPatients();
+                              break;
+                            case "Z-A":
+                              bloc.getAllPatientsZA();
+                              break;
+                            case "rot. cuff":
+                              bloc.getAllPatientPathology("Rotator cuff");
+                              break;
+                            case "froz. sh.":
+                              bloc.getAllPatientPathology("Frozen shoulder");
+                              break;
+                            case "hum. fr.":
+                              bloc.getAllPatientPathology("Humerus fracture");
+                              break;
+                            case "other":
+                              bloc.getAllPatientPathology("Other");
+                              break;
+                            default:
+                              bloc.getAllPatients();
+                              break;
+                          }
+                          //bloc.getAllPatientPathology("Humerus fracture");
                           if (snapshot.data != null &&
                               snapshot.data!.isNotEmpty) {
                             return ListView.builder(
@@ -490,9 +516,10 @@ class _HomePage extends State<HomePage> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => OverallPatientPage(
-                                                patientId:
-                                                snapshot.data![index].id!)));
+                                            builder: (context) =>
+                                                OverallPatientPage(
+                                                    patientId: snapshot
+                                                        .data![index].id!)));
                                     /*Navigator.push(
                                         context,
                                         MaterialPageRoute(

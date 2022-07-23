@@ -206,7 +206,7 @@ class _LineChartSample extends State<LineChartSample> {
       if (maxX < dt) maxX = dt;
       return FlSpot(
         dt,
-        score.bbScore > 130 ? 130 : score.bbScore < 0 ? 0 : score.bbScore,
+        score.bbScore > 130 ? 130 : score.bbScore.toInt().toDouble() < 0 ? 0 : score.bbScore.toInt().toDouble(),
       );
     }).toList();
 
@@ -231,7 +231,7 @@ class _LineChartSample extends State<LineChartSample> {
       if (maxX < dt) maxX = dt;
       return FlSpot(
         dt,
-        score.elevationAngleInjured > 180 ? 180 : score.elevationAngleInjured < 0 ? 0 : score.elevationAngleInjured,
+        score.elevationAngleInjured > 180 ? 180 : score.elevationAngleInjured.toInt().toDouble() < 0 ? 0 : score.elevationAngleInjured.toInt().toDouble(),
       );
     }).toList();
 
@@ -242,7 +242,7 @@ class _LineChartSample extends State<LineChartSample> {
           .toDouble();
       return FlSpot(
         dt,
-        score.elevationAngleHealthy > 180 ? 180 : score.elevationAngleHealthy < 0 ? 0 : score.elevationAngleHealthy,
+        score.elevationAngleHealthy > 180 ? 180 : score.elevationAngleHealthy.toInt().toDouble() < 0 ? 0 : score.elevationAngleHealthy.toInt().toDouble(),
       );
     }).toList();
 
@@ -289,15 +289,15 @@ class _LineChartSample extends State<LineChartSample> {
                           const Padding(
                             padding: EdgeInsets.only(right: 60.0, left: 20.0),
                             child: Text(
-                              'B-B Score',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 2,
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
+                                  'B-B Score',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 2,
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
                           ),
                           const SizedBox(
                             height: 37,
@@ -360,17 +360,52 @@ class _LineChartSample extends State<LineChartSample> {
                           const SizedBox(
                             height: 4,
                           ),
-                          const Padding(
-                            padding: EdgeInsets.only(right: 60.0, left: 20.0),
-                            child: Text(
-                              'Elevation Angle',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 2,
-                              ),
-                              textAlign: TextAlign.left,
+                          Padding(
+                            padding: const EdgeInsets.only(right: 60.0, left: 20.0),
+                            child: Row(
+                              children: [
+                                const Text(
+                                  'Elevation angle',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 2,
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                                const SizedBox(
+                                  width: 80,
+                                ),
+                                Column(
+                                  children: const [
+                                    Text(
+                                      'Healthy',
+                                      style: TextStyle(
+                                        color: Colors.green,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 2,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      'Injured',
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 2,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ],
+                                ),
+
+                              ],
                             ),
                           ),
                           const SizedBox(
