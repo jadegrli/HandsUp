@@ -49,6 +49,7 @@ class _ModifyPatientPage extends State<ModifyPatientPage> {
         todayDate.year == date.year) {
       return false;
     }
+    //TODO remove
     if (!isLeftShoulder && !isRightShoulder) {
       return false;
     }

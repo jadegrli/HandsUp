@@ -57,6 +57,8 @@ class AngleScoreLive extends ScoreLive {
         ) {
       elevationInjured = maxInjured;
       elevationHealthy = maxHealthy;
+    } else {
+      throw Exception("Error in score calculation : not same number of repetition on both side");
     }
   }
 

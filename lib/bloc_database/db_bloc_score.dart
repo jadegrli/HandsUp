@@ -19,11 +19,21 @@ class DataBaseBlocScore {
   }
 
   getScoreByPatientId(int id) async {
-    _controller.sink.add(await _scoreRepository.getScoreByPatientId(id: id));
+    if (id == 0) {
+      getScoreWithNoPatient();
+    } else {
+      //_controller.sink.add(await _scoreRepository.getScoreByPatientId(id: id);
+      List<Score> list = await _scoreRepository.getScoreByPatientId(id: id);
+      list.sort((a, b) => b.id!.compareTo(a.id!));
+      _controller.sink.add(list);
+    }
   }
 
   getScoreWithNoPatient() async {
-    _controller.sink.add(await _scoreRepository.getScoresWithNoPatient());
+    List<Score> list = await _scoreRepository.getScoresWithNoPatient();
+    list.sort((a, b) => b.id!.compareTo(a.id!));
+    _controller.sink.add(list);
+    //_controller.sink.add(await _scoreRepository.getScoresWithNoPatient());
   }
 
   getScoreFromId(int id) async {

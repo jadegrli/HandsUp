@@ -96,6 +96,8 @@ class PScoreLive extends ScoreLive {
       }
       backScore = 100 * pScoreBack / deltaPrBack.length;
       bbScore = 16.71 + 0.32 * backScore + 0.45 * upScore;
+    } else {
+      throw Exception("Error in score calculation : not same number of repetition on both side");
     }
   }
 

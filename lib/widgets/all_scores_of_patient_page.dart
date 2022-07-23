@@ -1,7 +1,6 @@
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:hands_up/widgets/score_page.dart';
 
 import '../bloc_database/db_bloc_score.dart';
 
@@ -57,8 +56,8 @@ class _AllScoresOfPatientPage extends State<AllScoresOfPatientPage> {
                                 mainAxisAlignment:
                                 MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text("Last Measure",
-                                      style: TextStyle(
+                                  Text(snapshot.data![index].creationDate,
+                                      style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold)),
                                   IconButton(
@@ -67,32 +66,26 @@ class _AllScoresOfPatientPage extends State<AllScoresOfPatientPage> {
                                           Icons.question_mark_outlined)),
                                 ],
                               ),
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                primary: true,
-                                child: Column(
-                                  children: [
-                                    Text(
-                                        snapshot.data![index].creationDate),
-                                    Row(
+                              Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                       children: [
                                         Column(
                                           children: [
                                             const SizedBox(
-                                                height: 40),
+                                                height: 25),
                                             Text(
                                               "${snapshot.data![index].bbScore ~/ 1}%",
                                               style: const TextStyle(
                                                   color: Colors
                                                       .deepPurple,
-                                                  fontSize: 40,
+                                                  fontSize: 30,
                                                   fontWeight:
                                                   FontWeight
                                                       .bold),
                                             ),
                                             const SizedBox(
-                                                height: 50),
-                                            const Text("B-B Score"),
+                                                height: 40),
+                                            const Text("B-B Score", style: TextStyle(fontSize: 14)),
                                           ],
                                         ),
                                         Column(
@@ -104,7 +97,7 @@ class _AllScoresOfPatientPage extends State<AllScoresOfPatientPage> {
                                               const EdgeInsets
                                                   .all(20.0),
                                               margin: const EdgeInsets
-                                                  .all(20),
+                                                  .all(10),
                                               decoration:
                                               const BoxDecoration(
                                                 borderRadius:
@@ -124,7 +117,7 @@ class _AllScoresOfPatientPage extends State<AllScoresOfPatientPage> {
                                                     style: const TextStyle(
                                                         color: Colors
                                                             .deepPurple,
-                                                        fontSize: 25,
+                                                        fontSize: 23,
                                                         fontWeight:
                                                         FontWeight
                                                             .bold),
@@ -186,9 +179,9 @@ class _AllScoresOfPatientPage extends State<AllScoresOfPatientPage> {
                                               ),
                                             ),
                                             const Text(
-                                                "Elevation Angle"),
+                                                "Elevation Angle", style: TextStyle(fontSize: 13)),
                                             const Text(
-                                                "Injured shoulder"),
+                                                "Injured shoulder", style: TextStyle(fontSize: 13)),
                                           ],
                                         ),
                                         Column(
@@ -200,7 +193,7 @@ class _AllScoresOfPatientPage extends State<AllScoresOfPatientPage> {
                                               const EdgeInsets
                                                   .all(20.0),
                                               margin: const EdgeInsets
-                                                  .all(20),
+                                                  .all(10),
                                               decoration:
                                               const BoxDecoration(
                                                 borderRadius:
@@ -220,7 +213,7 @@ class _AllScoresOfPatientPage extends State<AllScoresOfPatientPage> {
                                                     style: const TextStyle(
                                                         color: Colors
                                                             .deepPurple,
-                                                        fontSize: 25,
+                                                        fontSize: 23,
                                                         fontWeight:
                                                         FontWeight
                                                             .bold),
@@ -282,16 +275,13 @@ class _AllScoresOfPatientPage extends State<AllScoresOfPatientPage> {
                                               ),
                                             ),
                                             const Text(
-                                                "Elevation Angle"),
+                                                "Elevation Angle", style: TextStyle(fontSize: 13)),
                                             const Text(
-                                                "Healthy shoulder"),
+                                                "Healthy shoulder", style: TextStyle(fontSize: 13)),
                                           ],
                                         ),
                                       ],
                                     )
-                                  ],
-                                ),
-                              ),
 
                             ],
                           ),

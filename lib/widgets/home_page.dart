@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hands_up/widgets/all_scores_of_patient_page.dart';
 import 'package:hands_up/widgets/measure_page_2.dart';
 import 'package:hands_up/widgets/overall_patient_page.dart';
 import 'package:hands_up/widgets/page_test.dart';
@@ -305,7 +306,7 @@ class _HomePage extends State<HomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const AllScoresWithoutPatientPage()),
+                                builder: (context) => const AllScoresWithoutPatientPage()),
                         );
                       },
                     ),

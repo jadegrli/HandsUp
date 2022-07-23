@@ -206,7 +206,7 @@ class _LineChartSample extends State<LineChartSample> {
       if (maxX < dt) maxX = dt;
       return FlSpot(
         dt,
-        score.bbScore > 130 ? 130 : score.bbScore,
+        score.bbScore > 130 ? 130 : score.bbScore < 0 ? 0 : score.bbScore,
       );
     }).toList();
 
@@ -231,7 +231,7 @@ class _LineChartSample extends State<LineChartSample> {
       if (maxX < dt) maxX = dt;
       return FlSpot(
         dt,
-        score.elevationAngleInjured > 180 ? 180 : score.elevationAngleInjured,
+        score.elevationAngleInjured > 180 ? 180 : score.elevationAngleInjured < 0 ? 0 : score.elevationAngleInjured,
       );
     }).toList();
 
@@ -242,7 +242,7 @@ class _LineChartSample extends State<LineChartSample> {
           .toDouble();
       return FlSpot(
         dt,
-        score.elevationAngleHealthy > 180 ? 180 : score.elevationAngleHealthy,
+        score.elevationAngleHealthy > 180 ? 180 : score.elevationAngleHealthy < 0 ? 0 : score.elevationAngleHealthy,
       );
     }).toList();
 
@@ -529,9 +529,9 @@ class _LineChartSample extends State<LineChartSample> {
     return SideTitleWidget(
       axisSide: meta.axisSide,
       space: 10,
-      child: RotatedBox(
+      child: RotatedBox( //to display the text vertically
         quarterTurns: 1,
-        child: text, //your text
+        child: text,
       ),
     );
   }

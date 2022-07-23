@@ -16,12 +16,13 @@ class OverallPatientPage extends StatefulWidget {
 
 class _OverallPatientPage extends State<OverallPatientPage> {
   int pageIndex = 0;
-  late int id_patient;
+  late int idPatient;
+  bool showAppBar = true;
 
   @override
   void initState() {
     super.initState();
-    id_patient = widget.patientId;
+    idPatient = widget.patientId;
   }
 
 
@@ -34,8 +35,8 @@ class _OverallPatientPage extends State<OverallPatientPage> {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xff2c274c),
+      appBar: showAppBar ? AppBar(
+        backgroundColor: const Color(0xff2c274c),
         title: const Text(
           "Patient profile",
           style: TextStyle(
@@ -44,9 +45,20 @@ class _OverallPatientPage extends State<OverallPatientPage> {
             fontWeight: FontWeight.w600,
           ),
         ),
+      ) : null,
+      body: GestureDetector(
+        onDoubleTap: () {
+          setState(() {
+            if (pageIndex == 0 || pageIndex == 1) {
+              showAppBar = true;
+            } else {
+              showAppBar = !showAppBar;
+            }
+          });
+        },
+        child: pages[pageIndex],
       ),
-      body: pages[pageIndex],
-      bottomNavigationBar: buildMyNavBar(context),
+      bottomNavigationBar: showAppBar ? buildMyNavBar(context) : null,
     );
   }
 

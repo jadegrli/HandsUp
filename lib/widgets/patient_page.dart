@@ -4,8 +4,8 @@ import 'package:hands_up/bloc_database/db_bloc_score.dart';
 import 'package:hands_up/widgets/modify_patient.dart';
 
 import '../bloc_database/db_bloc_patient.dart';
-import '../graph/graph.dart';
-import 'all_scores_of_patient_page.dart';
+import '../models/patient.dart';
+import '../models/score.dart';
 import 'home_page.dart';
 import 'measure_page.dart';
 
@@ -74,7 +74,7 @@ class _PatientPage extends State<PatientPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            StreamBuilder<List<dynamic>>(
+            StreamBuilder<List<Patient>>(
                 stream: blocPatient.data,
                 builder: (context, snapshot) {
                   blocPatient.getPatientByID(id: widget.patientId);
@@ -253,7 +253,7 @@ class _PatientPage extends State<PatientPage> {
                                                   fontWeight: FontWeight.bold)),
                                           TextSpan(
                                               text:
-                                                  "${snapshot.data!.first.healthCondition == "Other" ? snapshot.data!.first.otherPathology : snapshot.data!.first.healthCondition}"),
+                                                  snapshot.data!.first.healthCondition == "Other" ? snapshot.data!.first.otherPathology : snapshot.data!.first.healthCondition),
                                         ]),
                                   ),
                                 ],
@@ -459,7 +459,7 @@ class _PatientPage extends State<PatientPage> {
                                             duration:
                                                 int.parse(movementDuration),
                                             patientID:
-                                                snapshot.data!.first.id)),
+                                                snapshot.data!.first.id!)),
                                   );
                                 },
                               ),
@@ -497,7 +497,7 @@ class _PatientPage extends State<PatientPage> {
                                 ],
                               ),
                               //TODO change type dynamic
-                              StreamBuilder<List<dynamic>>(
+                              StreamBuilder<List<Score>>(
                                   stream: blocScore.data,
                                   builder: (context, snapshot) {
                                     blocScore
@@ -511,28 +511,27 @@ class _PatientPage extends State<PatientPage> {
                                       return Column(
                                         children: [
                                           Text(
-                                              snapshot.data!.last.creationDate),
-                                          SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Row(
+                                              snapshot.data!.first.creationDate),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                 children: [
                                                   Column(
                                                     children: [
                                                       const SizedBox(
-                                                          height: 40),
+                                                          height: 25),
                                                       Text(
-                                                        "${snapshot.data!.last.bbScore ~/ 1}%",
+                                                        "${snapshot.data!.first.bbScore ~/ 1}%",
                                                         style: const TextStyle(
                                                             color: Colors
                                                                 .deepPurple,
-                                                            fontSize: 40,
+                                                            fontSize: 30,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .bold),
                                                       ),
                                                       const SizedBox(
-                                                          height: 50),
-                                                      const Text("B-B Score"),
+                                                          height: 40),
+                                                      const Text("B-B Score", style: TextStyle(fontSize: 14),),
                                                     ],
                                                   ),
                                                   Column(
@@ -544,7 +543,7 @@ class _PatientPage extends State<PatientPage> {
                                                             const EdgeInsets
                                                                 .all(20.0),
                                                         margin: const EdgeInsets
-                                                            .all(20),
+                                                            .all(10),
                                                         decoration:
                                                             const BoxDecoration(
                                                           borderRadius:
@@ -560,11 +559,11 @@ class _PatientPage extends State<PatientPage> {
                                                               Alignment.center,
                                                           children: [
                                                             Text(
-                                                              "${snapshot.data!.last.elevationAngleInjured ~/ 1}°",
+                                                              "${snapshot.data!.first.elevationAngleInjured ~/ 1}°",
                                                               style: const TextStyle(
                                                                   color: Colors
                                                                       .deepPurple,
-                                                                  fontSize: 25,
+                                                                  fontSize: 23,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold),
@@ -583,9 +582,7 @@ class _PatientPage extends State<PatientPage> {
                                                                   PieChartSectionData(
                                                                     color: Colors
                                                                         .deepPurple,
-                                                                    value: (snapshot.data!.last.elevationAngleInjured *
-                                                                            100 /
-                                                                            180)
+                                                                    value: (snapshot.data!.first.elevationAngleInjured)
                                                                         .toDouble(),
                                                                     title:
                                                                         "", //(snapshot.data!.last.elevationAngleInjured ~/ 1).toString(),
@@ -602,10 +599,101 @@ class _PatientPage extends State<PatientPage> {
                                                                   PieChartSectionData(
                                                                     color: const Color(
                                                                         0xff7699b7),
-                                                                    value: (100 -
-                                                                            snapshot.data!.last.elevationAngleInjured *
-                                                                                100 /
-                                                                                180)
+                                                                    value: (180 -
+                                                                        snapshot.data!.first.elevationAngleInjured)
+                                                                        .toDouble(),
+                                                                    title: "",
+                                                                    /*((180 - snapshot.data!.last.elevationAngleInjured ~/ 1)).toString(),*/
+                                                                    radius: 10,
+                                                                    titleStyle: const TextStyle(
+                                                                        fontSize:
+                                                                        20,
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                        color: Color(
+                                                                            0xffffffff)),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      const Text(
+                                                          "Elevation Angle", style: TextStyle(fontSize: 13),),
+                                                      const Text(
+                                                          "Injured shoulder", style: TextStyle(fontSize: 13)),
+                                                    ],
+                                                  ),
+                                                  //TODO ajouter securité pour si angle + grand que 180 ou plus petit que 0 -> ramener tout a 0 ou 180
+                                                  Column(
+                                                    children: [
+                                                      Container(
+                                                        width: 100,
+                                                        height: 100,
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(20.0),
+                                                        margin: const EdgeInsets
+                                                            .all(10),
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          20)),
+                                                          color:
+                                                              Color(0xff9abdda),
+                                                        ),
+                                                        child: Stack(
+                                                          alignment:
+                                                              Alignment.center,
+                                                          children: [
+                                                            Text(
+                                                              "${snapshot.data!.first.elevationAngleHealthy ~/ 1}°",
+                                                              style: const TextStyle(
+                                                                  color: Colors
+                                                                      .deepPurple,
+                                                                  fontSize: 23,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                            ),
+                                                            PieChart(
+                                                              PieChartData(
+                                                                borderData:
+                                                                    FlBorderData(
+                                                                  show: false,
+                                                                ),
+                                                                sectionsSpace:
+                                                                    0,
+                                                                centerSpaceRadius:
+                                                                    30,
+                                                                sections: [
+                                                                  PieChartSectionData(
+                                                                    color: Colors
+                                                                        .deepPurple,
+                                                                    value: (snapshot.data!.first.elevationAngleHealthy)
+                                                                        .toDouble(),
+                                                                    title:
+                                                                        "", //(snapshot.data!.last.elevationAngleInjured ~/ 1).toString(),
+                                                                    radius: 10,
+                                                                    titleStyle: const TextStyle(
+                                                                        fontSize:
+                                                                            20,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        color: Color(
+                                                                            0xffffffff)),
+                                                                  ),
+                                                                  PieChartSectionData(
+                                                                    color: const Color(
+                                                                        0xff7699b7),
+                                                                    value: (180 -
+                                                                            snapshot.data!.first.elevationAngleHealthy)
                                                                         .toDouble(),
                                                                     title: "",
                                                                     /*((180 - snapshot.data!.last.elevationAngleInjured ~/ 1)).toString(),*/
@@ -626,109 +714,13 @@ class _PatientPage extends State<PatientPage> {
                                                         ),
                                                       ),
                                                       const Text(
-                                                          "Elevation Angle"),
+                                                          "Elevation Angle", style: TextStyle(fontSize: 13)),
                                                       const Text(
-                                                          "Injured shoulder"),
-                                                    ],
-                                                  ),
-                                                  Column(
-                                                    children: [
-                                                      Container(
-                                                        width: 100,
-                                                        height: 100,
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(20.0),
-                                                        margin: const EdgeInsets
-                                                            .all(20),
-                                                        decoration:
-                                                            const BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          20)),
-                                                          color:
-                                                              Color(0xff9abdda),
-                                                        ),
-                                                        child: Stack(
-                                                          alignment:
-                                                              Alignment.center,
-                                                          children: [
-                                                            Text(
-                                                              "${snapshot.data!.last.elevationAngleHealthy ~/ 1}°",
-                                                              style: const TextStyle(
-                                                                  color: Colors
-                                                                      .deepPurple,
-                                                                  fontSize: 25,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                            ),
-                                                            PieChart(
-                                                              PieChartData(
-                                                                borderData:
-                                                                    FlBorderData(
-                                                                  show: false,
-                                                                ),
-                                                                sectionsSpace:
-                                                                    0,
-                                                                centerSpaceRadius:
-                                                                    30,
-                                                                sections: [
-                                                                  PieChartSectionData(
-                                                                    color: Colors
-                                                                        .deepPurple,
-                                                                    value: (snapshot.data!.last.elevationAngleHealthy *
-                                                                            100 /
-                                                                            180)
-                                                                        .toDouble(),
-                                                                    title:
-                                                                        "", //(snapshot.data!.last.elevationAngleInjured ~/ 1).toString(),
-                                                                    radius: 10,
-                                                                    titleStyle: const TextStyle(
-                                                                        fontSize:
-                                                                            20,
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color: Color(
-                                                                            0xffffffff)),
-                                                                  ),
-                                                                  PieChartSectionData(
-                                                                    color: const Color(
-                                                                        0xff7699b7),
-                                                                    value: (100 -
-                                                                            snapshot.data!.last.elevationAngleHealthy *
-                                                                                100 /
-                                                                                180)
-                                                                        .toDouble(),
-                                                                    title: "",
-                                                                    /*((180 - snapshot.data!.last.elevationAngleInjured ~/ 1)).toString(),*/
-                                                                    radius: 10,
-                                                                    titleStyle: const TextStyle(
-                                                                        fontSize:
-                                                                            20,
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color: Color(
-                                                                            0xffffffff)),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      const Text(
-                                                          "Elevation Angle"),
-                                                      const Text(
-                                                          "Healthy shoulder"),
+                                                          "Healthy shoulder", style: TextStyle(fontSize: 13)),
                                                     ],
                                                   ),
                                                 ],
-                                              )),
+                                              )
                                         ],
                                       );
                                     }
