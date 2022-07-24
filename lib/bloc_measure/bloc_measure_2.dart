@@ -3,6 +3,7 @@ import 'dart:async';
 
 import '../models/measure.dart';
 import '../repositories/sensors_repository.dart';
+import '../score_calculation/p_score_live.dart';
 
 class MeasureBloc2  {
   final SensorsRepository sensorsRepository = SensorsRepository();

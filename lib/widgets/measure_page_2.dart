@@ -688,7 +688,13 @@ class _Measure2 extends State<MeasurePage2> {
                       const EdgeInsets.all(20) //content padding inside button
                   ),
               onPressed: () {
-                measureBloc.cancelMeasure();
+                //measureBloc.cancelMeasure();
+                measureBloc.endMeasure();
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                        const HomePage()));
               },
               child: const Text("CANCEL")),
         ],
