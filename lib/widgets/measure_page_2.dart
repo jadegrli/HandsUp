@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -7,13 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:hands_up/bloc_measure/bloc_measure_2.dart';
 import 'package:hands_up/widgets/home_page.dart';
 import 'package:hands_up/widgets/overall_patient_page.dart';
-import 'package:intl/intl.dart';
 
-import '../bloc_database/db_bloc_score.dart';
-import '../models/measure.dart';
-import '../models/score.dart';
-import '../score_calculation/angle_score_live.dart';
-import '../score_calculation/p_score_live.dart';
 
 class MeasurePage2 extends StatefulWidget {
   const MeasurePage2(
@@ -32,19 +25,13 @@ class MeasurePage2 extends StatefulWidget {
 }
 
 class _Measure2 extends State<MeasurePage2> {
-  final allRangesAcc = <List<double>>[];
-  final allRangesGyro = <List<double>>[];
-  double bbScore = 0;
-  double elevationInjured = 0;
-  double elevationHealthy = 0;
+  //TODO gérer ça encore
   bool exceptionCalculation = false;
 
-  final DataBaseBlocScore blocScore = DataBaseBlocScore();
   final MeasureBloc2 measureBloc = MeasureBloc2();
 
   late Timer _timer;
   late int _start;
-
   bool timerLaunched = false;
   String lastState = "Ready";
 
@@ -58,6 +45,7 @@ class _Measure2 extends State<MeasurePage2> {
 
   playSoundTransition() async
   {
+    //TODO exception ici : essayer de pause/start/stop et pas recreer et detruire a chaque fois
     await player.play(AssetSource('sounds/bip_sound.mp3'));
   }
 
@@ -65,6 +53,7 @@ class _Measure2 extends State<MeasurePage2> {
 
   playSoundMeasurePages() async
   {
+    //TODO exception ici
     await player2.play(AssetSource('sounds/validation_sound.mp3'));
   }
 
@@ -94,7 +83,6 @@ class _Measure2 extends State<MeasurePage2> {
   void initState() {
     super.initState();
     _start = widget.duration;
-
     //hide the bottom system navigation bar
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
       SystemUiOverlay.top,
@@ -126,6 +114,7 @@ class _Measure2 extends State<MeasurePage2> {
 
   @override
   Widget build(BuildContext context) {
+    //TODO make scrollable ?
     return Scaffold(
       body: StreamBuilder<MeasureStates>(
           stream: measureBloc.measurePhase,
@@ -178,6 +167,7 @@ class _Measure2 extends State<MeasurePage2> {
                 return movement(context, "Hand up");
               }
 
+              /*
               if (snapshot.data is StateAllMeasuresLoadingOfCancel) {
                 lastState = "Cancelling";
                 return Center(
@@ -220,7 +210,7 @@ class _Measure2 extends State<MeasurePage2> {
                     ],
                   ),
                 );
-              }
+              }*/
 
               if (snapshot.data is StateAllMeasuresFirstSide) {
                 lastState = "Mid result";
@@ -238,7 +228,7 @@ class _Measure2 extends State<MeasurePage2> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            const HomePage()));
+                                        const HomePage()));
                               } else {
                                 Navigator.pushReplacement(
                                     context,
@@ -255,7 +245,7 @@ class _Measure2 extends State<MeasurePage2> {
                                   widget.nbRepetition, widget.duration, false);
                             },
                             child: const Text("Continue measure")),
-                        midResult(snapshot.data!.allMeasures),
+                        midResult(snapshot.data!.allResultsAcc, snapshot.data!.allResultsGyro, snapshot.data!.error),
                       ],
                     ),
                   ),
@@ -270,42 +260,17 @@ class _Measure2 extends State<MeasurePage2> {
                     child: Column(
                       children: [
                         const Text("All measures"),
-                        finalResults(snapshot.data!.allMeasures),
+                        finalResults(snapshot.data!.error, snapshot.data!.values),
                         if (!exceptionCalculation)
                           ElevatedButton(
-                              onPressed: () async {
-                                final newScore = widget.patientID == 0
-                                    ? Score(
-                                        creationDate: DateFormat("yyyy-MM-dd")
-                                            .format(DateTime.now()),
-                                        elevationAngleInjured: elevationInjured,
-                                        elevationAngleHealthy: elevationHealthy,
-                                        bbScore: bbScore,
-                                        notes: "")
-                                    : Score(
-                                        creationDate: DateFormat("yyyy-MM-dd")
-                                            .format(DateTime.now()),
-                                        elevationAngleInjured: elevationInjured,
-                                        elevationAngleHealthy: elevationHealthy,
-                                        bbScore: bbScore,
-                                        patientId: widget.patientID,
-                                        notes: "");
-
-                                await blocScore.addScoreWithRepetition(
-                                    newScore,
-                                    List.from(allRangesAcc),
-                                    List.from(allRangesGyro),
-                                    elevationInjured,
-                                    elevationHealthy);
-
-                                measureBloc.endMeasure();
-
+                              onPressed: () {
+                                measureBloc.saveToDataBase(widget.patientID);
                                 if (widget.patientID == 0) {
                                   Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              const HomePage()));
+                                          const HomePage()));
                                 } else {
                                   Navigator.pushReplacement(
                                       context,
@@ -313,19 +278,19 @@ class _Measure2 extends State<MeasurePage2> {
                                           builder: (context) =>
                                               OverallPatientPage(
                                                   patientId:
-                                                      widget.patientID)));
+                                                  widget.patientID)));
                                 }
                               },
                               child: const Text("Validate")),
                         ElevatedButton(
-                            onPressed: () async {
+                            onPressed: () {
                               measureBloc.endMeasure();
                               if (widget.patientID == 0) {
                                 Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            const HomePage()));
+                                        const HomePage()));
                               } else {
                                 Navigator.pushReplacement(
                                     context,
@@ -349,261 +314,103 @@ class _Measure2 extends State<MeasurePage2> {
     );
   }
 
-  Widget midResult2(List<Measure> measure) {
-    final allResultsAcc = <List<double>>[];
-    final allResultsGyro = <List<double>>[];
-    final score = PScoreLive(allMeasures: measure);
-    final String length = measure.length.toString();
 
-    if (widget.nbRepetition * 2 == measure.length) {
-      try {
-        for (int i = 0; i < widget.nbRepetition * 2; i++) {
-          allResultsAcc.add(score.getRanges(measure[i].accelValues));
-          allResultsGyro.add(score.getRanges(measure[i].gyroValues));
-        }
-      } catch (exception) {
-        exceptionCalculation = true;
-        return Column(
-          children: const [
-            Center(
-              child: Text(
-                  "Error in calculation, it can happen when the smartphone is not moving during the measure. Please try again."),
-            ),
-          ],
-        );
-      }
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Text("Measure validation",
-                style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.w900)),
-          ),
-          const SizedBox(height: 20),
-          ListView(
-            children: [
-              for (int i = 0; i < widget.nbRepetition * 2 - 1; i += 2)
-                Container(
-                  margin: const EdgeInsets.all(8.0),
-                  child: Card(
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                    child: Column(
-                      children: [
-                        //tab here
-                        Text(
-                          "Ranges for Repetition ${i ~/ 2 + 1}",
-                          style: const TextStyle(
-                              fontSize: 18.0, fontWeight: FontWeight.w900),
-                        ),
-                        Text(
-                            "Hand Back, Accelerometer, X Axis : ${allResultsAcc[i][0]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Back, Accelerometer, Y Axis : ${allResultsAcc[i][1]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Back, Accelerometer, Z Axis : ${allResultsAcc[i][2]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Back, Gyroscope, X Axis : ${allResultsGyro[i][0]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Back, Gyroscope, Y Axis : ${allResultsGyro[i][1]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Back, Gyroscope, Z Axis : ${allResultsGyro[i][2]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Up, Accelerometer, X Axis : ${allResultsAcc[i + 1][0]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Up, Accelerometer, Y Axis : ${allResultsAcc[i + 1][1]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Up, Accelerometer, Z Axis : ${allResultsAcc[i + 1][2]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Up, Gyroscope, X Axis : ${allResultsGyro[i + 1][0]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Up, Gyroscope, Y Axis : ${allResultsGyro[i + 1][1]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Up, Gyroscope, Z Axis : ${allResultsGyro[i + 1][2]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                      ],
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      primary: Colors.green,
-                      //background color of button
-                      side: const BorderSide(width: 3, color: Colors.green),
-                      //border width and color
-                      elevation: 3,
-                      //elevation of button
-                      shape: RoundedRectangleBorder(
-                          //to set border radius to button
-                          borderRadius: BorderRadius.circular(30)),
-                      padding: const EdgeInsets.all(
-                          20) //content padding inside button
-                      ),
-                  onPressed: () {},
-                  child: const Text("CONTINUE")),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      primary: Colors.red,
-                      //background color of button
-                      side: const BorderSide(width: 3, color: Colors.red),
-                      //border width and color
-                      elevation: 3,
-                      //elevation of button
-                      shape: RoundedRectangleBorder(
-                          //to set border radius to button
-                          borderRadius: BorderRadius.circular(30)),
-                      padding: const EdgeInsets.all(
-                          20) //content padding inside button
-                      ),
-                  onPressed: () {},
-                  child: const Text("CANCEL")),
-            ],
-          ),
-        ],
-      );
-    }
-    return Text(
-        "Error while calculating middle score, length : $length, nbRepetition : ${widget.nbRepetition}");
+  Widget midResult(List<List<double>> allResultsAcc, List<List<double>> allResultsGyro, int error) {
+     if (error == 2) {
+       return const Text(
+           "Error while calculating middle score, length error in data lists");
+     } else if (error == 1) {
+         return Column(
+           children: const [
+             Center(
+               child: Text(
+                   "Error in calculation, it can happen when the smartphone is not moving during the measure. Please try again."),
+             ),
+           ],
+         );
+       } else {
+         return Column(
+           children: [
+             for (int i = 0; i < widget.nbRepetition * 2 - 1; i += 2)
+               Column(
+                 children: [
+                   Text(
+                     "Ranges for Repetition ${i ~/ 2 + 1}",
+                     style: const TextStyle(
+                         fontSize: 18.0, fontWeight: FontWeight.w900),
+                   ),
+                   Text(
+                       "Hand Back, Accelerometer, X Axis : ${allResultsAcc[i][0]}",
+                       style: const TextStyle(fontSize: 20.0)),
+                   Text(
+                       "Hand Back, Accelerometer, Y Axis : ${allResultsAcc[i][1]}",
+                       style: const TextStyle(fontSize: 20.0)),
+                   Text(
+                       "Hand Back, Accelerometer, Z Axis : ${allResultsAcc[i][2]}",
+                       style: const TextStyle(fontSize: 20.0)),
+                   Text(
+                       "Hand Back, Gyroscope, X Axis : ${allResultsGyro[i][0]}",
+                       style: const TextStyle(fontSize: 20.0)),
+                   Text(
+                       "Hand Back, Gyroscope, Y Axis : ${allResultsGyro[i][1]}",
+                       style: const TextStyle(fontSize: 20.0)),
+                   Text(
+                       "Hand Back, Gyroscope, Z Axis : ${allResultsGyro[i][2]}",
+                       style: const TextStyle(fontSize: 20.0)),
+                   Text(
+                       "Hand Up, Accelerometer, X Axis : ${allResultsAcc[i +
+                           1][0]}",
+                       style: const TextStyle(fontSize: 20.0)),
+                   Text(
+                       "Hand Up, Accelerometer, Y Axis : ${allResultsAcc[i +
+                           1][1]}",
+                       style: const TextStyle(fontSize: 20.0)),
+                   Text(
+                       "Hand Up, Accelerometer, Z Axis : ${allResultsAcc[i +
+                           1][2]}",
+                       style: const TextStyle(fontSize: 20.0)),
+                   Text("Hand Up, Gyroscope, X Axis : ${allResultsGyro[i +
+                       1][0]}",
+                       style: const TextStyle(fontSize: 20.0)),
+                   Text("Hand Up, Gyroscope, Y Axis : ${allResultsGyro[i +
+                       1][1]}",
+                       style: const TextStyle(fontSize: 20.0)),
+                   Text("Hand Up, Gyroscope, Z Axis : ${allResultsGyro[i +
+                       1][2]}",
+                       style: const TextStyle(fontSize: 20.0)),
+                 ],
+               ),
+           ],
+         );
+       }
+
+
   }
 
-  Widget midResult(List<Measure> measure) {
-    final allResultsAcc = <List<double>>[];
-    final allResultsGyro = <List<double>>[];
-    final score = PScoreLive(allMeasures: measure);
-    final String length = measure.length.toString();
-
-    if (widget.nbRepetition * 2 == measure.length) {
-      try {
-        for (int i = 0; i < widget.nbRepetition * 2; i++) {
-          allResultsAcc.add(score.getRanges(measure[i].accelValues));
-          allResultsGyro.add(score.getRanges(measure[i].gyroValues));
-        }
-      } catch (exception) {
-        exceptionCalculation = true;
-        return Column(
-          children: const [
-            Center(
-              child: Text(
-                  "Error in calculation, it can happen when the smartphone is not moving during the measure. Please try again."),
-            ),
-          ],
-        );
-      }
-      return Column(
-        children: [
-          for (int i = 0; i < widget.nbRepetition * 2 - 1; i += 2)
-            Column(
-              children: [
-                Text(
-                  "Ranges for Repetition ${i ~/ 2 + 1}",
-                  style: const TextStyle(
-                      fontSize: 18.0, fontWeight: FontWeight.w900),
-                ),
-                Text(
-                    "Hand Back, Accelerometer, X Axis : ${allResultsAcc[i][0]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text(
-                    "Hand Back, Accelerometer, Y Axis : ${allResultsAcc[i][1]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text(
-                    "Hand Back, Accelerometer, Z Axis : ${allResultsAcc[i][2]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text("Hand Back, Gyroscope, X Axis : ${allResultsGyro[i][0]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text("Hand Back, Gyroscope, Y Axis : ${allResultsGyro[i][1]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text("Hand Back, Gyroscope, Z Axis : ${allResultsGyro[i][2]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text(
-                    "Hand Up, Accelerometer, X Axis : ${allResultsAcc[i + 1][0]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text(
-                    "Hand Up, Accelerometer, Y Axis : ${allResultsAcc[i + 1][1]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text(
-                    "Hand Up, Accelerometer, Z Axis : ${allResultsAcc[i + 1][2]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text("Hand Up, Gyroscope, X Axis : ${allResultsGyro[i + 1][0]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text("Hand Up, Gyroscope, Y Axis : ${allResultsGyro[i + 1][1]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text("Hand Up, Gyroscope, Z Axis : ${allResultsGyro[i + 1][2]}",
-                    style: const TextStyle(fontSize: 20.0)),
-              ],
-            ),
-        ],
-      );
-    }
-    return Text(
-        "Error while calculating middle score, length : $length, nbRepetition : ${widget.nbRepetition}");
-  }
-
-  int _calculateScores(List<Measure> measures) {
-    if (widget.nbRepetition * 4 == measures.length) {
-      try {
-        final mpScoreLive = PScoreLive(allMeasures: measures);
-        for (int i = 0; i < widget.nbRepetition * 4; i++) {
-          allRangesAcc.add(mpScoreLive.getRanges(measures[i].accelValues));
-          allRangesGyro.add(mpScoreLive.getRanges(measures[i].gyroValues));
-        }
-        mpScoreLive.computeScore();
-        bbScore = mpScoreLive.bbScore;
-        final mAngleScoreLive = AngleScoreLive(allMeasures: measures);
-        mAngleScoreLive.computeScore();
-        elevationInjured = mAngleScoreLive.elevationInjured;
-        elevationHealthy = mAngleScoreLive.elevationHealthy;
-        return 1;
-      } catch (exception) {
-        exceptionCalculation = true;
-        return -1;
-      }
-    }
-    return 0;
-  }
-
-  Widget finalResults(List<Measure> measures) {
-    if (_calculateScores(measures) == 1) {
-      return Column(
-        children: [
-          Text("BBScore : $bbScore", style: const TextStyle(fontSize: 20.0)),
-          Text("Elevation Angle Healthy : $elevationHealthy",
-              style: const TextStyle(fontSize: 20.0)),
-          Text("Elevation Angle Injured : $elevationInjured",
-              style: const TextStyle(fontSize: 20.0)),
-        ],
-      );
-    } else if (_calculateScores(measures) == 0) {
-      return Column(
-        children: const [
-          Text("Error in score calculation!", style: TextStyle(fontSize: 20.0)),
-        ],
-      );
-    } else {
+  Widget finalResults(int error, List<double> values) { // lui passer un score
+    if (error == 1) {
       return Column(
         children: const [
           Center(
             child: Text(
                 "Error in calculation, it can happen when the smartphone is not moving during the measure. Please try again."),
           ),
+        ],
+      );
+    } else if (error == 2) {
+      return Column(
+        children: const [
+          Text("Error while calculating final score, length error in data lists", style: TextStyle(fontSize: 20.0)),
+        ],
+      );
+    } else {
+      return Column(
+        children: [
+          Text("BBScore : ${values[0]}", style: const TextStyle(fontSize: 20.0)),
+          Text("Elevation Angle Healthy : ${values[1]}",
+              style: const TextStyle(fontSize: 20.0)),
+          Text("Elevation Angle Injured : ${values[2]}",
+              style: const TextStyle(fontSize: 20.0)),
         ],
       );
     }
@@ -688,13 +495,21 @@ class _Measure2 extends State<MeasurePage2> {
                       const EdgeInsets.all(20) //content padding inside button
                   ),
               onPressed: () {
-                //measureBloc.cancelMeasure();
                 measureBloc.endMeasure();
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                        const HomePage()));
+                if (widget.patientID == 0) {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                          const HomePage()));
+                } else {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              OverallPatientPage(
+                                  patientId: widget.patientID)));
+                }
               },
               child: const Text("CANCEL")),
         ],
