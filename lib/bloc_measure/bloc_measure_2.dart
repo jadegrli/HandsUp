@@ -30,7 +30,7 @@ class MeasureBloc2  {
   final DataBaseBlocScore blocScore = DataBaseBlocScore();
 
 
-  //static bool isCanceled = false;
+  static bool isCanceled = false;
 
 
   MeasureBloc2() {
@@ -42,34 +42,34 @@ class MeasureBloc2  {
     _measureController.sink.add(StateLoading([], [], [], 0));
     sensorsRepository.initSensor();
     for (int i = 0; i < nbRepetition; ++i) {
-      /*if (isCanceled) {
+      if (isCanceled) {
         _measureController.sink.add(StateAllMeasuresCanceled([], [], [], 0));
         return;
-      }*/
+      }
       _measureController.sink.add(StateRest([], [], [], 0));
       await Future.delayed(Duration(seconds: movementDuration), () {});
-      /*if (isCanceled) {
+      if (isCanceled) {
         _measureController.sink.add(StateAllMeasuresCanceled([], [], [], 0));
         return;
-      }*/
+      }
       _measureController.sink.add(StateHandBack([], [], [], 0));
       await sensorsRepository.sensorsMeasure(movementDuration);
-      /*if (isCanceled) {
+      if (isCanceled) {
         _measureController.sink.add(StateAllMeasuresCanceled([], [], [], 0));
         return;
-      }*/
+      }
       _measureController.sink.add(StateRest([], [], [], 0));
       await Future.delayed(Duration(seconds: movementDuration), () {});
-      /*if (isCanceled) {
+      if (isCanceled) {
         _measureController.sink.add(StateAllMeasuresCanceled([], [], [], 0));
         return;
-      }*/
+      }
       _measureController.sink.add(StateHandUp([], [], [], 0));
       await sensorsRepository.sensorsMeasure(movementDuration);
-      /*if (isCanceled) {
+      if (isCanceled) {
         _measureController.sink.add(StateAllMeasuresCanceled([], [], [], 0));
         return;
-      }*/
+      }
     }
     _measureController.sink.add(StateLoading([], [], [], 0));
     if (firstSide) {
@@ -152,12 +152,12 @@ class MeasureBloc2  {
     }
     return errorType;
   }
-  /*
+
   cancelMeasure() {
     isCanceled = true;
     //throw loading state of canceling
     _measureController.sink.add(StateAllMeasuresLoadingOfCancel([], [], [], 0));
-  }*/
+  }
 
   endMeasure() async {
     sensorsRepository.reset();
@@ -219,14 +219,10 @@ class StateAllMeasuresSecondSide extends MeasureStates {
   StateAllMeasuresSecondSide(List<List<double>> allResultsAcc, List<List<double>> allResultsGyro, List<double> values, int error) : super(allResultsAcc, allResultsGyro, values, error);
 }
 
-class StateSaveToDatabase extends MeasureStates {
-  StateSaveToDatabase(List<List<double>> allResultsAcc, List<List<double>> allResultsGyro, List<double> values, int error) : super(allResultsAcc, allResultsGyro, values, error);
-}
-/*
 class StateAllMeasuresLoadingOfCancel extends MeasureStates {
   StateAllMeasuresLoadingOfCancel(List<List<double>> allResultsAcc, List<List<double>> allResultsGyro, List<double> values, int error) : super(allResultsAcc, allResultsGyro, values, error);
 }
 
 class StateAllMeasuresCanceled extends MeasureStates {
   StateAllMeasuresCanceled(List<List<double>> allResultsAcc, List<List<double>> allResultsGyro, List<double> values, int error) : super(allResultsAcc, allResultsGyro, values, error);
-}*/
+}

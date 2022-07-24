@@ -40,7 +40,7 @@ class _Measure2 extends State<MeasurePage2> {
     _timer.cancel();
     timerLaunched = false;
   }
-
+/*
   final player = AudioPlayer();
 
   playSoundTransition() async
@@ -57,7 +57,7 @@ class _Measure2 extends State<MeasurePage2> {
     await player2.play(AssetSource('sounds/validation_sound.mp3'));
   }
 
-
+*/
   void startTimer() {
     timerLaunched = true;
     _start = widget.duration;
@@ -97,8 +97,8 @@ class _Measure2 extends State<MeasurePage2> {
   void dispose() {
     super.dispose();
     _timer.cancel();
-    player.dispose();
-    player2.dispose();
+    //player.dispose();
+   // player2.dispose();
     //unhide the bottom system navigation bar
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
@@ -109,7 +109,6 @@ class _Measure2 extends State<MeasurePage2> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    //measureBloc.dispose();
   }
 
   @override
@@ -139,7 +138,7 @@ class _Measure2 extends State<MeasurePage2> {
 
               if (snapshot.data is StateRest) {
                 if (lastState != "Rest") {
-                  playSoundTransition();
+                  //playSoundTransition();
                   if (timerLaunched) stopTimer();
                   startTimer();
                 }
@@ -149,7 +148,7 @@ class _Measure2 extends State<MeasurePage2> {
 
               if (snapshot.data is StateHandBack) {
                 if (lastState != "Hand back") {
-                  playSoundTransition();
+                  //playSoundTransition();
                   if (timerLaunched) stopTimer();
                   startTimer();
                 }
@@ -159,7 +158,7 @@ class _Measure2 extends State<MeasurePage2> {
 
               if (snapshot.data is StateHandUp) {
                 if (lastState != "Hand up") {
-                  playSoundTransition();
+                  //playSoundTransition();
                   if (timerLaunched) stopTimer();
                   startTimer();
                 }
@@ -167,7 +166,7 @@ class _Measure2 extends State<MeasurePage2> {
                 return movement(context, "Hand up");
               }
 
-              /*
+
               if (snapshot.data is StateAllMeasuresLoadingOfCancel) {
                 lastState = "Cancelling";
                 return Center(
@@ -210,11 +209,11 @@ class _Measure2 extends State<MeasurePage2> {
                     ],
                   ),
                 );
-              }*/
+              }
 
               if (snapshot.data is StateAllMeasuresFirstSide) {
                 lastState = "Mid result";
-                playSoundMeasurePages();
+                //playSoundMeasurePages();
                 return SingleChildScrollView(
                   child: Center(
                     child: Column(
@@ -254,7 +253,7 @@ class _Measure2 extends State<MeasurePage2> {
 
               if (snapshot.data is StateAllMeasuresSecondSide) {
                 lastState = "Final result";
-                playSoundMeasurePages();
+                //playSoundMeasurePages();
                 return SingleChildScrollView(
                   child: Center(
                     child: Column(
