@@ -222,7 +222,7 @@ class _LineChartSample extends State<LineChartSample> {
   }
 
   /// on commence avec le premier jour ou le premier mois car trop difficile de gérer les mois (certains on 30 jours, d'autres 31, 28 ou 29 avec années bissextiles)
-  double monthLength(String month) {
+  /*double monthLength(String month) {
     if (month == "01" || month == "03" || month == "05" || month == "07" || month == "08" || month == "10" || month == "12") {
       return 2678400000;
     } else if (month == "02") {
@@ -230,7 +230,7 @@ class _LineChartSample extends State<LineChartSample> {
     } else {
       return 2592000000;
     }
-  }
+  }*/
 
   void getDataFromDbAngle(List<Score> scoreList) {
     double minX = double.maxFinite;
@@ -239,9 +239,6 @@ class _LineChartSample extends State<LineChartSample> {
     List<Score> newScoreListHealthy = dayOrMonth == "Days" ? sortScoreDayAngle(scoreList, true) : sortScoreMonthAngle(scoreList, true);
     List<Score> newScoreListInjured = dayOrMonth == "Days" ? sortScoreDayAngle(scoreList, false) : sortScoreMonthAngle(scoreList, false);
     final format = DateFormat("yyyy-MM-dd");
-
-    String max = "";
-    String min = "";
 
     spotListAngleInjured = newScoreListInjured.map((score) {
       var dt = dayOrMonth == "Days" ?  format
@@ -253,11 +250,9 @@ class _LineChartSample extends State<LineChartSample> {
           .toDouble();
       if (minX > dt) {
         minX = dt;
-        min = score.creationDate.substring(5,7);
       }
       if (maxX < dt) {
         maxX = dt;
-        max = score.creationDate.substring(5,7);
       }
       return FlSpot(
         dt,

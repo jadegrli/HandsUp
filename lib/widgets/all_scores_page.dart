@@ -47,7 +47,7 @@ class _AllScoresPage extends State<AllScoresPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ScorePage(score: snapshot.data![index])),
+                            builder: (context) => ScorePage(id: snapshot.data![index].id!, patientId: 0,)),
                       );
                     },
                   );

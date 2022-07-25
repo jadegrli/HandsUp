@@ -520,12 +520,6 @@ class _HomePage extends State<HomePage> {
                                                 OverallPatientPage(
                                                     patientId: snapshot
                                                         .data![index].id!)));
-                                    /*Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => PatientPage(
-                                                patientId:
-                                                    snapshot.data![index].id!)));*/
                                   },
                                 );
                               },
