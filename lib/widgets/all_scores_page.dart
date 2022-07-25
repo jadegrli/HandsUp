@@ -6,7 +6,7 @@ import '../bloc_database/db_bloc_score.dart';
 import '../models/score.dart';
 
 
-
+//TODO remove this page when test finished
 
 class AllScoresPage extends StatefulWidget {
   const AllScoresPage({Key? key}) : super(key: key);
