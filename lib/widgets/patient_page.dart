@@ -7,7 +7,7 @@ import '../bloc_database/db_bloc_patient.dart';
 import '../models/patient.dart';
 import '../models/score.dart';
 import 'home_page.dart';
-import 'measure_page.dart';
+import 'measure_page_2.dart';
 
 class PatientPage extends StatefulWidget {
   //final Patient patient;
@@ -453,7 +453,7 @@ class _PatientPage extends State<PatientPage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => MeasurePage(
+                                        builder: (context) => MeasurePage2(
                                             nbRepetition:
                                                 int.parse(nbRepetition),
                                             duration:

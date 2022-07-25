@@ -28,6 +28,8 @@ class _LineChartSample extends State<LineChartSample> {
   double _maxXAngle = 0;
   final double _minYAngle = 0;
   final double _maxYAngle = 180;
+  String dayOrMonth = "Days";
+  var dayOrMonthList = ["Days", "Months"];
 
   @override
   void initState() {
@@ -194,12 +196,15 @@ class _LineChartSample extends State<LineChartSample> {
     double minX = double.maxFinite;
     double maxX = double.minPositive;
 
-    List<Score> newScoreList = sortScoreDayBBScore(scoreList);
+    List<Score> newScoreList = dayOrMonth == "Days" ? sortScoreDayBBScore(scoreList) : sortScoreMonthBBScore(scoreList);
     final format = DateFormat("yyyy-MM-dd");
 
     spotListBBScore = newScoreList.map((score) {
-      var dt = format
-          .parse(score.creationDate, true)
+      var dt = dayOrMonth == "Days" ?  format
+          .parse(score.creationDate.substring(0,10)+" 00:00:00.000", true)
+          .millisecondsSinceEpoch
+          .toDouble() : format
+          .parse(score.creationDate.substring(0,7)+"-01 00:00:00.000", true)
           .millisecondsSinceEpoch
           .toDouble();
       if (minX > dt) minX = dt;
@@ -210,34 +215,63 @@ class _LineChartSample extends State<LineChartSample> {
       );
     }).toList();
 
-    _minXBBScore = minX - 86400000; //one day before in ms
-    _maxXBBScore = maxX + 86400000; //one day after in ms
+    /*_minXBBScore = dayOrMonth == "Days" ? minX - 86400000 : minX - 2629800000; //one day/month before in ms
+    _maxXBBScore = dayOrMonth == "Days" ? maxX + 86400000 : maxX + 2629800000; //one day/month after in ms*/
+    _minXBBScore =  minX;
+    _maxXBBScore = maxX;
+  }
+
+  /// on commence avec le premier jour ou le premier mois car trop difficile de gérer les mois (certains on 30 jours, d'autres 31, 28 ou 29 avec années bissextiles)
+  double monthLength(String month) {
+    if (month == "01" || month == "03" || month == "05" || month == "07" || month == "08" || month == "10" || month == "12") {
+      return 2678400000;
+    } else if (month == "02") {
+      return 2419200000;
+    } else {
+      return 2592000000;
+    }
   }
 
   void getDataFromDbAngle(List<Score> scoreList) {
     double minX = double.maxFinite;
     double maxX = double.minPositive;
 
-    List<Score> newScoreListHealthy = sortScoreDayAngle(scoreList, true);
-    List<Score> newScoreListInjured = sortScoreDayAngle(scoreList, false);
+    List<Score> newScoreListHealthy = dayOrMonth == "Days" ? sortScoreDayAngle(scoreList, true) : sortScoreMonthAngle(scoreList, true);
+    List<Score> newScoreListInjured = dayOrMonth == "Days" ? sortScoreDayAngle(scoreList, false) : sortScoreMonthAngle(scoreList, false);
     final format = DateFormat("yyyy-MM-dd");
 
+    String max = "";
+    String min = "";
+
     spotListAngleInjured = newScoreListInjured.map((score) {
-      var dt = format
-          .parse(score.creationDate, true)
+      var dt = dayOrMonth == "Days" ?  format
+          .parse(score.creationDate.substring(0,10) + " 00:00:00.000", true)
+          .millisecondsSinceEpoch
+          .toDouble() : format
+          .parse(score.creationDate.substring(0,7) + "-01 00:00:00.000", true)
           .millisecondsSinceEpoch
           .toDouble();
-      if (minX > dt) minX = dt;
-      if (maxX < dt) maxX = dt;
+      if (minX > dt) {
+        minX = dt;
+        min = score.creationDate.substring(5,7);
+      }
+      if (maxX < dt) {
+        maxX = dt;
+        max = score.creationDate.substring(5,7);
+      }
       return FlSpot(
         dt,
         score.elevationAngleInjured > 180 ? 180 : score.elevationAngleInjured.toInt().toDouble() < 0 ? 0 : score.elevationAngleInjured.toInt().toDouble(),
       );
     }).toList();
 
+
     spotListAngleHealthy = newScoreListHealthy.map((score) {
-      var dt = format
-          .parse(score.creationDate, true)
+      var dt = dayOrMonth == "Days" ?  format
+          .parse(score.creationDate.substring(0,10)+" 00:00:00.000", true)
+          .millisecondsSinceEpoch
+          .toDouble() : format
+          .parse(score.creationDate.substring(0,7)+"-01 00:00:00.000", true)
           .millisecondsSinceEpoch
           .toDouble();
       return FlSpot(
@@ -246,9 +280,12 @@ class _LineChartSample extends State<LineChartSample> {
       );
     }).toList();
 
-    _minXAngle = minX ;//- 86400000; //one day before in ms
-    _maxXAngle = maxX ;//+ 86400000; //one day after in ms
+    /*_minXAngle = dayOrMonth == "Days" ? minX - 86400000 : minX - monthLength(max); //one day before in ms
+    _maxXAngle = dayOrMonth == "Days" ? maxX + 86400000 : maxX + monthLength(min); //one day/month after in ms*/
+    _minXAngle = minX; //one day before in ms
+    _maxXAngle = maxX;
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -258,6 +295,52 @@ class _LineChartSample extends State<LineChartSample> {
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
+              Padding(padding: const EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 10),
+                child: Row(
+                  children: [
+                    const Text("Choose interval : ", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
+                    const SizedBox(width: 20,),
+                    DecoratedBox(
+                      // to style the dropdown button
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          //background color of dropdown button
+                          borderRadius: BorderRadius.circular(30),
+                          //border raiuds of dropdown button
+                          boxShadow: const <BoxShadow>[
+                            //apply shadow on Dropdown button
+                            BoxShadow(
+                                color:
+                                Color.fromRGBO(0, 0, 0, 0.57),
+                                //shadow for button
+                                blurRadius: 5)
+                            //blur radius of shadow
+                          ]),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 30, right: 30),
+                        child: DropdownButton(
+                          value: dayOrMonth,
+                          icon: const Icon(
+                              Icons.keyboard_arrow_down),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              dayOrMonth = newValue!;
+                            });
+                          },
+                          items: dayOrMonthList
+                              .map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                        ),
+                      ),
+                    ),
+                  ],
+                )),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Container(
@@ -331,7 +414,6 @@ class _LineChartSample extends State<LineChartSample> {
                   ),
                 ),
               ),
-
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Container(
@@ -479,12 +561,12 @@ class _LineChartSample extends State<LineChartSample> {
       );
 
   LineChartData get sampleDataAngle => LineChartData(
-    lineTouchData: lineTouchData, //ok
-    gridData: gridData, //ok
-    titlesData: titlesDataAngle, //ok
-    borderData: borderData, //ok
+    lineTouchData: lineTouchData,
+    gridData: gridData,
+    titlesData: titlesDataAngle,
+    borderData: borderData,
     lineBarsData: lineBarsDataAngle,
-    minX: _minXAngle,//ok tout ça
+    minX: _minXAngle,
     maxX: _maxXAngle,
     minY: _minYAngle,
     maxY: _maxYAngle,
@@ -528,9 +610,6 @@ class _LineChartSample extends State<LineChartSample> {
   );
 
   List<LineChartBarData> get lineBarsDataBBScore => [
-        /*lineChartBarData1_1,
-        lineChartBarData1_2,
-        lineChartBarData1_3,*/
         lineChartBarDataBBScore
       ];
 
@@ -542,11 +621,11 @@ class _LineChartSample extends State<LineChartSample> {
   SideTitles get bottomTitles => SideTitles(
         showTitles: true,
         reservedSize: 80,
-        interval: 86400000, //one day in ms
-        getTitlesWidget: bottomTitleWidgets,
+        interval: dayOrMonth == "Days" ? 86400000 : 2629800000, //one day in ms
+        getTitlesWidget: dayOrMonth == "Days" ? bottomTitleWidgetsDays : bottomTitleWidgetsMonth,
       );
 
-  Widget bottomTitleWidgets(double value, TitleMeta meta) {
+  Widget bottomTitleWidgetsDays(double value, TitleMeta meta) {
     const style = TextStyle(
       color: Color(0xff72719b),
       fontWeight: FontWeight.bold,
@@ -555,6 +634,31 @@ class _LineChartSample extends State<LineChartSample> {
 
     final DateTime date = DateTime.fromMillisecondsSinceEpoch(value.toInt());
     final String dateFormat = DateFormat("yyyy-MM-dd").format(date);
+
+    Widget text = Text(
+      dateFormat,
+      style: style,
+    );
+
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      space: 10,
+      child: RotatedBox( //to display the text vertically
+        quarterTurns: 1,
+        child: text,
+      ),
+    );
+  }
+
+  Widget bottomTitleWidgetsMonth(double value, TitleMeta meta) {
+    const style = TextStyle(
+      color: Color(0xff72719b),
+      fontWeight: FontWeight.bold,
+      fontSize: 10,
+    );
+
+    final DateTime date = DateTime.fromMillisecondsSinceEpoch(value.toInt());
+    final String dateFormat = DateFormat("yyyy-MM").format(date);
 
     Widget text = Text(
       dateFormat,
