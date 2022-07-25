@@ -40,7 +40,7 @@ class MeasureBloc2  {
 
   launchSide(int nbRepetition, int movementDuration, bool firstSide) async {
     _measureController.sink.add(StateLoading([], [], [], 0));
-    sensorsRepository.initSensor();
+    if (firstSide) sensorsRepository.initSensor();
     for (int i = 0; i < nbRepetition; ++i) {
       if (isCanceled) {
         _measureController.sink.add(StateAllMeasuresCanceled([], [], [], 0));
@@ -160,8 +160,9 @@ class MeasureBloc2  {
   }
 
   endMeasure() async {
+    _measureController.sink.add(StateReady([], [], [], 0));
     sensorsRepository.reset();
-    //isCanceled = false;
+    isCanceled = false;
     midRangesAcc.clear();
     midRangesGyro.clear();
     allRangesAcc.clear();
@@ -169,7 +170,6 @@ class MeasureBloc2  {
     bbScore = 0;
     elevationAngleHealthy = 0;
     elevationAngleInjured = 0;
-    _measureController.sink.add(StateReady([], [], [], 0));
   }
 
   dispose() {

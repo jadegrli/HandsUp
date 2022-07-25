@@ -96,7 +96,7 @@ class _Measure2 extends State<MeasurePage2> {
   @override
   void dispose() {
     super.dispose();
-    _timer.cancel();
+    //_timer.cancel();
     //player.dispose();
    // player2.dispose();
     //unhide the bottom system navigation bar
@@ -494,7 +494,8 @@ class _Measure2 extends State<MeasurePage2> {
                       const EdgeInsets.all(20) //content padding inside button
                   ),
               onPressed: () {
-                measureBloc.endMeasure();
+                measureBloc.cancelMeasure();
+                /*measureBloc.endMeasure();
                 if (widget.patientID == 0) {
                   Navigator.pushReplacement(
                       context,
@@ -508,7 +509,7 @@ class _Measure2 extends State<MeasurePage2> {
                           builder: (context) =>
                               OverallPatientPage(
                                   patientId: widget.patientID)));
-                }
+                }*/
               },
               child: const Text("CANCEL")),
         ],

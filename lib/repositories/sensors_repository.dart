@@ -36,7 +36,6 @@ class SensorsRepository {
     });
   }
 
-
   void initSensor() {
     _streamSubscriptions.add(
       accelerometerEvents.listen((AccelerometerEvent event) {
@@ -81,6 +80,28 @@ class SensorsRepository {
   //erase all values from gyro sensor values tab
   void _clearGyro() {
     gyroValuesTab.clear();
+  }
+
+  void resetInterm() {
+    for (final subscription in _streamSubscriptions) {
+      subscription.cancel();
+    }
+    _streamSubscriptions.add(
+      accelerometerEvents.listen((AccelerometerEvent event) {
+        _addValToTabAcc(event);
+      }),
+    );
+
+    _streamSubscriptions.add(
+      gyroscopeEvents.listen((GyroscopeEvent event) {
+        _addValToTabGyro(event);
+      }),
+    );
+
+    _streamSubscriptions.first.pause();
+    _streamSubscriptions.last.pause();
+    _clearAcc();
+    _clearGyro();
   }
 
   void reset() {
