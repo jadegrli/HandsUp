@@ -477,7 +477,7 @@ class _Measure2 extends State<MeasurePage2> {
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
                                   "${double.parse((allResultsAcc[i][1].toDouble()).toStringAsFixed(3))}" /*yA.toStringAsFixed(2)*/,
-                                  style: const TextStyle(fontSize: 15.0)),
+                                  style: const TextStyle(fontSize: 20.0)),
                             )
                           ],
                         ),
@@ -548,7 +548,7 @@ class _Measure2 extends State<MeasurePage2> {
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
                                   "${double.parse((allResultsGyro[i][1].toDouble()).toStringAsFixed(3))}" /*yA.toStringAsFixed(2)*/,
-                                  style: const TextStyle(fontSize: 15.0)),
+                                  style: const TextStyle(fontSize: 20.0)),
                             )
                           ],
                         ),
@@ -636,7 +636,7 @@ class _Measure2 extends State<MeasurePage2> {
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
                                   " ${double.parse((allResultsAcc[i + 1][1].toDouble()).toStringAsFixed(3))}" /*yA.toStringAsFixed(2)*/,
-                                  style: const TextStyle(fontSize: 15.0)),
+                                  style: const TextStyle(fontSize: 20.0)),
                             )
                           ],
                         ),
@@ -707,7 +707,7 @@ class _Measure2 extends State<MeasurePage2> {
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
                                   "${double.parse((allResultsGyro[i + 1][1].toDouble()).toStringAsFixed(3))}" /*yA.toStringAsFixed(2)*/,
-                                  style: const TextStyle(fontSize: 15.0)),
+                                  style: const TextStyle(fontSize: 20.0)),
                             )
                           ],
                         ),
@@ -759,7 +759,7 @@ class _Measure2 extends State<MeasurePage2> {
       );
     } else {
       return Container(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(15.0),
             margin: const EdgeInsets.all(20),
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(20)),

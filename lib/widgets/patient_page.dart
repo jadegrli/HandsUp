@@ -467,7 +467,7 @@ class _PatientPage extends State<PatientPage> {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.all(20.0),
+                          padding: const EdgeInsets.all(15.0),
                           margin: const EdgeInsets.all(20),
                           decoration: const BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(20)),

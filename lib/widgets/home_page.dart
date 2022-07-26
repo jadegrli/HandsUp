@@ -441,6 +441,9 @@ class _HomePage extends State<HomePage> {
                     ),
                     TextField(
                       controller: controller,
+                      onSubmitted: (value) {
+
+                      },
                       decoration: InputDecoration(
                         icon: const Icon(Icons.search_rounded),
                         hintStyle: const TextStyle(color: Colors.black),
@@ -474,28 +477,33 @@ class _HomePage extends State<HomePage> {
                     StreamBuilder<List<Patient>>(
                         stream: bloc.data,
                         builder: (context, snapshot) {
-                          switch (sortChoice) {
-                            case "A-Z":
-                              bloc.getAllPatients();
-                              break;
-                            case "Z-A":
-                              bloc.getAllPatientsZA();
-                              break;
-                            case "rotator cuff":
-                              bloc.getAllPatientPathology("Rotator cuff");
-                              break;
-                            case "frozen shoulder":
-                              bloc.getAllPatientPathology("Frozen shoulder");
-                              break;
-                            case "humerus fracture":
-                              bloc.getAllPatientPathology("Humerus fracture");
-                              break;
-                            case "other":
-                              bloc.getAllPatientPathology("Other");
-                              break;
-                            default:
-                              bloc.getAllPatients();
-                              break;
+                          if (controller.text.isEmpty) {
+                            switch (sortChoice) {
+                              case "A-Z":
+                                bloc.getAllPatients();
+                                break;
+                              case "Z-A":
+                                bloc.getAllPatientsZA();
+                                break;
+                              case "rotator cuff":
+                                bloc.getAllPatientPathology("Rotator cuff");
+                                break;
+                              case "frozen shoulder":
+                                bloc.getAllPatientPathology("Frozen shoulder");
+                                break;
+                              case "humerus fracture":
+                                bloc.getAllPatientPathology("Humerus fracture");
+                                break;
+                              case "other":
+                                bloc.getAllPatientPathology("Other");
+                                break;
+                              default:
+                                bloc.getAllPatients();
+                                break;
+                            }
+                          } else {
+                            String name = controller.text;
+                            bloc.getPatientsByName(query: name);
                           }
                           //bloc.getAllPatientPathology("Humerus fracture");
                           if (snapshot.data != null &&
