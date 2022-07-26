@@ -45,6 +45,9 @@ dependencies:
   async: ^2.8.2
   flutter_countdown_timer: ^4.1.0
   audioplayers: ^1.0.1
+  csv: ^5.0.1
+  share_plus: ^4.0.10
+  archive: ^3.3.1
 
 dev_dependencies:
   flutter_test:

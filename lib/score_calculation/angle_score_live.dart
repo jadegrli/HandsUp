@@ -56,7 +56,9 @@ class AngleScoreLive extends ScoreLive {
         angularRangeBackHealthy.length == angularRangeBackInjured.length*/
         ) {
       elevationInjured = maxInjured;
+      elevationInjured = double.parse(elevationInjured.toStringAsFixed(3));
       elevationHealthy = maxHealthy;
+      elevationHealthy = double.parse(elevationHealthy.toStringAsFixed(3));
     } else {
       throw Exception("Error in score calculation : not same number of repetition on both side");
     }

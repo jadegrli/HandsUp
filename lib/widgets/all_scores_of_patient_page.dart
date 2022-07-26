@@ -1,6 +1,7 @@
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:hands_up/export/export_data.dart';
 import 'package:hands_up/widgets/score_page.dart';
 
 import '../bloc_database/db_bloc_score.dart';

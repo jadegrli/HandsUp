@@ -1,8 +1,13 @@
 
 import 'package:flutter/material.dart';
+import 'package:hands_up/bloc_database/db_bloc_repetition.dart';
+import 'package:hands_up/export/export_data.dart';
 import 'package:hands_up/widgets/patient_page.dart';
 
+import '../bloc_database/db_bloc_score.dart';
 import '../graph/graph.dart';
+import '../models/repetition.dart';
+import '../models/score.dart';
 import 'all_scores_of_patient_page.dart';
 
 class OverallPatientPage extends StatefulWidget {
@@ -18,6 +23,9 @@ class _OverallPatientPage extends State<OverallPatientPage> {
   int pageIndex = 0;
   late int idPatient;
   bool showAppBar = true;
+   final blocScore = DataBaseBlocScore();
+   final blocRepetition = DataBaseBlocRepetition();
+   final export = ExportDataBloc();
 
   @override
   void initState() {
@@ -45,6 +53,11 @@ class _OverallPatientPage extends State<OverallPatientPage> {
             fontWeight: FontWeight.w600,
           ),
         ),
+        actions: [
+          IconButton(onPressed: () async {
+            export.export(widget.patientId);
+          }, icon: const Icon(Icons.share),)
+        ],
       ) : null,
       body: GestureDetector(
         onDoubleTap: () {
