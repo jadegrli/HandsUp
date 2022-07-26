@@ -17,6 +17,7 @@ class ExportDataBloc {
   final _patientRepository = PatientRepository();
   final _scoreRepository = ScoreRepository();
   final _repetitionRepository = RepetitionRepository();
+  String folderName = "";
 
 
 
@@ -121,6 +122,7 @@ class ExportDataBloc {
     }
 
     //zip folder
+    //TODO enlever le zip qui traine
     final Directory _appDocDir = await getApplicationDocumentsDirectory();
     final Directory _appDocDirFolder = Directory('${_appDocDir.path}/$patientFolderName/');
     print("test");
@@ -128,10 +130,12 @@ class ExportDataBloc {
     encoder.create('${_appDocDir.path}/$patientFolderName/$patientFolderName.zip');
     encoder.addDirectory(_appDocDirFolder);
     encoder.close();
+    folderName = _appDocDirFolder.path;
 
     //share file
-    Share.shareFiles(['${_appDocDirFolder.path}/$patientFolderName.zip'], text: 'All scores for patient');
-   // _appDocDirFolder.deleteSync(recursive: true);
+    await Share.shareFiles(['${_appDocDirFolder.path}/$patientFolderName.zip'], text: 'All scores for patient');
+    _appDocDirFolder.deleteSync(recursive: true);
   }
+
 
 }
