@@ -10,7 +10,6 @@ import 'home_page.dart';
 import 'measure_page_2.dart';
 
 class PatientPage extends StatefulWidget {
-  //final Patient patient;
   final int patientId;
 
   const PatientPage({Key? key, required this.patientId, patientID})
@@ -519,7 +518,7 @@ class _PatientPage extends State<PatientPage> {
                                                     children: [
                                                       const SizedBox(
                                                           height: 25),
-                                                      Text(
+                                                      Text(snapshot.data!.first.bbScore > 135 ? ">135%" :
                                                         "${snapshot.data!.first.bbScore ~/ 1}%",
                                                         style: const TextStyle(
                                                             color: Colors
@@ -558,12 +557,12 @@ class _PatientPage extends State<PatientPage> {
                                                           alignment:
                                                               Alignment.center,
                                                           children: [
-                                                            Text(
+                                                            Text(snapshot.data!.first.elevationAngleInjured > 180 ? ">180°" :
                                                               "${snapshot.data!.first.elevationAngleInjured ~/ 1}°",
                                                               style: const TextStyle(
                                                                   color: Colors
                                                                       .deepPurple,
-                                                                  fontSize: 23,
+                                                                  fontSize: 20,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold),
@@ -582,7 +581,7 @@ class _PatientPage extends State<PatientPage> {
                                                                   PieChartSectionData(
                                                                     color: Colors
                                                                         .deepPurple,
-                                                                    value: (snapshot.data!.first.elevationAngleInjured)
+                                                                    value: snapshot.data!.first.elevationAngleInjured > 180 ? 180 : (snapshot.data!.first.elevationAngleInjured)
                                                                         .toDouble(),
                                                                     title:
                                                                         "", //(snapshot.data!.last.elevationAngleInjured ~/ 1).toString(),
@@ -599,7 +598,7 @@ class _PatientPage extends State<PatientPage> {
                                                                   PieChartSectionData(
                                                                     color: const Color(
                                                                         0xff7699b7),
-                                                                    value: (180 -
+                                                                    value: snapshot.data!.first.elevationAngleInjured > 180 ? 0 : (180 -
                                                                         snapshot.data!.first.elevationAngleInjured)
                                                                         .toDouble(),
                                                                     title: "",
@@ -651,12 +650,12 @@ class _PatientPage extends State<PatientPage> {
                                                           alignment:
                                                               Alignment.center,
                                                           children: [
-                                                            Text(
+                                                            Text( snapshot.data!.first.elevationAngleHealthy > 180 ? ">180°":
                                                               "${snapshot.data!.first.elevationAngleHealthy ~/ 1}°",
                                                               style: const TextStyle(
                                                                   color: Colors
                                                                       .deepPurple,
-                                                                  fontSize: 23,
+                                                                  fontSize: 20,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold),
@@ -675,7 +674,7 @@ class _PatientPage extends State<PatientPage> {
                                                                   PieChartSectionData(
                                                                     color: Colors
                                                                         .deepPurple,
-                                                                    value: (snapshot.data!.first.elevationAngleHealthy)
+                                                                    value: snapshot.data!.first.elevationAngleHealthy > 180 ? 180 : (snapshot.data!.first.elevationAngleHealthy)
                                                                         .toDouble(),
                                                                     title:
                                                                         "", //(snapshot.data!.last.elevationAngleInjured ~/ 1).toString(),
@@ -692,7 +691,7 @@ class _PatientPage extends State<PatientPage> {
                                                                   PieChartSectionData(
                                                                     color: const Color(
                                                                         0xff7699b7),
-                                                                    value: (180 -
+                                                                    value: snapshot.data!.first.elevationAngleHealthy > 180 ? 0 : (180 -
                                                                             snapshot.data!.first.elevationAngleHealthy)
                                                                         .toDouble(),
                                                                     title: "",

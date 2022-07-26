@@ -60,11 +60,12 @@ class _HomePage extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xfff8f0f7),
         appBar: AppBar(
           centerTitle: true,
           elevation: 5,
           automaticallyImplyLeading: false,
-          backgroundColor: Colors.indigo[50],
+          backgroundColor: const Color(0xfff5eaf4),
           title: const Text(
             "HandsUp",
             style: TextStyle(color: Color(0xff000000)),
@@ -126,7 +127,7 @@ class _HomePage extends State<HomePage> {
                 margin: const EdgeInsets.all(20),
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(20)),
-                  color: Colors.lightBlueAccent,
+                  color: Color(0xffd5c6e5),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
                         color: Colors.black54,
@@ -138,11 +139,11 @@ class _HomePage extends State<HomePage> {
                   children: <Widget>[
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        const Text("QUICK START",
+                      children: const <Widget>[
+                        Text("QUICK START",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
-                        IconButton(
+                        /*IconButton(
                           icon: const Icon(Icons.quiz_outlined),
                           color: Colors.deepPurpleAccent,
                           iconSize: 25,
@@ -187,7 +188,7 @@ class _HomePage extends State<HomePage> {
                               ),
                             );
                           },
-                        ),
+                        ),*/
                       ],
                     ),
                     const SizedBox(height: 15),
@@ -282,6 +283,7 @@ class _HomePage extends State<HomePage> {
                       icon: const Icon(Icons.play_circle_outline),
                       label: const Text("NEW MEASUREMENT"),
                       style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff9f74cd)),
                           padding: MaterialStateProperty.all<EdgeInsets>(
                               const EdgeInsets.only(
                                   left: 50, right: 50, top: 15, bottom: 15))),
@@ -301,6 +303,7 @@ class _HomePage extends State<HomePage> {
                       icon: const Icon(Icons.format_list_bulleted_outlined),
                       label: const Text("All measures"),
                       style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff79b9c2)),
                           padding: MaterialStateProperty.all<EdgeInsets>(
                               const EdgeInsets.only(left: 50, right: 50))),
                       onPressed: () {
@@ -321,7 +324,7 @@ class _HomePage extends State<HomePage> {
                 margin: const EdgeInsets.all(10),
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(20)),
-                  color: Colors.lightBlueAccent,
+                  color: Color(0xffd5c6e5),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
                         color: Colors.black54,
@@ -336,7 +339,7 @@ class _HomePage extends State<HomePage> {
                       margin: const EdgeInsets.all(10),
                       decoration: const BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(20)),
-                        color: Colors.lightBlueAccent,
+                        color: Color(0xffeadaee),
                         boxShadow: <BoxShadow>[
                           BoxShadow(
                               color: Colors.black54,
@@ -387,7 +390,7 @@ class _HomePage extends State<HomePage> {
                               ),
                             ),
                           ),
-                          IconButton(
+                          /*IconButton(
                             icon: const Icon(Icons.quiz_outlined),
                             color: Colors.deepPurpleAccent,
                             iconSize: 25,
@@ -432,7 +435,7 @@ class _HomePage extends State<HomePage> {
                                 ),
                               );
                             },
-                          ),
+                          ),*/
                         ],
                       ),
                     ),
@@ -440,7 +443,7 @@ class _HomePage extends State<HomePage> {
                       controller: controller,
                       decoration: InputDecoration(
                         icon: const Icon(Icons.search_rounded),
-                        hintStyle: const TextStyle(color: Colors.blue),
+                        hintStyle: const TextStyle(color: Colors.black),
                         hintText: "Enter a name",
                         suffixIcon: isTextFieldPatientClear
                             ? null
@@ -571,7 +574,7 @@ class _HomePage extends State<HomePage> {
                 },
               );*/
             },
-            backgroundColor: Colors.deepPurpleAccent,
+            backgroundColor: Colors.blueGrey,
             child: const Icon(
               Icons.person_add,
               size: 40,

@@ -21,7 +21,7 @@ class PatientDao {
     result = await db.query(patientTABLE,
         columns: Patient.columns,
         orderBy:
-            "name ASC"); //TODO check orderBy and after order by name order by firstName
+            "name ASC");
 
     List<Patient> patientsList = result.isNotEmpty
         ? result.map((item) => Patient.fromDatabaseJson(item)).toList()

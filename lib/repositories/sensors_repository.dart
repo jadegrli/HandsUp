@@ -18,7 +18,7 @@ class SensorsRepository {
     sensorsValues.add(Measure(accelValues: List.from(accelValuesTab), gyroValues: List.from(gyroValuesTab)));
   }
 
-  Future<void> _runSensors(int nbSeconds) {
+  Future<void> _runSensors(int nbSeconds) async {
     if (!_streamSubscriptions.first.isPaused) {
       _streamSubscriptions.first.pause();
     }
@@ -80,28 +80,6 @@ class SensorsRepository {
   //erase all values from gyro sensor values tab
   void _clearGyro() {
     gyroValuesTab.clear();
-  }
-
-  void resetInterm() {
-    for (final subscription in _streamSubscriptions) {
-      subscription.cancel();
-    }
-    _streamSubscriptions.add(
-      accelerometerEvents.listen((AccelerometerEvent event) {
-        _addValToTabAcc(event);
-      }),
-    );
-
-    _streamSubscriptions.add(
-      gyroscopeEvents.listen((GyroscopeEvent event) {
-        _addValToTabGyro(event);
-      }),
-    );
-
-    _streamSubscriptions.first.pause();
-    _streamSubscriptions.last.pause();
-    _clearAcc();
-    _clearGyro();
   }
 
   void reset() {

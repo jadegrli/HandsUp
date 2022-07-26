@@ -16,6 +16,13 @@ class DataBaseBlocPatient {
     getAllPatients();
   }
 
+  getAllPatients() async {
+    List<Patient> list = await _patientRepository.getAllPatients();
+    list.sort((a,b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    list = sortByFirstNameWhenSameName(list);
+    _controller.sink.add(list);
+  }
+
   List<Patient> sortByFirstNameWhenSameName(List<Patient> list) {
     var tmp = <Patient>[];
     var result = <Patient>[];
@@ -38,14 +45,6 @@ class DataBaseBlocPatient {
       counter = 0;
     }
     return result;
-  }
-
-  getAllPatients() async {
-    List<Patient> list = await _patientRepository.getAllPatients();
-    list.sort((a,b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
-    list = sortByFirstNameWhenSameName(list);
-    _controller.sink.add(list);
-    //_controller.sink.add(await _patientRepository.getAllPatients());
   }
 
   getAllPatientsZA() async {

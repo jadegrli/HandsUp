@@ -84,7 +84,8 @@ class _AllScoresWithoutPatientPage extends State<AllScoresWithoutPatientPage> {
                                         const SizedBox(
                                             height: 25),
                                         Text(
-                                          "${snapshot.data![index].bbScore ~/ 1}%",
+                                            snapshot.data![index].bbScore > 135 ? ">135%" :
+                                            "${snapshot.data![index].bbScore ~/ 1}%",
                                           style: const TextStyle(
                                               color: Colors
                                                   .deepPurple,
@@ -122,12 +123,12 @@ class _AllScoresWithoutPatientPage extends State<AllScoresWithoutPatientPage> {
                                             alignment:
                                             Alignment.center,
                                             children: [
-                                              Text(
+                                              Text(snapshot.data![index].elevationAngleInjured > 180 ? ">180°" :
                                                 "${snapshot.data![index].elevationAngleInjured ~/ 1}°",
                                                 style: const TextStyle(
                                                     color: Colors
                                                         .deepPurple,
-                                                    fontSize: 23,
+                                                    fontSize: 20,
                                                     fontWeight:
                                                     FontWeight
                                                         .bold),
@@ -146,7 +147,7 @@ class _AllScoresWithoutPatientPage extends State<AllScoresWithoutPatientPage> {
                                                     PieChartSectionData(
                                                       color: Colors
                                                           .deepPurple,
-                                                      value: (snapshot.data![index].elevationAngleInjured *
+                                                      value: snapshot.data![index].elevationAngleInjured > 180 ? 100 : (snapshot.data![index].elevationAngleInjured *
                                                           100 ~/
                                                           180)
                                                           .toDouble(),
@@ -165,7 +166,7 @@ class _AllScoresWithoutPatientPage extends State<AllScoresWithoutPatientPage> {
                                                     PieChartSectionData(
                                                       color: const Color(
                                                           0xff7699b7),
-                                                      value: (100 -
+                                                      value: snapshot.data![index].elevationAngleInjured > 100 ? 0 : (100 -
                                                           snapshot.data![index].elevationAngleInjured *
                                                               100 ~/
                                                               180)
@@ -218,12 +219,12 @@ class _AllScoresWithoutPatientPage extends State<AllScoresWithoutPatientPage> {
                                             alignment:
                                             Alignment.center,
                                             children: [
-                                              Text(
+                                              Text(snapshot.data![index].elevationAngleHealthy > 180 ? ">180°" :
                                                 "${snapshot.data![index].elevationAngleHealthy ~/ 1}°",
                                                 style: const TextStyle(
                                                     color: Colors
                                                         .deepPurple,
-                                                    fontSize: 23,
+                                                    fontSize: 20,
                                                     fontWeight:
                                                     FontWeight
                                                         .bold),
@@ -242,7 +243,7 @@ class _AllScoresWithoutPatientPage extends State<AllScoresWithoutPatientPage> {
                                                     PieChartSectionData(
                                                       color: Colors
                                                           .deepPurple,
-                                                      value: (snapshot.data![index].elevationAngleHealthy *
+                                                      value: snapshot.data![index].elevationAngleHealthy > 180 ? 100 : (snapshot.data![index].elevationAngleHealthy *
                                                           100 ~/
                                                           180)
                                                           .toDouble(),
@@ -261,7 +262,7 @@ class _AllScoresWithoutPatientPage extends State<AllScoresWithoutPatientPage> {
                                                     PieChartSectionData(
                                                       color: const Color(
                                                           0xff7699b7),
-                                                      value: (100 -
+                                                      value: snapshot.data![index].elevationAngleHealthy > 180 ? 0 : (100 -
                                                           snapshot.data![index].elevationAngleHealthy *
                                                               100 ~/
                                                               180)
