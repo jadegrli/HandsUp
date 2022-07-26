@@ -50,7 +50,7 @@ class ExportDataBloc {
     await _createFolderInAppDocDir(patientFolderName);
 
     for (int i = 0; i < scoresList.length; ++i) {
-      String folderScore = await _createFolderInAppDocDir("$patientFolderName/score$i");
+      String folderScore = await _createFolderInAppDocDir("$patientFolderName/score${i+1}");
       List<List<String>> data = [
         [
           "Patient name",
@@ -116,7 +116,7 @@ class ExportDataBloc {
         data2.add(tmp);
       }
       String csvData2 = const ListToCsvConverter().convert(data2);
-      final path2 = "$folderScore/csv-repetitions_score_${scoresList[i].creationDate}.creationDate}.csv";
+      final path2 = "$folderScore/csv-repetitions_score${i+1}.csv";
       final File file2 = File(path2);
       await file2.writeAsString(csvData2);
     }
