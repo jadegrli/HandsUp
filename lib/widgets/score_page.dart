@@ -50,7 +50,6 @@ class _ScorePage extends State<ScorePage> {
       ),
       body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
           StreamBuilder<List<Score>>(
               stream: bloc.data,
@@ -166,9 +165,9 @@ class _ScorePage extends State<ScorePage> {
                             ],
                           ),
                           const SizedBox(height: 30,),
-                          Text("B-B Score : ${snapshot.data!.first.bbScore}"),
-                          Text("Elevation Angle Injured : ${snapshot.data!.first.elevationAngleInjured}"),
-                          Text("Elevation Angle Healthy : ${snapshot.data!.first.elevationAngleHealthy}"),
+                          Text("B-B Score : ${snapshot.data!.first.bbScore} %", style: const TextStyle(fontSize: 20),),
+                          Text("Elevation Angle Injured : ${snapshot.data!.first.elevationAngleInjured}°", style: const TextStyle(fontSize: 20)),
+                          Text("Elevation Angle Healthy : ${snapshot.data!.first.elevationAngleHealthy}°", style: const TextStyle(fontSize: 20)),
                           const SizedBox(height: 30,),
                           Padding(
                             padding: const EdgeInsets.all(16.0),

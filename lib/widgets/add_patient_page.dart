@@ -190,6 +190,7 @@ class _CreatePatientPage extends State<CreatePatientPage> {
                 ), //Text
                 const SizedBox(width: 10), //SizedBox
                 Checkbox(
+                  activeColor: Colors.deepPurple,
                   checkColor: Colors.white,
                   value: hasPathology,
                   onChanged: (bool? value) {
@@ -303,6 +304,7 @@ class _CreatePatientPage extends State<CreatePatientPage> {
             ),
             Checkbox(
               checkColor: Colors.white,
+              activeColor: Colors.deepPurple,
               value: isLeftShoulder,
               onChanged: (bool? value) {
                 setState(() {
@@ -319,6 +321,7 @@ class _CreatePatientPage extends State<CreatePatientPage> {
               style: TextStyle(fontSize: 17.0),
             ),
             Checkbox(
+              activeColor: Colors.deepPurple,
               checkColor: Colors.white,
               value: isRightShoulder,
               onChanged: (bool? value) {

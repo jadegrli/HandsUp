@@ -111,7 +111,14 @@ class _ModifyPatientPage extends State<ModifyPatientPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Modify patient'),
+        backgroundColor: const Color(0xfff5eaf4),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back, color: Colors.black,),
+        ),
+        title: const Text('Modify patient', style: TextStyle(color: Colors.black),),
       ),
       body: SingleChildScrollView(
         child: StreamBuilder<List<dynamic>>(
@@ -201,7 +208,7 @@ class _ModifyPatientPage extends State<ModifyPatientPage> {
                                 },
                                 icon: const Icon(
                                   Icons.calendar_month_rounded,
-                                  color: Colors.blue,
+                                  color: Colors.deepPurple,
                                   size: 50.0,
                                 )),
                           ],
@@ -230,6 +237,7 @@ class _ModifyPatientPage extends State<ModifyPatientPage> {
                       const SizedBox(width: 10), //SizedBox
                       Checkbox(
                         checkColor: Colors.white,
+                        activeColor: Colors.deepPurple,
                         value: hasPathology,
                         onChanged: (bool? value) {
                           setState(() {
@@ -265,6 +273,7 @@ class _ModifyPatientPage extends State<ModifyPatientPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.deepPurple,
           child: const Icon(Icons.check),
           onPressed: () {
             if (canUpdate) {
@@ -352,6 +361,7 @@ class _ModifyPatientPage extends State<ModifyPatientPage> {
               style: TextStyle(fontSize: 17.0),
             ),
             Checkbox(
+              activeColor: Colors.deepPurple,
               checkColor: Colors.white,
               value: isLeftShoulder,
               onChanged: (bool? value) {
@@ -369,6 +379,7 @@ class _ModifyPatientPage extends State<ModifyPatientPage> {
               style: TextStyle(fontSize: 17.0),
             ),
             Checkbox(
+              activeColor: Colors.deepPurple,
               checkColor: Colors.white,
               value: isRightShoulder,
               onChanged: (bool? value) {

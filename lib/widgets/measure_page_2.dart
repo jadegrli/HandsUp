@@ -116,7 +116,8 @@ class _Measure2 extends State<MeasurePage2> {
     //TODO make scrollable ?
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Measure"),
+        backgroundColor: const Color(0xfff5eaf4),
+        title: const Text("Measure", style: TextStyle(color: Colors.black)),
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
@@ -127,43 +128,58 @@ class _Measure2 extends State<MeasurePage2> {
                 if (snapshot.data is StateReady) {
                   lastState = "Ready";
                   return Column(
-                      children: [
-                        SizedBox(height: MediaQuery.of(context).size.height/ 3.5,),
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: 30),
-                          child: Text("Start a new measure",
-                              style: TextStyle(
-                                  fontSize: 30.0,
-                                  fontWeight: FontWeight.w900,
-                                  color: Colors.black)),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: 40, left : 20, right: 20),
-                          child: Text("Please attach the phone on your arm and the begin the measure",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 20.0,
-                                  color: Colors.black)),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop(true);
-                                },
-                                child: const Text("Cancel")),
-                            const SizedBox(width: 40,),
-                            ElevatedButton(
-                                onPressed: () {
-                                  measureBloc.launchSide(
-                                      widget.nbRepetition, widget.duration, true);
-                                },
-                                child: const Text("Launch")),
-                          ],
-                        ),
-                      ],
-                    );
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height / 3.5,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 30),
+                        child: Text("Start a new measure",
+                            style: TextStyle(
+                                fontSize: 30.0,
+                                fontWeight: FontWeight.w900,
+                                color: Colors.black)),
+                      ),
+                      const Padding(
+                        padding:
+                            EdgeInsets.only(bottom: 40, left: 20, right: 20),
+                        child: Text(
+                            "Please attach the phone on your arm and the begin the measure",
+                            textAlign: TextAlign.center,
+                            style:
+                                TextStyle(fontSize: 20.0, color: Colors.black)),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        Colors.red),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop(true);
+                              },
+                              child: const Text("Cancel")),
+                          const SizedBox(
+                            width: 40,
+                          ),
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        Colors.green),
+                              ),
+                              onPressed: () {
+                                measureBloc.launchSide(
+                                    widget.nbRepetition, widget.duration, true);
+                              },
+                              child: const Text("Launch")),
+                        ],
+                      ),
+                    ],
+                  );
                 }
 
                 if (snapshot.data is StateLoading) {
@@ -208,15 +224,17 @@ class _Measure2 extends State<MeasurePage2> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SizedBox(height: MediaQuery.of(context).size.height/ 3.5,),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height / 3.5,
+                        ),
                         const CircularProgressIndicator(),
                         const Padding(
-                          padding: EdgeInsets.only(left : 20, right: 20, top: 30),
+                          padding:
+                              EdgeInsets.only(left: 20, right: 20, top: 30),
                           child: Text("Canceling measure...",
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  fontSize: 20.0,
-                                  color: Colors.black)),
+                                  fontSize: 20.0, color: Colors.black)),
                         ),
                       ],
                     ),
@@ -230,16 +248,22 @@ class _Measure2 extends State<MeasurePage2> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SizedBox(height: MediaQuery.of(context).size.height/ 3.5,),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height / 3.5,
+                        ),
                         const Padding(
-                          padding: EdgeInsets.only(left : 20, right: 20, bottom: 20),
+                          padding:
+                              EdgeInsets.only(left: 20, right: 20, bottom: 20),
                           child: Text("The measure is canceled",
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  fontSize: 20.0,
-                                  color: Colors.black)),
+                                  fontSize: 20.0, color: Colors.black)),
                         ),
                         ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  Colors.deepPurple),
+                            ),
                             onPressed: () {
                               measureBloc.endMeasure();
                               if (widget.patientID == 0) {
@@ -274,7 +298,7 @@ class _Measure2 extends State<MeasurePage2> {
                           margin: const EdgeInsets.all(20),
                           decoration: const BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(20)),
-                            color: Color(0xff9abdda),
+                            color: Color(0xfff5eaf4),
                             boxShadow: <BoxShadow>[
                               BoxShadow(
                                   color: Colors.black54,
@@ -288,7 +312,7 @@ class _Measure2 extends State<MeasurePage2> {
                                 padding: EdgeInsets.all(0),
                                 child: Text(
                                   "Values for the first shoulder",
-                                  style: TextStyle(fontSize: 25),
+                                  style: TextStyle(fontSize: 23),
                                 ),
                               ),
                               Padding(
@@ -311,6 +335,11 @@ class _Measure2 extends State<MeasurePage2> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            Colors.red),
+                                  ),
                                   onPressed: () {
                                     measureBloc.endMeasure();
                                     if (widget.patientID == 0) {
@@ -334,6 +363,11 @@ class _Measure2 extends State<MeasurePage2> {
                                 width: 30,
                               ),
                               ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            Colors.green),
+                                  ),
                                   onPressed: () {
                                     measureBloc.launchSide(widget.nbRepetition,
                                         widget.duration, false);
@@ -356,19 +390,53 @@ class _Measure2 extends State<MeasurePage2> {
                         children: [
                           finalResults(
                               snapshot.data!.error, snapshot.data!.values),
-                            Row(
-                              mainAxisAlignment:
-                              MainAxisAlignment.spaceEvenly,
-                              children: [
+                          const SizedBox(
+                            height: 25,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            Colors.red),
+                                  ),
+                                  onPressed: () {
+                                    measureBloc.endMeasure();
+                                    if (widget.patientID == 0) {
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const HomePage()));
+                                    } else {
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  OverallPatientPage(
+                                                      patientId:
+                                                          widget.patientID)));
+                                    }
+                                  },
+                                  child: const Text("Cancel")),
+                              if (!exceptionCalculation)
                                 ElevatedButton(
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              Colors.green),
+                                    ),
                                     onPressed: () {
-                                      measureBloc.endMeasure();
+                                      measureBloc
+                                          .saveToDataBase(widget.patientID);
                                       if (widget.patientID == 0) {
                                         Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                const HomePage()));
+                                                    const HomePage()));
                                       } else {
                                         Navigator.pushReplacement(
                                             context,
@@ -376,34 +444,12 @@ class _Measure2 extends State<MeasurePage2> {
                                                 builder: (context) =>
                                                     OverallPatientPage(
                                                         patientId:
-                                                        widget.patientID)));
+                                                            widget.patientID)));
                                       }
                                     },
-                                    child: const Text("Cancel")),
-                                if (!exceptionCalculation)
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        measureBloc.saveToDataBase(widget.patientID);
-                                        if (widget.patientID == 0) {
-                                          Navigator.pushReplacement(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                  const HomePage()));
-                                        } else {
-                                          Navigator.pushReplacement(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      OverallPatientPage(
-                                                          patientId:
-                                                          widget.patientID)));
-                                        }
-                                      },
-                                      child: const Text("Validate")),
-                              ],
-                            ),
-
+                                    child: const Text("Validate")),
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -421,14 +467,24 @@ class _Measure2 extends State<MeasurePage2> {
   Widget midResult(List<List<double>> allResultsAcc,
       List<List<double>> allResultsGyro, int error) {
     if (error == 2) {
-      return const Text(
-          "Error while calculating middle score, length error in data lists");
+      return const Padding(
+        padding: EdgeInsets.all(10.0),
+        child: Text(
+          "Error while calculating middle score, length error in data lists",
+          style: TextStyle(fontSize: 18.0),
+        ),
+      );
     } else if (error == 1) {
       return Column(
         children: const [
           Center(
-            child: Text(
-                "Error in calculation, it can happen when the smartphone is not moving during the measure. Please try again."),
+            child: Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Text(
+                "Error in calculation, it can happen when the smartphone is not moving during the measure. Please try again.",
+                style: TextStyle(fontSize: 18.0),
+              ),
+            ),
           ),
         ],
       );
@@ -441,7 +497,7 @@ class _Measure2 extends State<MeasurePage2> {
               margin: const EdgeInsets.all(20),
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(20)),
-                color: Color(0xff9abdda),
+                color: Color(0xfff5eaf4),
                 boxShadow: <BoxShadow>[
                   BoxShadow(
                       color: Colors.black54,
@@ -470,12 +526,12 @@ class _Measure2 extends State<MeasurePage2> {
                     child: Table(
                       border: TableBorder.all(
                           width: 2.0,
-                          color: Colors.blueAccent,
+                          color: Colors.deepPurple,
                           style: BorderStyle.solid),
                       children: [
                         const TableRow(
                           decoration: BoxDecoration(
-                            color: Colors.blue,
+                            color: Color(0xff8cc0cc),
                           ),
                           children: [
                             Padding(
@@ -546,7 +602,7 @@ class _Measure2 extends State<MeasurePage2> {
                         ),
                         const TableRow(
                           decoration: BoxDecoration(
-                            color: Colors.blue,
+                            color: Color(0xff8cc0cc),
                           ),
                           children: [
                             Padding(
@@ -629,12 +685,12 @@ class _Measure2 extends State<MeasurePage2> {
                     child: Table(
                       border: TableBorder.all(
                           width: 2.0,
-                          color: Colors.purple,
+                          color: Colors.deepPurple,
                           style: BorderStyle.solid),
                       children: [
                         const TableRow(
                           decoration: BoxDecoration(
-                            color: Colors.blue,
+                            color: Color(0xff8cc0cc),
                           ),
                           children: [
                             Padding(
@@ -705,7 +761,7 @@ class _Measure2 extends State<MeasurePage2> {
                         ),
                         const TableRow(
                           decoration: BoxDecoration(
-                            color: Colors.blue,
+                            color: Color(0xff8cc0cc),
                           ),
                           children: [
                             Padding(
@@ -790,23 +846,36 @@ class _Measure2 extends State<MeasurePage2> {
       return Column(
         children: const [
           Center(
-            child: Text(
-                "Error in calculation, it can happen when the smartphone is not moving during the measure. Please try again."),
+            child: Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Text(
+                "Error in calculation, it can happen when the smartphone is not moving during the measure. Please try again.",
+                style: TextStyle(fontSize: 18.0),
+              ),
+            ),
           ),
         ],
       );
     } else if (error == 2) {
       return Column(
         children: const [
-          Text(
-              "Error while calculating final score, length error in data lists",
-              style: TextStyle(fontSize: 20.0)),
+          Center(
+            child: Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Text(
+                "Error while calculating final score, length error in data lists",
+                style: TextStyle(fontSize: 18.0),
+              ),
+            ),
+          ),
         ],
       );
     } else {
       return Column(
         children: [
-          SizedBox(height: MediaQuery.of(context).size.height/ 5,),
+          SizedBox(
+            height: MediaQuery.of(context).size.height / 5,
+          ),
           Container(
             padding: const EdgeInsets.all(15.0),
             margin: const EdgeInsets.all(20),
@@ -838,8 +907,8 @@ class _Measure2 extends State<MeasurePage2> {
                         Column(
                           children: [
                             const SizedBox(height: 25),
-                            Text(values[0] > 135 ? ">135%" :
-                            "${values[0] ~/ 1}%",
+                            Text(
+                              values[0] > 135 ? ">135%" : "${values[0] ~/ 1}%",
                               style: const TextStyle(
                                   color: Colors.deepPurple,
                                   fontSize: 30,
@@ -861,14 +930,16 @@ class _Measure2 extends State<MeasurePage2> {
                               margin: const EdgeInsets.all(10),
                               decoration: const BoxDecoration(
                                 borderRadius:
-                                BorderRadius.all(Radius.circular(20)),
+                                    BorderRadius.all(Radius.circular(20)),
                                 color: Color(0xff9abdda),
                               ),
                               child: Stack(
                                 alignment: Alignment.center,
                                 children: [
-                                  Text(values[2] > 180 ? ">180°" :
-                                  "${values[2] ~/ 1}°",
+                                  Text(
+                                    values[2] > 180
+                                        ? ">180°"
+                                        : "${values[2] ~/ 1}°",
                                     style: const TextStyle(
                                         color: Colors.deepPurple,
                                         fontSize: 20,
@@ -884,9 +955,11 @@ class _Measure2 extends State<MeasurePage2> {
                                       sections: [
                                         PieChartSectionData(
                                           color: Colors.deepPurple,
-                                          value: values[2] > 180 ? 180 : (values[2]).toDouble(),
+                                          value: values[2] > 180
+                                              ? 180
+                                              : (values[2]).toDouble(),
                                           title:
-                                          "", //(snapshot.data!.last.elevationAngleInjured ~/ 1).toString(),
+                                              "", //(snapshot.data!.last.elevationAngleInjured ~/ 1).toString(),
                                           radius: 10,
                                           titleStyle: const TextStyle(
                                               fontSize: 20,
@@ -895,7 +968,9 @@ class _Measure2 extends State<MeasurePage2> {
                                         ),
                                         PieChartSectionData(
                                           color: const Color(0xff7699b7),
-                                          value: values[2] > 180 ? 0 : (180 - values[2]).toDouble(),
+                                          value: values[2] > 180
+                                              ? 0
+                                              : (180 - values[2]).toDouble(),
                                           title: "",
                                           /*((180 - snapshot.data!.last.elevationAngleInjured ~/ 1)).toString(),*/
                                           radius: 10,
@@ -928,14 +1003,16 @@ class _Measure2 extends State<MeasurePage2> {
                               margin: const EdgeInsets.all(10),
                               decoration: const BoxDecoration(
                                 borderRadius:
-                                BorderRadius.all(Radius.circular(20)),
+                                    BorderRadius.all(Radius.circular(20)),
                                 color: Color(0xff9abdda),
                               ),
                               child: Stack(
                                 alignment: Alignment.center,
                                 children: [
-                                  Text(values[1] > 180 ? ">180°" :
-                                  "${values[1] ~/ 1}°",
+                                  Text(
+                                    values[1] > 180
+                                        ? ">180°"
+                                        : "${values[1] ~/ 1}°",
                                     style: const TextStyle(
                                         color: Colors.deepPurple,
                                         fontSize: 20,
@@ -951,9 +1028,11 @@ class _Measure2 extends State<MeasurePage2> {
                                       sections: [
                                         PieChartSectionData(
                                           color: Colors.deepPurple,
-                                          value: values[1] > 180 ? 180 : (values[1]).toDouble(),
+                                          value: values[1] > 180
+                                              ? 180
+                                              : (values[1]).toDouble(),
                                           title:
-                                          "", //(snapshot.data!.last.elevationAngleInjured ~/ 1).toString(),
+                                              "", //(snapshot.data!.last.elevationAngleInjured ~/ 1).toString(),
                                           radius: 10,
                                           titleStyle: const TextStyle(
                                               fontSize: 20,
@@ -962,7 +1041,9 @@ class _Measure2 extends State<MeasurePage2> {
                                         ),
                                         PieChartSectionData(
                                           color: const Color(0xff7699b7),
-                                          value: values[1] > 180 ? 0 : (180 - values[1]).toDouble(),
+                                          value: values[1] > 180
+                                              ? 0
+                                              : (180 - values[1]).toDouble(),
                                           title: "",
                                           /*((180 - snapshot.data!.last.elevationAngleInjured ~/ 1)).toString(),*/
                                           radius: 10,

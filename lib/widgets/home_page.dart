@@ -60,7 +60,7 @@ class _HomePage extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffeeebf4), //ok
+        backgroundColor: const Color(0xffeeebf4), //ok
         appBar: AppBar(
           centerTitle: true,
           elevation: 5,
@@ -283,7 +283,8 @@ class _HomePage extends State<HomePage> {
                       icon: const Icon(Icons.play_circle_outline),
                       label: const Text("NEW MEASUREMENT"),
                       style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff7a52a8)), //ok
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              const Color(0xff7a52a8)), //ok
                           padding: MaterialStateProperty.all<EdgeInsets>(
                               const EdgeInsets.only(
                                   left: 50, right: 50, top: 15, bottom: 15))),
@@ -303,7 +304,8 @@ class _HomePage extends State<HomePage> {
                       icon: const Icon(Icons.format_list_bulleted_outlined),
                       label: const Text("All measures"),
                       style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff8cc0cc)), //ok
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              const Color(0xff8cc0cc)), //ok
                           padding: MaterialStateProperty.all<EdgeInsets>(
                               const EdgeInsets.only(left: 50, right: 50))),
                       onPressed: () {
@@ -384,7 +386,10 @@ class _HomePage extends State<HomePage> {
                                         (String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
-                                    child: Text(value, style: const TextStyle(fontSize: 10),),
+                                    child: Text(
+                                      value,
+                                      style: const TextStyle(fontSize: 10),
+                                    ),
                                   );
                                 }).toList(),
                               ),
@@ -441,9 +446,7 @@ class _HomePage extends State<HomePage> {
                     ),
                     TextField(
                       controller: controller,
-                      onSubmitted: (value) {
-
-                      },
+                      onSubmitted: (value) {},
                       decoration: InputDecoration(
                         iconColor: Colors.deepPurple,
                         icon: const Icon(Icons.search_rounded),
@@ -519,6 +522,18 @@ class _HomePage extends State<HomePage> {
                                 return ListTile(
                                   title: Row(
                                     children: [
+                                      CircleAvatar(
+                                        backgroundColor:
+                                            const Color(0xff8cc0cc),
+                                        child: Text(
+                                          snapshot.data![index].name
+                                              .substring(0, 1)
+                                              .toUpperCase(),
+                                          style: const TextStyle(
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
                                       Text(snapshot.data![index].name),
                                       const SizedBox(width: 5),
                                       Text(snapshot.data![index].firstName),
