@@ -122,15 +122,10 @@ class ExportDataBloc {
     }
 
     //zip folder
-    //TODO enlever le zip qui traine
     final Directory _appDocDir = await getApplicationDocumentsDirectory();
     final Directory _appDocDirFolder = Directory('${_appDocDir.path}/$patientFolderName/');
-    print("test");
     var encoder = ZipFileEncoder();
-    encoder.create('${_appDocDir.path}/$patientFolderName/$patientFolderName.zip');
-    encoder.addDirectory(_appDocDirFolder);
-    encoder.close();
-    folderName = _appDocDirFolder.path;
+    encoder.zipDirectory(_appDocDirFolder, filename: '${_appDocDirFolder.path}/$patientFolderName.zip');
 
     //share file
     await Share.shareFiles(['${_appDocDirFolder.path}/$patientFolderName.zip'], text: 'All scores for patient');

@@ -26,9 +26,8 @@ class _HomePage extends State<HomePage> {
   String nbRepetition = "3";
   String sortChoice = "A-Z";
   String patientNameToFind = "";
-  var itemsTest = ["3", "4", "5", "6", "7", "8", "9"];
+  var itemsTest = ["3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"];
   var itemsNbRepetitions = ["2", "3", "4", "5"];
-  //TODO mettre des enum plutot ici, + simple pour comparer
   var itemsSortsPatient = [
     "A-Z",
     "Z-A",

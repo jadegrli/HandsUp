@@ -25,7 +25,6 @@ class MeasurePage2 extends StatefulWidget {
 }
 
 class _Measure2 extends State<MeasurePage2> {
-  //TODO gérer ça encore
   bool exceptionCalculation = false;
 
   final MeasureBloc2 measureBloc = MeasureBloc2();
@@ -40,7 +39,7 @@ class _Measure2 extends State<MeasurePage2> {
     timerLaunched = false;
   }
 
-/*
+
   final player = AudioPlayer();
 
   playSoundTransition() async
@@ -57,7 +56,7 @@ class _Measure2 extends State<MeasurePage2> {
     await player2.play(AssetSource('sounds/validation_sound.mp3'));
   }
 
-*/
+
   void startTimer() {
     timerLaunched = true;
     _start = widget.duration;
@@ -96,9 +95,9 @@ class _Measure2 extends State<MeasurePage2> {
   @override
   void dispose() {
     super.dispose();
-    //_timer.cancel();
-    //player.dispose();
-    // player2.dispose();
+    _timer.cancel();
+    player.dispose();
+    player2.dispose();
     //unhide the bottom system navigation bar
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
@@ -189,7 +188,7 @@ class _Measure2 extends State<MeasurePage2> {
 
                 if (snapshot.data is StateRest) {
                   if (lastState != "Rest") {
-                    //playSoundTransition();
+                    playSoundTransition();
                     if (timerLaunched) stopTimer();
                     startTimer();
                   }
@@ -199,7 +198,7 @@ class _Measure2 extends State<MeasurePage2> {
 
                 if (snapshot.data is StateHandBack) {
                   if (lastState != "Hand back") {
-                    //playSoundTransition();
+                    playSoundTransition();
                     if (timerLaunched) stopTimer();
                     startTimer();
                   }
@@ -209,7 +208,7 @@ class _Measure2 extends State<MeasurePage2> {
 
                 if (snapshot.data is StateHandUp) {
                   if (lastState != "Hand up") {
-                    //playSoundTransition();
+                    playSoundTransition();
                     if (timerLaunched) stopTimer();
                     startTimer();
                   }
@@ -289,7 +288,7 @@ class _Measure2 extends State<MeasurePage2> {
 
                 if (snapshot.data is StateAllMeasuresFirstSide) {
                   lastState = "Mid result";
-                  //playSoundMeasurePages();
+                  playSoundMeasurePages();
                   return SingleChildScrollView(
                     child: Column(
                       children: [
@@ -362,6 +361,7 @@ class _Measure2 extends State<MeasurePage2> {
                               const SizedBox(
                                 width: 30,
                               ),
+                              if (!exceptionCalculation)
                               ElevatedButton(
                                   style: ButtonStyle(
                                     backgroundColor:
@@ -383,7 +383,7 @@ class _Measure2 extends State<MeasurePage2> {
 
                 if (snapshot.data is StateAllMeasuresSecondSide) {
                   lastState = "Final result";
-                  //playSoundMeasurePages();
+                  playSoundMeasurePages();
                   return SingleChildScrollView(
                     child: Center(
                       child: Column(
@@ -467,6 +467,7 @@ class _Measure2 extends State<MeasurePage2> {
   Widget midResult(List<List<double>> allResultsAcc,
       List<List<double>> allResultsGyro, int error) {
     if (error == 2) {
+      exceptionCalculation = true;
       return const Padding(
         padding: EdgeInsets.all(10.0),
         child: Text(
@@ -475,6 +476,7 @@ class _Measure2 extends State<MeasurePage2> {
         ),
       );
     } else if (error == 1) {
+      exceptionCalculation = true;
       return Column(
         children: const [
           Center(
@@ -843,6 +845,7 @@ class _Measure2 extends State<MeasurePage2> {
 
   Widget finalResults(int error, List<double> values) {
     if (error == 1) {
+      exceptionCalculation = true;
       return Column(
         children: const [
           Center(
@@ -857,6 +860,7 @@ class _Measure2 extends State<MeasurePage2> {
         ],
       );
     } else if (error == 2) {
+      exceptionCalculation = true;
       return Column(
         children: const [
           Center(
