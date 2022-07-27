@@ -44,11 +44,17 @@ class _OverallPatientPage extends State<OverallPatientPage> {
 
     return Scaffold(
       appBar: showAppBar ? AppBar(
-        backgroundColor: const Color(0xff2c274c),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back, color: Colors.black,),
+        ),
+        backgroundColor: const Color(0xfff5eaf4),
         title: const Text(
           "Patient profile",
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontSize: 25,
             fontWeight: FontWeight.w600,
           ),
@@ -56,9 +62,10 @@ class _OverallPatientPage extends State<OverallPatientPage> {
         actions: [
           IconButton(onPressed: () async {
             export.export(widget.patientId);
-          }, icon: const Icon(Icons.share),)
+          }, icon: const Icon(Icons.share, color: Colors.black,),)
         ],
       ) : null,
+      backgroundColor: const Color(0xffeeebf4),
       body: GestureDetector(
         onDoubleTap: () {
           setState(() {
@@ -79,7 +86,7 @@ class _OverallPatientPage extends State<OverallPatientPage> {
     return Container(
       height: 60,
       decoration: const BoxDecoration(
-        color: Color(0xff2c274c),
+        color: Color(0xff7a52a8),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,

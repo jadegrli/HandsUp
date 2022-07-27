@@ -126,14 +126,44 @@ class _Measure2 extends State<MeasurePage2> {
               if (snapshot.data != null) {
                 if (snapshot.data is StateReady) {
                   lastState = "Ready";
-                  return Center(
-                    child: ElevatedButton(
-                        onPressed: () {
-                          measureBloc.launchSide(
-                              widget.nbRepetition, widget.duration, true);
-                        },
-                        child: const Text("Launch")),
-                  );
+                  return Column(
+                      children: [
+                        SizedBox(height: MediaQuery.of(context).size.height/ 3.5,),
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 30),
+                          child: Text("Start a new measure",
+                              style: TextStyle(
+                                  fontSize: 30.0,
+                                  fontWeight: FontWeight.w900,
+                                  color: Colors.black)),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 40, left : 20, right: 20),
+                          child: Text("Please attach the phone on your arm and the begin the measure",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 20.0,
+                                  color: Colors.black)),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(true);
+                                },
+                                child: const Text("Cancel")),
+                            const SizedBox(width: 40,),
+                            ElevatedButton(
+                                onPressed: () {
+                                  measureBloc.launchSide(
+                                      widget.nbRepetition, widget.duration, true);
+                                },
+                                child: const Text("Launch")),
+                          ],
+                        ),
+                      ],
+                    );
                 }
 
                 if (snapshot.data is StateLoading) {
@@ -177,9 +207,17 @@ class _Measure2 extends State<MeasurePage2> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      children: const [
-                        CircularProgressIndicator(),
-                        Text("Canceling measure"),
+                      children: [
+                        SizedBox(height: MediaQuery.of(context).size.height/ 3.5,),
+                        const CircularProgressIndicator(),
+                        const Padding(
+                          padding: EdgeInsets.only(left : 20, right: 20, top: 30),
+                          child: Text("Canceling measure...",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 20.0,
+                                  color: Colors.black)),
+                        ),
                       ],
                     ),
                   );
@@ -192,7 +230,15 @@ class _Measure2 extends State<MeasurePage2> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Text("The measure is canceled"),
+                        SizedBox(height: MediaQuery.of(context).size.height/ 3.5,),
+                        const Padding(
+                          padding: EdgeInsets.only(left : 20, right: 20, bottom: 20),
+                          child: Text("The measure is canceled",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 20.0,
+                                  color: Colors.black)),
+                        ),
                         ElevatedButton(
                             onPressed: () {
                               measureBloc.endMeasure();
@@ -314,27 +360,6 @@ class _Measure2 extends State<MeasurePage2> {
                               mainAxisAlignment:
                               MainAxisAlignment.spaceEvenly,
                               children: [
-                                if (!exceptionCalculation)
-                                ElevatedButton(
-                                    onPressed: () {
-                                      measureBloc.saveToDataBase(widget.patientID);
-                                      if (widget.patientID == 0) {
-                                        Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                const HomePage()));
-                                      } else {
-                                        Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    OverallPatientPage(
-                                                        patientId:
-                                                        widget.patientID)));
-                                      }
-                                    },
-                                    child: const Text("Validate")),
                                 ElevatedButton(
                                     onPressed: () {
                                       measureBloc.endMeasure();
@@ -355,6 +380,27 @@ class _Measure2 extends State<MeasurePage2> {
                                       }
                                     },
                                     child: const Text("Cancel")),
+                                if (!exceptionCalculation)
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        measureBloc.saveToDataBase(widget.patientID);
+                                        if (widget.patientID == 0) {
+                                          Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                  const HomePage()));
+                                        } else {
+                                          Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      OverallPatientPage(
+                                                          patientId:
+                                                          widget.patientID)));
+                                        }
+                                      },
+                                      child: const Text("Validate")),
                               ],
                             ),
 
@@ -758,7 +804,10 @@ class _Measure2 extends State<MeasurePage2> {
         ],
       );
     } else {
-      return Container(
+      return Column(
+        children: [
+          SizedBox(height: MediaQuery.of(context).size.height/ 5,),
+          Container(
             padding: const EdgeInsets.all(15.0),
             margin: const EdgeInsets.all(20),
             decoration: const BoxDecoration(
@@ -790,7 +839,7 @@ class _Measure2 extends State<MeasurePage2> {
                           children: [
                             const SizedBox(height: 25),
                             Text(values[0] > 135 ? ">135%" :
-                              "${values[0] ~/ 1}%",
+                            "${values[0] ~/ 1}%",
                               style: const TextStyle(
                                   color: Colors.deepPurple,
                                   fontSize: 30,
@@ -812,14 +861,14 @@ class _Measure2 extends State<MeasurePage2> {
                               margin: const EdgeInsets.all(10),
                               decoration: const BoxDecoration(
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
+                                BorderRadius.all(Radius.circular(20)),
                                 color: Color(0xff9abdda),
                               ),
                               child: Stack(
                                 alignment: Alignment.center,
                                 children: [
                                   Text(values[2] > 180 ? ">180°" :
-                                    "${values[2] ~/ 1}°",
+                                  "${values[2] ~/ 1}°",
                                     style: const TextStyle(
                                         color: Colors.deepPurple,
                                         fontSize: 20,
@@ -837,7 +886,7 @@ class _Measure2 extends State<MeasurePage2> {
                                           color: Colors.deepPurple,
                                           value: values[2] > 180 ? 180 : (values[2]).toDouble(),
                                           title:
-                                              "", //(snapshot.data!.last.elevationAngleInjured ~/ 1).toString(),
+                                          "", //(snapshot.data!.last.elevationAngleInjured ~/ 1).toString(),
                                           radius: 10,
                                           titleStyle: const TextStyle(
                                               fontSize: 20,
@@ -879,14 +928,14 @@ class _Measure2 extends State<MeasurePage2> {
                               margin: const EdgeInsets.all(10),
                               decoration: const BoxDecoration(
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
+                                BorderRadius.all(Radius.circular(20)),
                                 color: Color(0xff9abdda),
                               ),
                               child: Stack(
                                 alignment: Alignment.center,
                                 children: [
                                   Text(values[1] > 180 ? ">180°" :
-                                    "${values[1] ~/ 1}°",
+                                  "${values[1] ~/ 1}°",
                                     style: const TextStyle(
                                         color: Colors.deepPurple,
                                         fontSize: 20,
@@ -904,7 +953,7 @@ class _Measure2 extends State<MeasurePage2> {
                                           color: Colors.deepPurple,
                                           value: values[1] > 180 ? 180 : (values[1]).toDouble(),
                                           title:
-                                              "", //(snapshot.data!.last.elevationAngleInjured ~/ 1).toString(),
+                                          "", //(snapshot.data!.last.elevationAngleInjured ~/ 1).toString(),
                                           radius: 10,
                                           titleStyle: const TextStyle(
                                               fontSize: 20,
@@ -940,8 +989,9 @@ class _Measure2 extends State<MeasurePage2> {
                 ),
               ],
             ),
-          );
-
+          ),
+        ],
+      );
     }
   }
 

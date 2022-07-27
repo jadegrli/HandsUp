@@ -86,7 +86,7 @@ class _PatientPage extends State<PatientPage> {
                           margin: const EdgeInsets.all(20),
                           decoration: const BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(20)),
-                            color: Color(0xff9abdda),
+                            color: Color(0xfff5eaf4),
                             boxShadow: <BoxShadow>[
                               BoxShadow(
                                   color: Colors.black54,
@@ -265,7 +265,7 @@ class _PatientPage extends State<PatientPage> {
                           margin: const EdgeInsets.all(20),
                           decoration: const BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(20)),
-                            color: Color(0xff9abdda),
+                            color: Color(0xfff5eaf4),
                             boxShadow: <BoxShadow>[
                               BoxShadow(
                                   color: Colors.black54,
@@ -285,7 +285,7 @@ class _PatientPage extends State<PatientPage> {
                                           fontWeight: FontWeight.bold)),
                                   IconButton(
                                     icon: const Icon(Icons.quiz_outlined),
-                                    color: Colors.black,
+                                    color: const Color(0xffa797c1),
                                     iconSize: 25,
                                     onPressed: () {
                                       showDialog(
@@ -446,7 +446,7 @@ class _PatientPage extends State<PatientPage> {
                                               bottom: 15)),
                                   backgroundColor:
                                       MaterialStateProperty.all<Color>(
-                                          const Color(0xff2c274c)),
+                                          const Color(0xff7a52a8)),
                                 ),
                                 onPressed: () {
                                   Navigator.push(
@@ -471,7 +471,7 @@ class _PatientPage extends State<PatientPage> {
                           margin: const EdgeInsets.all(20),
                           decoration: const BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(20)),
-                            color: Color(0xff9abdda),
+                            color: Color(0xfff5eaf4),
                             boxShadow: <BoxShadow>[
                               BoxShadow(
                                   color: Colors.black54,
@@ -484,15 +484,15 @@ class _PatientPage extends State<PatientPage> {
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text("Last Measure",
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold)),
-                                  IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(
-                                          Icons.question_mark_outlined)),
+                                children: const [
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 10),
+                                    child: Text("Last Measure",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold)),
+                                  ),
                                 ],
                               ),
                               //TODO change type dynamic
@@ -551,7 +551,7 @@ class _PatientPage extends State<PatientPage> {
                                                                       .circular(
                                                                           20)),
                                                           color:
-                                                              Color(0xff9abdda),
+                                                          Color(0xfff5eaf4),
                                                         ),
                                                         child: Stack(
                                                           alignment:
@@ -597,7 +597,7 @@ class _PatientPage extends State<PatientPage> {
                                                                   ),
                                                                   PieChartSectionData(
                                                                     color: const Color(
-                                                                        0xff7699b7),
+                                                                        0xffb5abcc),
                                                                     value: snapshot.data!.first.elevationAngleInjured > 180 ? 0 : (180 -
                                                                         snapshot.data!.first.elevationAngleInjured)
                                                                         .toDouble(),
@@ -644,7 +644,7 @@ class _PatientPage extends State<PatientPage> {
                                                                       .circular(
                                                                           20)),
                                                           color:
-                                                              Color(0xff9abdda),
+                                                          Color(0xfff5eaf4),
                                                         ),
                                                         child: Stack(
                                                           alignment:
@@ -690,7 +690,7 @@ class _PatientPage extends State<PatientPage> {
                                                                   ),
                                                                   PieChartSectionData(
                                                                     color: const Color(
-                                                                        0xff7699b7),
+                                                                        0xffb5abcc),
                                                                     value: snapshot.data!.first.elevationAngleHealthy > 180 ? 0 : (180 -
                                                                             snapshot.data!.first.elevationAngleHealthy)
                                                                         .toDouble(),

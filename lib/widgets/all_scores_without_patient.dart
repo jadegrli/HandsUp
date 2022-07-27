@@ -28,8 +28,14 @@ class _AllScoresWithoutPatientPage extends State<AllScoresWithoutPatientPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("All scores with no patient"),
-        backgroundColor: const Color(0xff2c274c),
+        title: const Text("All scores with no patient", style: TextStyle(color: Colors.black)),
+        backgroundColor: const Color(0xfff5eaf4),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back, color: Colors.black,),
+        ),
       ),
       body: SingleChildScrollView(
         child: Center (
@@ -52,7 +58,7 @@ class _AllScoresWithoutPatientPage extends State<AllScoresWithoutPatientPage> {
                             margin: const EdgeInsets.all(5),
                             decoration: const BoxDecoration(
                               borderRadius: BorderRadius.all(Radius.circular(20)),
-                              color: Color(0xff9abdda),
+                              color: Color(0xfff5eaf4),
                               boxShadow: <BoxShadow>[
                                 BoxShadow(
                                     color: Colors.black54,
@@ -62,19 +68,12 @@ class _AllScoresWithoutPatientPage extends State<AllScoresWithoutPatientPage> {
                             ),
                             child: Column(
                               children: <Widget>[
-                                Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(snapshot.data![index].creationDate,
-                                        style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold)),
-                                    IconButton(
-                                        onPressed: () {},
-                                        icon: const Icon(
-                                            Icons.question_mark_outlined)),
-                                  ],
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: Text(snapshot.data![index].creationDate,
+                                      style: const TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold)),
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -117,7 +116,7 @@ class _AllScoresWithoutPatientPage extends State<AllScoresWithoutPatientPage> {
                                                     .circular(
                                                     20)),
                                             color:
-                                            Color(0xff9abdda),
+                                            Color(0xfff5eaf4),
                                           ),
                                           child: Stack(
                                             alignment:
@@ -165,7 +164,7 @@ class _AllScoresWithoutPatientPage extends State<AllScoresWithoutPatientPage> {
                                                     ),
                                                     PieChartSectionData(
                                                       color: const Color(
-                                                          0xff7699b7),
+                                                          0xffb5abcc),
                                                       value: snapshot.data![index].elevationAngleInjured > 100 ? 0 : (100 -
                                                           snapshot.data![index].elevationAngleInjured *
                                                               100 ~/
@@ -213,7 +212,7 @@ class _AllScoresWithoutPatientPage extends State<AllScoresWithoutPatientPage> {
                                                     .circular(
                                                     20)),
                                             color:
-                                            Color(0xff9abdda),
+                                            Color(0xfff5eaf4),
                                           ),
                                           child: Stack(
                                             alignment:
@@ -261,7 +260,7 @@ class _AllScoresWithoutPatientPage extends State<AllScoresWithoutPatientPage> {
                                                     ),
                                                     PieChartSectionData(
                                                       color: const Color(
-                                                          0xff7699b7),
+                                                          0xffb5abcc),
                                                       value: snapshot.data![index].elevationAngleHealthy > 180 ? 0 : (100 -
                                                           snapshot.data![index].elevationAngleHealthy *
                                                               100 ~/
@@ -309,7 +308,7 @@ class _AllScoresWithoutPatientPage extends State<AllScoresWithoutPatientPage> {
                   );
                 } else {
                   return const Align(
-                      child: CircularProgressIndicator(),
+                      child: Text("No data"),
                       alignment: FractionalOffset.center);
                 }
               }),

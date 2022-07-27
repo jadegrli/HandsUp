@@ -342,7 +342,7 @@ class _LineChartSample extends State<LineChartSample> {
                   width: MediaQuery.of(context).size.width,
                   height: orientation == Orientation.portrait ? MediaQuery.of(context).size.height/2 : MediaQuery.of(context).size.height,
                   margin: const EdgeInsets.all(10),
-                  decoration: const BoxDecoration(
+                  decoration:  const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(18)),
                     gradient: LinearGradient(
                       colors: [
@@ -394,7 +394,7 @@ class _LineChartSample extends State<LineChartSample> {
                                       return graphBBScore();
                                     } else {
                                       return const Align(
-                                          child: CircularProgressIndicator(),
+                                          child: Text("No data", style: TextStyle(color: Colors.white),),
                                           alignment: FractionalOffset.center);
                                     }
                                   }),
@@ -459,7 +459,7 @@ class _LineChartSample extends State<LineChartSample> {
                                     Text(
                                       'Healthy',
                                       style: TextStyle(
-                                        color: Colors.green,
+                                        color: Colors.greenAccent,
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 2,
@@ -472,7 +472,7 @@ class _LineChartSample extends State<LineChartSample> {
                                     Text(
                                       'Injured',
                                       style: TextStyle(
-                                        color: Colors.red,
+                                        color: Colors.redAccent,
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 2,
@@ -502,7 +502,7 @@ class _LineChartSample extends State<LineChartSample> {
                                       return graphAngle();
                                     } else {
                                       return const Align(
-                                          child: CircularProgressIndicator(),
+                                          child: Text("No data", style: TextStyle(color: Colors.white),),
                                           alignment: FractionalOffset.center);
                                     }
                                   }),
@@ -685,12 +685,12 @@ class _LineChartSample extends State<LineChartSample> {
   );
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
+    String text = value.toInt().toString();
     const style = TextStyle(
       color: Color(0xff75729e),
       fontWeight: FontWeight.bold,
       fontSize: 14,
     );
-    String text = value.toInt().toString();
 
     return Text(text, style: style, textAlign: TextAlign.center);
   }
@@ -719,7 +719,7 @@ class _LineChartSample extends State<LineChartSample> {
 
   LineChartBarData get lineChartBarDataAngleInjured => LineChartBarData(
     isCurved: true,
-    color: Colors.red,
+    color: Colors.redAccent,
     barWidth: 5,
     isStrokeCapRound: true,
     //dotData: FlDotData(show: false),
@@ -729,7 +729,7 @@ class _LineChartSample extends State<LineChartSample> {
 
   LineChartBarData get lineChartBarDataAngleHealthy=> LineChartBarData(
     isCurved: true,
-    color: Colors.green,
+    color: Colors.greenAccent,
     barWidth: 5,
     isStrokeCapRound: true,
     //dotData: FlDotData(show: false),

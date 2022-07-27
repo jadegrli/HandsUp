@@ -60,7 +60,7 @@ class _HomePage extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xfff8f0f7),
+      backgroundColor: const Color(0xffeeebf4), //ok
         appBar: AppBar(
           centerTitle: true,
           elevation: 5,
@@ -73,7 +73,7 @@ class _HomePage extends State<HomePage> {
           actions: <Widget>[
             IconButton(
               icon: const Icon(Icons.info_rounded),
-              color: Colors.deepPurpleAccent,
+              color: const Color(0xff895cbc),
               iconSize: 35,
               onPressed: () {
                 showDialog(
@@ -127,7 +127,7 @@ class _HomePage extends State<HomePage> {
                 margin: const EdgeInsets.all(20),
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(20)),
-                  color: Color(0xffd5c6e5),
+                  color: Color(0xfff5eaf4), // ok
                   boxShadow: <BoxShadow>[
                     BoxShadow(
                         color: Colors.black54,
@@ -283,7 +283,7 @@ class _HomePage extends State<HomePage> {
                       icon: const Icon(Icons.play_circle_outline),
                       label: const Text("NEW MEASUREMENT"),
                       style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff9f74cd)),
+                          backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff7a52a8)), //ok
                           padding: MaterialStateProperty.all<EdgeInsets>(
                               const EdgeInsets.only(
                                   left: 50, right: 50, top: 15, bottom: 15))),
@@ -303,7 +303,7 @@ class _HomePage extends State<HomePage> {
                       icon: const Icon(Icons.format_list_bulleted_outlined),
                       label: const Text("All measures"),
                       style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff79b9c2)),
+                          backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff8cc0cc)), //ok
                           padding: MaterialStateProperty.all<EdgeInsets>(
                               const EdgeInsets.only(left: 50, right: 50))),
                       onPressed: () {
@@ -324,7 +324,7 @@ class _HomePage extends State<HomePage> {
                 margin: const EdgeInsets.all(10),
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(20)),
-                  color: Color(0xffd5c6e5),
+                  color: Color(0xfff5eaf4), //ok
                   boxShadow: <BoxShadow>[
                     BoxShadow(
                         color: Colors.black54,
@@ -339,7 +339,7 @@ class _HomePage extends State<HomePage> {
                       margin: const EdgeInsets.all(10),
                       decoration: const BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(20)),
-                        color: Color(0xffeadaee),
+                        color: Color(0xfff5eaf4), // ok
                         boxShadow: <BoxShadow>[
                           BoxShadow(
                               color: Colors.black54,
@@ -445,6 +445,7 @@ class _HomePage extends State<HomePage> {
 
                       },
                       decoration: InputDecoration(
+                        iconColor: Colors.deepPurple,
                         icon: const Icon(Icons.search_rounded),
                         hintStyle: const TextStyle(color: Colors.black),
                         hintText: "Enter a name",
@@ -582,7 +583,7 @@ class _HomePage extends State<HomePage> {
                 },
               );*/
             },
-            backgroundColor: Colors.blueGrey,
+            backgroundColor: const Color(0xff8cc0cc), //ok
             child: const Icon(
               Icons.person_add,
               size: 40,

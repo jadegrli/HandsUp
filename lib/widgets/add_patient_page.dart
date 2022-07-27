@@ -97,7 +97,14 @@ class _CreatePatientPage extends State<CreatePatientPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create a new patient'),
+        backgroundColor: const Color(0xfff5eaf4),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back, color: Colors.black,),
+        ),
+        title: const Text('Create a new patient', style: TextStyle(color: Colors.black),),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -155,7 +162,7 @@ class _CreatePatientPage extends State<CreatePatientPage> {
                           },
                           icon: const Icon(
                             Icons.calendar_month_rounded,
-                            color: Colors.blue,
+                            color: Colors.deepPurple,
                             size: 50.0,
                           )),
                     ],
@@ -211,6 +218,7 @@ class _CreatePatientPage extends State<CreatePatientPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.deepPurple,
           child: const Icon(Icons.check),
           onPressed: () {
             if (verifyEntries()) {

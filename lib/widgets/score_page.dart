@@ -38,7 +38,14 @@ class _ScorePage extends State<ScorePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Score profile"),
+        backgroundColor: const Color(0xfff5eaf4),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back, color: Colors.black,),
+        ),
+        title: const Text("Score profile", style: TextStyle(color: Colors.black),),
         automaticallyImplyLeading: true,
       ),
       body: SingleChildScrollView(
@@ -62,7 +69,7 @@ class _ScorePage extends State<ScorePage> {
                       margin: const EdgeInsets.all(20),
                       decoration: const BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(20)),
-                        color: Color(0xff9abdda),
+                        color: Color(0xfff5eaf4),
                         boxShadow: <BoxShadow>[
                           BoxShadow(
                               color: Colors.black54,
@@ -188,6 +195,7 @@ class _ScorePage extends State<ScorePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.deepPurple,
           child: const Icon(Icons.check),
           onPressed: () {
             final newScore = Score(id: widget.id, creationDate: score.creationDate, elevationAngleInjured: score.elevationAngleInjured, elevationAngleHealthy: score.elevationAngleHealthy, bbScore: score.bbScore, notes: notesTextController.text);
@@ -218,7 +226,7 @@ class _ScorePage extends State<ScorePage> {
                             "OK",
                             style: TextStyle(
                                 color: Colors
-                                    .green),
+                                    .deepPurple),
                           ),
                         ),
                       ),
