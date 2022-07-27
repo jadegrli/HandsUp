@@ -32,9 +32,10 @@ class _HomePage extends State<HomePage> {
   var itemsSortsPatient = [
     "A-Z",
     "Z-A",
-    "rotator cuff",
-    "frozen shoulder",
-    "humerus fracture",
+    "healthy",
+    "rot. cuff",
+    "frozen sh.",
+    "hum. frac.",
     "other"
   ];
 
@@ -489,13 +490,16 @@ class _HomePage extends State<HomePage> {
                               case "Z-A":
                                 bloc.getAllPatientsZA();
                                 break;
-                              case "rotator cuff":
+                              case "rot. cuff":
                                 bloc.getAllPatientPathology("Rotator cuff");
                                 break;
-                              case "frozen shoulder":
+                                case "healthy":
+                                bloc.getAllPatientPathology("Healthy");
+                          break;
+                              case "frozen sh.":
                                 bloc.getAllPatientPathology("Frozen shoulder");
                                 break;
-                              case "humerus fracture":
+                              case "hum. frac.":
                                 bloc.getAllPatientPathology("Humerus fracture");
                                 break;
                               case "other":
