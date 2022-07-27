@@ -389,7 +389,7 @@ class _HomePage extends State<HomePage> {
                                     value: value,
                                     child: Text(
                                       value,
-                                      style: const TextStyle(fontSize: 10),
+                                      style: const TextStyle(fontSize: 13),
                                     ),
                                   );
                                 }).toList(),
