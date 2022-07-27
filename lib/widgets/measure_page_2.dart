@@ -95,7 +95,6 @@ class _Measure2 extends State<MeasurePage2> {
   @override
   void dispose() {
     super.dispose();
-    _timer.cancel();
     player.dispose();
     player2.dispose();
     //unhide the bottom system navigation bar
