@@ -20,6 +20,7 @@ class _ScorePage extends State<ScorePage> {
   final notesTextController = TextEditingController();
   late Score score;
   bool initOnce = true;
+  bool isExcluded = false;
 
   @override
   void initState() {

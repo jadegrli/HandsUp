@@ -55,6 +55,9 @@ class AngleScoreLive extends ScoreLive {
                 .length /*&&
         angularRangeBackHealthy.length == angularRangeBackInjured.length*/
         ) {
+      if (maxInjured < 0 || maxHealthy < 0) {
+        throw Exception("Error in score calculation : negative results");
+      }
       elevationInjured = maxInjured;
       elevationInjured = double.parse(elevationInjured.toStringAsFixed(3));
       elevationHealthy = maxHealthy;

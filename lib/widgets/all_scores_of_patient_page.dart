@@ -64,9 +64,12 @@ class _AllScoresOfPatientPage extends State<AllScoresOfPatientPage> {
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold)),
                                     IconButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+
+                                        },
                                         icon: const Icon(
                                             Icons.question_mark_outlined)),
+
                                   ],
                                 ),
                                 Row(

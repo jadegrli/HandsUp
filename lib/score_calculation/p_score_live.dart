@@ -91,6 +91,9 @@ class PScoreLive extends ScoreLive {
       }
       upScore = 100 * pScoreUp / deltaPrUp.length;
       upScore = double.parse(upScore.toStringAsFixed(3));
+      if (upScore < 0) {
+        throw Exception("Error in score calculation : negative result");
+      }
 
       if (deltaPrBack.isEmpty) {
         throw Exception("Error in score calculation : deltaPrBack is Empty");
@@ -99,6 +102,9 @@ class PScoreLive extends ScoreLive {
       backScore = double.parse(backScore.toStringAsFixed(3));
       bbScore = 16.71 + 0.32 * backScore + 0.45 * upScore;
       bbScore = double.parse(bbScore.toStringAsFixed(3));
+      if (bbScore < 0 || backScore < 0) {
+        throw Exception("Error in score calculation : negative result");
+      }
     } else {
       throw Exception("Error in score calculation : not same number of repetition on both side");
     }
