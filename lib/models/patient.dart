@@ -1,4 +1,3 @@
-
 class Patient {
   static final columns = [
     "id",
@@ -10,7 +9,7 @@ class Patient {
     "notes",
     "healthCondition",
     "otherPathology",
-    "isRightReferenceOrHealthy" 
+    "isRightReferenceOrHealthy"
   ];
 
   final int?
@@ -83,7 +82,7 @@ class Patient {
         notes: notes ?? this.notes,
         creationDate: creationDate ?? this.creationDate,
         isRightReferenceOrHealthy:
-        isRightReferenceOrHealthy ?? this.isRightReferenceOrHealthy,
+            isRightReferenceOrHealthy ?? this.isRightReferenceOrHealthy,
         healthCondition: healthCondition ?? this.healthCondition,
         otherPathology: otherPathology ?? this.otherPathology,
       );

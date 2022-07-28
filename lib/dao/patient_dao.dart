@@ -19,9 +19,7 @@ class PatientDao {
 
     List<Map<String, dynamic>> result = [];
     result = await db.query(patientTABLE,
-        columns: Patient.columns,
-        orderBy:
-            "name ASC");
+        columns: Patient.columns, orderBy: "name ASC");
 
     List<Patient> patientsList = result.isNotEmpty
         ? result.map((item) => Patient.fromDatabaseJson(item)).toList()
@@ -42,9 +40,7 @@ class PatientDao {
           orderBy: "name ASC");
     } else {
       result = await db.query(patientTABLE,
-          columns: Patient.columns,
-          orderBy:
-              "name ASC");
+          columns: Patient.columns, orderBy: "name ASC");
     }
 
     List<Patient> patientsList = result.isNotEmpty

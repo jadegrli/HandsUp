@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../models/repetition.dart';
 
-
 class RepetitionPage extends StatefulWidget {
   final Repetition repetition;
   const RepetitionPage({Key? key, required this.repetition}) : super(key: key);
@@ -27,12 +26,18 @@ class _RepetitionPage extends State<RepetitionPage> {
             Text("isHealthy : ${widget.repetition.isHealthy}"),
             Text("scoreId : ${widget.repetition.scoreId}"),
             Text("rangeAngularUp : ${widget.repetition.rangeAngularUp}"),
-            Text("rangeAccBackCoordX : ${widget.repetition.rangeAccBackCoordX}"),
-            Text("rangeAccBackCoordY : ${widget.repetition.rangeAccBackCoordY}"),
-            Text("rangeAccBackCoordZ : ${widget.repetition.rangeAccBackCoordZ}"),
-            Text("rangeGyroBackCoordX : ${widget.repetition.rangeGyroBackCoordX}"),
-            Text("rangeGyroBackCoordY : ${widget.repetition.rangeGyroBackCoordY}"),
-            Text("rangeGyroBackCoordZ : ${widget.repetition.rangeGyroBackCoordZ}"),
+            Text(
+                "rangeAccBackCoordX : ${widget.repetition.rangeAccBackCoordX}"),
+            Text(
+                "rangeAccBackCoordY : ${widget.repetition.rangeAccBackCoordY}"),
+            Text(
+                "rangeAccBackCoordZ : ${widget.repetition.rangeAccBackCoordZ}"),
+            Text(
+                "rangeGyroBackCoordX : ${widget.repetition.rangeGyroBackCoordX}"),
+            Text(
+                "rangeGyroBackCoordY : ${widget.repetition.rangeGyroBackCoordY}"),
+            Text(
+                "rangeGyroBackCoordZ : ${widget.repetition.rangeGyroBackCoordZ}"),
             Text("rangeAccUpCoordX : ${widget.repetition.rangeAccUpCoordX}"),
             Text("rangeAccUpCoordY : ${widget.repetition.rangeAccUpCoordY}"),
             Text("rangeAccUpCoordZ : ${widget.repetition.rangeAccUpCoordZ}"),

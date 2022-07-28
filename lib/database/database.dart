@@ -30,7 +30,10 @@ class DatabaseProvider {
     String path = join(documentsDirectory.path, "HandsUp.db");
 
     var database = await openDatabase(path,
-        version: 1, onCreate: initDB, onUpgrade: onUpgrade, onConfigure: _onConfigure);
+        version: 1,
+        onCreate: initDB,
+        onUpgrade: onUpgrade,
+        onConfigure: _onConfigure);
     return database;
   }
 

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:hands_up/bloc_database/db_bloc_repetition.dart';
 import 'package:hands_up/export/export_data.dart';
@@ -9,7 +8,8 @@ import '../graph/graph.dart';
 import 'all_scores_of_patient_page.dart';
 
 class OverallPatientPage extends StatefulWidget {
-  const OverallPatientPage({Key? key, required this.patientId}) : super(key: key);
+  const OverallPatientPage({Key? key, required this.patientId})
+      : super(key: key);
 
   final int patientId;
 
@@ -21,16 +21,15 @@ class _OverallPatientPage extends State<OverallPatientPage> {
   int pageIndex = 0;
   late int idPatient;
   bool showAppBar = true;
-   final blocScore = DataBaseBlocScore();
-   final blocRepetition = DataBaseBlocRepetition();
-   final export = ExportDataBloc();
+  final blocScore = DataBaseBlocScore();
+  final blocRepetition = DataBaseBlocRepetition();
+  final export = ExportDataBloc();
 
   @override
   void initState() {
     super.initState();
     idPatient = widget.patientId;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -41,28 +40,39 @@ class _OverallPatientPage extends State<OverallPatientPage> {
     ];
 
     return Scaffold(
-      appBar: showAppBar ? AppBar(
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.arrow_back, color: Colors.black,),
-        ),
-        backgroundColor: const Color(0xfff5eaf4),
-        title: const Text(
-          "Patient profile",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 25,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        actions: [
-          IconButton(onPressed: () async {
-            export.export(widget.patientId);
-          }, icon: const Icon(Icons.share, color: Colors.black,),)
-        ],
-      ) : null,
+      appBar: showAppBar
+          ? AppBar(
+              leading: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.black,
+                ),
+              ),
+              backgroundColor: const Color(0xfff5eaf4),
+              title: const Text(
+                "Patient profile",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 25,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              actions: [
+                IconButton(
+                  onPressed: () async {
+                    export.export(widget.patientId);
+                  },
+                  icon: const Icon(
+                    Icons.share,
+                    color: Colors.black,
+                  ),
+                )
+              ],
+            )
+          : null,
       backgroundColor: const Color(0xffeeebf4),
       body: GestureDetector(
         onDoubleTap: () {
@@ -98,15 +108,15 @@ class _OverallPatientPage extends State<OverallPatientPage> {
             },
             icon: pageIndex == 0
                 ? const Icon(
-              Icons.person,
-              color: Colors.black,
-              size: 35,
-            )
+                    Icons.person,
+                    color: Colors.black,
+                    size: 35,
+                  )
                 : const Icon(
-              Icons.person,
-              color: Colors.white,
-              size: 35,
-            ),
+                    Icons.person,
+                    color: Colors.white,
+                    size: 35,
+                  ),
           ),
           IconButton(
             enableFeedback: false,
@@ -117,15 +127,15 @@ class _OverallPatientPage extends State<OverallPatientPage> {
             },
             icon: pageIndex == 1
                 ? const Icon(
-              Icons.format_list_bulleted_outlined,
-              color: Colors.black,
-              size: 35,
-            )
+                    Icons.format_list_bulleted_outlined,
+                    color: Colors.black,
+                    size: 35,
+                  )
                 : const Icon(
-              Icons.format_list_bulleted_outlined,
-              color: Colors.white,
-              size: 35,
-            ),
+                    Icons.format_list_bulleted_outlined,
+                    color: Colors.white,
+                    size: 35,
+                  ),
           ),
           IconButton(
             enableFeedback: false,
@@ -136,19 +146,18 @@ class _OverallPatientPage extends State<OverallPatientPage> {
             },
             icon: pageIndex == 2
                 ? const Icon(
-              Icons.auto_graph,
-              color: Colors.black,
-              size: 35,
-            )
+                    Icons.auto_graph,
+                    color: Colors.black,
+                    size: 35,
+                  )
                 : const Icon(
-              Icons.auto_graph,
-              color: Colors.white,
-              size: 35,
-            ),
+                    Icons.auto_graph,
+                    color: Colors.white,
+                    size: 35,
+                  ),
           ),
         ],
       ),
     );
   }
-
 }

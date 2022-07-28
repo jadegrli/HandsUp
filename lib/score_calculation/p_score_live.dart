@@ -95,7 +95,8 @@ class PScoreLive extends ScoreLive {
       }
       bbScore = double.parse(bbScore.toStringAsFixed(3));
     } else {
-      throw Exception("Error in score calculation : not same number of repetition on both side");
+      throw Exception(
+          "Error in score calculation : not same number of repetition on both side");
     }
   }
 

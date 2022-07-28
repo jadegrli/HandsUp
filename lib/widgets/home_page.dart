@@ -21,7 +21,26 @@ class _HomePage extends State<HomePage> {
   String nbRepetition = "3";
   String sortChoice = "A-Z";
   String patientNameToFind = "";
-  var itemsTest = ["3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"];
+  var itemsTest = [
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20"
+  ];
   var itemsNbRepetitions = ["2", "3", "4", "5"];
   var itemsSortsPatient = [
     "A-Z",
@@ -394,9 +413,9 @@ class _HomePage extends State<HomePage> {
                               case "rot. cuff":
                                 bloc.getAllPatientPathology("Rotator cuff");
                                 break;
-                                case "healthy":
+                              case "healthy":
                                 bloc.getAllPatientPathology("Healthy");
-                          break;
+                                break;
                               case "frozen sh.":
                                 bloc.getAllPatientPathology("Frozen shoulder");
                                 break;
@@ -425,24 +444,24 @@ class _HomePage extends State<HomePage> {
                               itemBuilder: (context, index) {
                                 return ListTile(
                                   title: Row(
-                                      children: [
-                                        CircleAvatar(
-                                          backgroundColor:
-                                          const Color(0xff8cc0cc),
-                                          child: Text(
-                                            snapshot.data![index].name
-                                                .substring(0, 1)
-                                                .toUpperCase(),
-                                            style: const TextStyle(
-                                                color: Colors.white),
-                                          ),
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundColor:
+                                            const Color(0xff8cc0cc),
+                                        child: Text(
+                                          snapshot.data![index].name
+                                              .substring(0, 1)
+                                              .toUpperCase(),
+                                          style: const TextStyle(
+                                              color: Colors.white),
                                         ),
-                                        const SizedBox(width: 10),
-                                        Text(snapshot.data![index].name),
-                                        const SizedBox(width: 5),
-                                        Text(snapshot.data![index].firstName),
-                                      ],
-                                    ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Text(snapshot.data![index].name),
+                                      const SizedBox(width: 5),
+                                      Text(snapshot.data![index].firstName),
+                                    ],
+                                  ),
                                   onTap: () {
                                     Navigator.push(
                                         context,
@@ -492,8 +511,6 @@ class _HomePage extends State<HomePage> {
               size: 40,
             ),
           ),
-        )
-        );
+        ));
   }
-
 }

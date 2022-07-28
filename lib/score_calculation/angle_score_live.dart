@@ -1,11 +1,8 @@
-
-
 import 'dart:math';
 
 import 'package:hands_up/score_calculation/score_live.dart';
 
 import '../models/measure.dart';
-
 
 class AngleScoreLive extends ScoreLive {
   AngleScoreLive({required List<Measure> allMeasures})
@@ -24,24 +21,24 @@ class AngleScoreLive extends ScoreLive {
     for (int i = 0; i < allMeasures.length ~/ 2; i++) {
       if (i % 2 == 1) {
         //hand up
-          double tmp = _getAngularRange(allMeasures[i].accelValues);
-          angularRangeUpHealthy.add(tmp);
-          if (tmp > maxHealthy) maxHealthy = tmp;
+        double tmp = _getAngularRange(allMeasures[i].accelValues);
+        angularRangeUpHealthy.add(tmp);
+        if (tmp > maxHealthy) maxHealthy = tmp;
       } /*else {
         angularRangeBackHealthy
             .add(_getAngularRange(allMeasures[i].accelValues));
       }*/
     }
 
-    double maxInjured = _getAngularRange(
-                allMeasures[allMeasures.length ~/ 2].accelValues);
+    double maxInjured =
+        _getAngularRange(allMeasures[allMeasures.length ~/ 2].accelValues);
 
     for (int i = allMeasures.length ~/ 2; i < allMeasures.length; i++) {
       if (i % 2 == 1) {
         //hand up
-          double tmp = _getAngularRange(allMeasures[i].accelValues);
-          angularRangeUpInjured.add(tmp);
-          if (tmp > maxInjured) maxInjured = tmp;
+        double tmp = _getAngularRange(allMeasures[i].accelValues);
+        angularRangeUpInjured.add(tmp);
+        if (tmp > maxInjured) maxInjured = tmp;
       } /*else {
         angularRangeBackInjured
             .add(_getAngularRange(allMeasures[i].accelValues));
@@ -62,7 +59,8 @@ class AngleScoreLive extends ScoreLive {
       elevationHealthy = maxHealthy;
       elevationHealthy = double.parse(elevationHealthy.toStringAsFixed(3));
     } else {
-      throw Exception("Error in score calculation : not same number of repetition on both side");
+      throw Exception(
+          "Error in score calculation : not same number of repetition on both side");
     }
   }
 

@@ -1,10 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:hands_up/widgets/score_page.dart';
 
 import '../bloc_database/db_bloc_score.dart';
 import '../models/score.dart';
-
 
 //TODO remove this page when test finished
 
@@ -16,7 +14,6 @@ class AllScoresPage extends StatefulWidget {
 }
 
 class _AllScoresPage extends State<AllScoresPage> {
-
   final DataBaseBlocScore bloc = DataBaseBlocScore();
 
   @override
@@ -24,7 +21,6 @@ class _AllScoresPage extends State<AllScoresPage> {
     super.initState();
     bloc.getAllScore();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +43,10 @@ class _AllScoresPage extends State<AllScoresPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ScorePage(id: snapshot.data![index].id!, patientId: 0,)),
+                            builder: (context) => ScorePage(
+                                  id: snapshot.data![index].id!,
+                                  patientId: 0,
+                                )),
                       );
                     },
                   );
@@ -61,5 +60,4 @@ class _AllScoresPage extends State<AllScoresPage> {
           }),
     );
   }
-
 }

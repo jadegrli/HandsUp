@@ -1,4 +1,3 @@
-
 class Repetition {
   static final columns = [
     "id",
@@ -118,15 +117,15 @@ class Repetition {
         scoreId: scoreId ?? this.scoreId,
         rangeAccBackCoordX: rangeAccBackCoordX ?? this.rangeAccBackCoordX,
         rangeAccBackCoordY: rangeAccBackCoordY ?? this.rangeAccBackCoordY,
-        rangeAccBackCoordZ : rangeAccBackCoordZ ?? this.rangeAccBackCoordZ,
-        rangeGyroBackCoordX : rangeGyroBackCoordX ?? this.rangeGyroBackCoordX,
-        rangeGyroBackCoordY : rangeGyroBackCoordY ?? this.rangeGyroBackCoordY,
-        rangeGyroBackCoordZ : rangeGyroBackCoordZ ?? this.rangeGyroBackCoordZ,
-        rangeAccUpCoordX : rangeAccUpCoordX ?? this.rangeAccUpCoordX,
-        rangeAccUpCoordY : rangeAccUpCoordY ?? this.rangeAccUpCoordY,
+        rangeAccBackCoordZ: rangeAccBackCoordZ ?? this.rangeAccBackCoordZ,
+        rangeGyroBackCoordX: rangeGyroBackCoordX ?? this.rangeGyroBackCoordX,
+        rangeGyroBackCoordY: rangeGyroBackCoordY ?? this.rangeGyroBackCoordY,
+        rangeGyroBackCoordZ: rangeGyroBackCoordZ ?? this.rangeGyroBackCoordZ,
+        rangeAccUpCoordX: rangeAccUpCoordX ?? this.rangeAccUpCoordX,
+        rangeAccUpCoordY: rangeAccUpCoordY ?? this.rangeAccUpCoordY,
         rangeAccUpCoordZ: rangeAccUpCoordZ ?? this.rangeAccUpCoordZ,
-        rangeGyroUpCoordX : rangeGyroUpCoordX ?? this.rangeGyroUpCoordX,
-        rangeGyroUpCoordY : rangeGyroUpCoordY ?? this.rangeGyroUpCoordY,
-        rangeGyroUpCoordZ : rangeGyroUpCoordZ ?? this.rangeGyroUpCoordZ,
+        rangeGyroUpCoordX: rangeGyroUpCoordX ?? this.rangeGyroUpCoordX,
+        rangeGyroUpCoordY: rangeGyroUpCoordY ?? this.rangeGyroUpCoordY,
+        rangeGyroUpCoordZ: rangeGyroUpCoordZ ?? this.rangeGyroUpCoordZ,
       );
 }

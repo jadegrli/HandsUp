@@ -3,7 +3,6 @@ import 'dart:async';
 import '../models/patient.dart';
 import '../repositories/patient_repository.dart';
 
-
 class DataBaseBlocPatient {
   final _patientRepository = PatientRepository();
 
@@ -11,14 +10,13 @@ class DataBaseBlocPatient {
 
   get data => _controller.stream;
 
-
   DataBaseBlocPatient() {
     getAllPatients();
   }
 
   getAllPatients() async {
     List<Patient> list = await _patientRepository.getAllPatients();
-    list.sort((a,b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    list.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
     list = sortByFirstNameWhenSameName(list);
     _controller.sink.add(list);
   }
@@ -35,10 +33,11 @@ class DataBaseBlocPatient {
           tmp.add(list[j]);
           counter++;
         } else {
-            break;
+          break;
         }
       }
-      tmp.sort((a, b) => a.firstName.toLowerCase().compareTo(b.firstName.toLowerCase()));
+      tmp.sort((a, b) =>
+          a.firstName.toLowerCase().compareTo(b.firstName.toLowerCase()));
       result.addAll(tmp);
       tmp.clear();
       i += counter;
@@ -50,7 +49,7 @@ class DataBaseBlocPatient {
   /// sort list in none alphabetical order : name and then first name
   getAllPatientsZA() async {
     List<Patient> list = await _patientRepository.getAllPatients();
-    list.sort((a,b) => b.name.toLowerCase().compareTo(a.name.toLowerCase()));
+    list.sort((a, b) => b.name.toLowerCase().compareTo(a.name.toLowerCase()));
     list = sortByFirstNameWhenSameName(list);
     _controller.sink.add(list);
     //_controller.sink.add(await _patientRepository.getAllPatients());
@@ -59,7 +58,8 @@ class DataBaseBlocPatient {
   /// returns all patient with a specific pathology
   getAllPatientPathology(String pathology) async {
     List<Patient> list = await _patientRepository.getAllPatients();
-    List<Patient> listPatholgy = list.where((i) => i.healthCondition == pathology).toList();
+    List<Patient> listPatholgy =
+        list.where((i) => i.healthCondition == pathology).toList();
     _controller.sink.add(listPatholgy);
   }
 

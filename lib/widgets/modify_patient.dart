@@ -50,7 +50,9 @@ class _ModifyPatientPage extends State<ModifyPatientPage> {
       return false;
     }
 
-    if (hasPathology && sortChoice == "Other" && otherPathologyTextController.text.isEmpty) {
+    if (hasPathology &&
+        sortChoice == "Other" &&
+        otherPathologyTextController.text.isEmpty) {
       return false;
     }
     return true;
@@ -112,22 +114,30 @@ class _ModifyPatientPage extends State<ModifyPatientPage> {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: const Icon(Icons.arrow_back, color: Colors.black,),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ),
         ),
-        title: const Text('Modify patient', style: TextStyle(color: Colors.black),),
+        title: const Text(
+          'Modify patient',
+          style: TextStyle(color: Colors.black),
+        ),
       ),
       body: SingleChildScrollView(
         child: StreamBuilder<List<dynamic>>(
           stream: bloc.data,
           builder: (context, snapshot) {
             if (snapshot.data != null && snapshot.data!.isNotEmpty) {
-              if (initOnce){
+              if (initOnce) {
                 initOnce = false;
                 firstNameTextController.text = snapshot.data!.first.firstName;
                 nameTextController.text = snapshot.data!.first.name;
                 emailTextController.text = snapshot.data!.first.email;
                 otherPathologyTextController.text =
-                    snapshot.data!.first.otherPathology == "-" ? "" : snapshot.data!.first.otherPathology;
+                    snapshot.data!.first.otherPathology == "-"
+                        ? ""
+                        : snapshot.data!.first.otherPathology;
                 notesTextController.text = snapshot.data!.first.notes;
                 hasPathology = snapshot.data!.first.healthCondition == "Healthy"
                     ? false
@@ -295,43 +305,40 @@ class _ModifyPatientPage extends State<ModifyPatientPage> {
                   //if set to true allow to close popup by tapping out of the popup
                   barrierDismissible: true,
                   context: context,
-                  builder: (BuildContext context) =>
-                      AlertDialog(
-                        title: const Center(
-                          child: Text(
-                              "Information are missing or incorrect..."),
-                        ),
-                        content: SingleChildScrollView(
-                          child: Column(
-                            children: const <Widget>[
-                              Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  "Please fill all information and check that everything is correct",
-                                  style: TextStyle(fontSize: 18.0),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        actions: [
-                          Center(
-                            child: TextButton(
-                                child: const Text(
-                                  "Ok",
-                                  style: TextStyle(
-                                      color: Colors.deepPurpleAccent,
-                                      fontSize: 20),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop(true);
-                                }),
+                  builder: (BuildContext context) => AlertDialog(
+                    title: const Center(
+                      child: Text("Information are missing or incorrect..."),
+                    ),
+                    content: SingleChildScrollView(
+                      child: Column(
+                        children: const <Widget>[
+                          Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Please fill all information and check that everything is correct",
+                              style: TextStyle(fontSize: 18.0),
+                            ),
                           ),
                         ],
-                        elevation: 24,
                       ),
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    actions: [
+                      Center(
+                        child: TextButton(
+                            child: const Text(
+                              "Ok",
+                              style: TextStyle(
+                                  color: Colors.deepPurpleAccent, fontSize: 20),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop(true);
+                            }),
+                      ),
+                    ],
+                    elevation: 24,
+                  ),
                 );
               }
             }
@@ -415,8 +422,7 @@ class _ModifyPatientPage extends State<ModifyPatientPage> {
                   borderRadius: BorderRadius.circular(50),
                   boxShadow: const <BoxShadow>[
                     BoxShadow(
-                        color: Color.fromRGBO(0, 0, 0, 0.57),
-                        blurRadius: 5)
+                        color: Color.fromRGBO(0, 0, 0, 0.57), blurRadius: 5)
                   ]),
               child: Padding(
                 padding: const EdgeInsets.only(left: 30, right: 30),

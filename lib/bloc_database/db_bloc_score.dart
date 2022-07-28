@@ -5,7 +5,6 @@ import '../models/score.dart';
 import '../repositories/repetition_repository.dart';
 import '../repositories/score_repository.dart';
 
-
 class DataBaseBlocScore {
   final _scoreRepository = ScoreRepository();
   final _repetitionRepository = RepetitionRepository();
@@ -36,7 +35,8 @@ class DataBaseBlocScore {
       getScoreWithNoPatient();
     } else {
       //_controller.sink.add(await _scoreRepository.getScoreByPatientId(id: id);
-      List<Score> list = await _scoreRepository.getScoreByPatientIdExcluded(id: id);
+      List<Score> list =
+          await _scoreRepository.getScoreByPatientIdExcluded(id: id);
       list.sort((a, b) => b.id!.compareTo(a.id!));
       _controller.sink.add(list);
     }
@@ -57,18 +57,22 @@ class DataBaseBlocScore {
     await _scoreRepository.insertScore(score);
   }
 
-
   /// create a new score and create all the repetitions of the score
-  addScoreWithRepetition(Score score, List<List<double>> allRangesAcc, List<List<double>> allRangesGyro,
-      double elevationInjured, double elevationHealthy) async {
+  addScoreWithRepetition(
+      Score score,
+      List<List<double>> allRangesAcc,
+      List<List<double>> allRangesGyro,
+      double elevationInjured,
+      double elevationHealthy) async {
     List<int> id = await _scoreRepository.insertScore(score);
 
     for (int i = 0; i < allRangesAcc.length - 1; i += 2) {
       final newRepetition = Repetition(
           isHealthy: i < allRangesAcc.length ~/ 2,
           scoreId: id.first,
-          rangeAngularUp:
-          i < allRangesAcc.length ~/ 2 ? elevationHealthy : elevationInjured,
+          rangeAngularUp: i < allRangesAcc.length ~/ 2
+              ? elevationHealthy
+              : elevationInjured,
           rangeAccBackCoordX: allRangesAcc[i][0],
           rangeAccBackCoordY: allRangesAcc[i][1],
           rangeAccBackCoordZ: allRangesAcc[i][2],
@@ -88,7 +92,6 @@ class DataBaseBlocScore {
   addRepetition(Repetition repetition) async {
     await _repetitionRepository.insertRepetition(repetition);
   }
-
 
   updateScore(Score score) async {
     await _scoreRepository.updateScore(score);

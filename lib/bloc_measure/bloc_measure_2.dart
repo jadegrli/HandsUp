@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:intl/intl.dart';
@@ -10,7 +9,7 @@ import '../repositories/sensors_repository.dart';
 import '../score_calculation/angle_score_live.dart';
 import '../score_calculation/p_score_live.dart';
 
-class MeasureBloc2  {
+class MeasureBloc2 {
   final SensorsRepository sensorsRepository = SensorsRepository();
 
   final _measureController = StreamController<MeasureStates>();
@@ -29,14 +28,11 @@ class MeasureBloc2  {
 
   final DataBaseBlocScore blocScore = DataBaseBlocScore();
 
-
   static bool isCanceled = false;
-
 
   MeasureBloc2() {
     _measureController.sink.add(StateReady([], [], [], 0));
   }
-
 
   /// launches the measure for a shoulder
   launchSide(int nbRepetition, int movementDuration, bool firstSide) async {
@@ -74,11 +70,15 @@ class MeasureBloc2  {
     }
     _measureController.sink.add(StateLoading([], [], [], 0));
     if (firstSide) {
-      int error = midResult(List.from(sensorsRepository.sensorsValues), nbRepetition);
-      _measureController.sink.add(StateAllMeasuresFirstSide(midRangesAcc, midRangesGyro, [], error));
+      int error =
+          midResult(List.from(sensorsRepository.sensorsValues), nbRepetition);
+      _measureController.sink.add(
+          StateAllMeasuresFirstSide(midRangesAcc, midRangesGyro, [], error));
     } else {
-      int error2 = finalResult(List.from(sensorsRepository.sensorsValues), nbRepetition);
-      _measureController.sink.add(StateAllMeasuresSecondSide([], [], [bbScore, elevationAngleHealthy, elevationAngleInjured], error2));
+      int error2 =
+          finalResult(List.from(sensorsRepository.sensorsValues), nbRepetition);
+      _measureController.sink.add(StateAllMeasuresSecondSide([], [],
+          [bbScore, elevationAngleHealthy, elevationAngleInjured], error2));
     }
   }
 
@@ -87,29 +87,23 @@ class MeasureBloc2  {
     _measureController.sink.add(StateLoading([], [], [], 0));
     final newScore = patientID == 0
         ? Score(
-        isExcluded: false,
-        creationDate: DateFormat("yyyy-MM-dd HH:mm")
-            .format(DateTime.now()),
-        elevationAngleInjured: elevationAngleInjured,
-        elevationAngleHealthy: elevationAngleHealthy,
-        bbScore: bbScore,
-        notes: "")
+            isExcluded: false,
+            creationDate: DateFormat("yyyy-MM-dd HH:mm").format(DateTime.now()),
+            elevationAngleInjured: elevationAngleInjured,
+            elevationAngleHealthy: elevationAngleHealthy,
+            bbScore: bbScore,
+            notes: "")
         : Score(
-        isExcluded: false,
-        creationDate: DateFormat("yyyy-MM-dd HH:mm")
-            .format(DateTime.now()),
-        elevationAngleInjured: elevationAngleInjured,
-        elevationAngleHealthy: elevationAngleHealthy,
-        bbScore: bbScore,
-        patientId: patientID,
-        notes: "");
+            isExcluded: false,
+            creationDate: DateFormat("yyyy-MM-dd HH:mm").format(DateTime.now()),
+            elevationAngleInjured: elevationAngleInjured,
+            elevationAngleHealthy: elevationAngleHealthy,
+            bbScore: bbScore,
+            patientId: patientID,
+            notes: "");
 
-    await blocScore.addScoreWithRepetition(
-        newScore,
-        List.from(allRangesAcc),
-        List.from(allRangesGyro),
-        elevationAngleInjured,
-        elevationAngleHealthy);
+    await blocScore.addScoreWithRepetition(newScore, List.from(allRangesAcc),
+        List.from(allRangesGyro), elevationAngleInjured, elevationAngleHealthy);
 
     endMeasure();
   }
@@ -183,14 +177,12 @@ class MeasureBloc2  {
   dispose() {
     _measureController.close();
   }
-
 }
-
-
 
 /// All the States
 abstract class MeasureStates {
-  MeasureStates(this.allResultsAcc, this.allResultsGyro, this.values, this.error);
+  MeasureStates(
+      this.allResultsAcc, this.allResultsGyro, this.values, this.error);
   final List<List<double>> allResultsAcc;
   final List<List<double>> allResultsGyro;
   final List<double> values;
@@ -198,39 +190,55 @@ abstract class MeasureStates {
 }
 
 class StateReady extends MeasureStates {
-  StateReady(List<List<double>> allResultsAcc, List<List<double>> allResultsGyro, List<double> values, int error) : super(allResultsAcc, allResultsGyro, values, error);
-
+  StateReady(List<List<double>> allResultsAcc,
+      List<List<double>> allResultsGyro, List<double> values, int error)
+      : super(allResultsAcc, allResultsGyro, values, error);
 }
 
 class StateLoading extends MeasureStates {
-  StateLoading(List<List<double>> allResultsAcc, List<List<double>> allResultsGyro, List<double> values, int error) : super(allResultsAcc, allResultsGyro, values, error);
+  StateLoading(List<List<double>> allResultsAcc,
+      List<List<double>> allResultsGyro, List<double> values, int error)
+      : super(allResultsAcc, allResultsGyro, values, error);
 }
 
 class StateRest extends MeasureStates {
-  StateRest(List<List<double>> allResultsAcc, List<List<double>> allResultsGyro, List<double> values, int error) : super(allResultsAcc, allResultsGyro, values, error);
+  StateRest(List<List<double>> allResultsAcc, List<List<double>> allResultsGyro,
+      List<double> values, int error)
+      : super(allResultsAcc, allResultsGyro, values, error);
 }
 
 class StateHandBack extends MeasureStates {
-  StateHandBack(List<List<double>> allResultsAcc, List<List<double>> allResultsGyro, List<double> values, int error) : super(allResultsAcc, allResultsGyro, values, error);
+  StateHandBack(List<List<double>> allResultsAcc,
+      List<List<double>> allResultsGyro, List<double> values, int error)
+      : super(allResultsAcc, allResultsGyro, values, error);
 }
 
 class StateHandUp extends MeasureStates {
-  StateHandUp(List<List<double>> allResultsAcc, List<List<double>> allResultsGyro, List<double> values, int error) : super(allResultsAcc, allResultsGyro, values, error);
+  StateHandUp(List<List<double>> allResultsAcc,
+      List<List<double>> allResultsGyro, List<double> values, int error)
+      : super(allResultsAcc, allResultsGyro, values, error);
 }
 
 class StateAllMeasuresFirstSide extends MeasureStates {
-  StateAllMeasuresFirstSide(List<List<double>> allResultsAcc, List<List<double>> allResultsGyro, List<double> values, int error) : super(allResultsAcc, allResultsGyro, values, error);
-
+  StateAllMeasuresFirstSide(List<List<double>> allResultsAcc,
+      List<List<double>> allResultsGyro, List<double> values, int error)
+      : super(allResultsAcc, allResultsGyro, values, error);
 }
 
 class StateAllMeasuresSecondSide extends MeasureStates {
-  StateAllMeasuresSecondSide(List<List<double>> allResultsAcc, List<List<double>> allResultsGyro, List<double> values, int error) : super(allResultsAcc, allResultsGyro, values, error);
+  StateAllMeasuresSecondSide(List<List<double>> allResultsAcc,
+      List<List<double>> allResultsGyro, List<double> values, int error)
+      : super(allResultsAcc, allResultsGyro, values, error);
 }
 
 class StateAllMeasuresLoadingOfCancel extends MeasureStates {
-  StateAllMeasuresLoadingOfCancel(List<List<double>> allResultsAcc, List<List<double>> allResultsGyro, List<double> values, int error) : super(allResultsAcc, allResultsGyro, values, error);
+  StateAllMeasuresLoadingOfCancel(List<List<double>> allResultsAcc,
+      List<List<double>> allResultsGyro, List<double> values, int error)
+      : super(allResultsAcc, allResultsGyro, values, error);
 }
 
 class StateAllMeasuresCanceled extends MeasureStates {
-  StateAllMeasuresCanceled(List<List<double>> allResultsAcc, List<List<double>> allResultsGyro, List<double> values, int error) : super(allResultsAcc, allResultsGyro, values, error);
+  StateAllMeasuresCanceled(List<List<double>> allResultsAcc,
+      List<List<double>> allResultsGyro, List<double> values, int error)
+      : super(allResultsAcc, allResultsGyro, values, error);
 }

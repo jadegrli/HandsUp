@@ -5,16 +5,17 @@ import '../bloc_database/db_bloc_repetition.dart';
 
 //TODO remove
 class AllRepetitionsOfScorePage extends StatefulWidget {
-  const AllRepetitionsOfScorePage({Key? key, required this.scoreId}) : super(key: key);
+  const AllRepetitionsOfScorePage({Key? key, required this.scoreId})
+      : super(key: key);
 
   final int scoreId;
 
   @override
-  State<AllRepetitionsOfScorePage> createState() => _AllRepetitionsOfScorePage();
+  State<AllRepetitionsOfScorePage> createState() =>
+      _AllRepetitionsOfScorePage();
 }
 
 class _AllRepetitionsOfScorePage extends State<AllRepetitionsOfScorePage> {
-
   final DataBaseBlocRepetition bloc = DataBaseBlocRepetition();
 
   @override
@@ -22,7 +23,6 @@ class _AllRepetitionsOfScorePage extends State<AllRepetitionsOfScorePage> {
     super.initState();
     bloc.getRepetitionsByScoreId(widget.scoreId);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,8 @@ class _AllRepetitionsOfScorePage extends State<AllRepetitionsOfScorePage> {
             bloc.getRepetitionsByScoreId(widget.scoreId);
             if (snapshot.data != null && snapshot.data!.isNotEmpty) {
               return ListView.builder(
-                primary: false, //if true doesn't scroll because of SingleChildScrollView
+                primary:
+                    false, //if true doesn't scroll because of SingleChildScrollView
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
                 itemCount: snapshot.data?.length,
@@ -44,8 +45,8 @@ class _AllRepetitionsOfScorePage extends State<AllRepetitionsOfScorePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                            RepetitionPage(repetition: snapshot.data![index])),
+                            builder: (context) => RepetitionPage(
+                                repetition: snapshot.data![index])),
                       );
                     },
                   );
@@ -57,5 +58,4 @@ class _AllRepetitionsOfScorePage extends State<AllRepetitionsOfScorePage> {
           }),
     );
   }
-
 }

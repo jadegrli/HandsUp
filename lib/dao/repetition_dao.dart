@@ -3,7 +3,6 @@ import 'dart:async';
 import '../database/database.dart';
 import '../models/repetition.dart';
 
-
 class RepetitionDao {
   final dbProvider = DatabaseProvider.dbProvider;
 
@@ -19,9 +18,7 @@ class RepetitionDao {
 
     List<Map<String, dynamic>> result = [];
     result = await db.query(repetitionTABLE,
-        columns: Repetition.columns,
-        orderBy:
-            "id ASC");
+        columns: Repetition.columns, orderBy: "id ASC");
 
     List<Repetition> repetitionsList = result.isNotEmpty
         ? result.map((item) => Repetition.fromDatabaseJson(item)).toList()

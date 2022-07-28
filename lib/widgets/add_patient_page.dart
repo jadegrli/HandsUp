@@ -5,7 +5,6 @@ import '../bloc_database/db_bloc_patient.dart';
 import '../models/patient.dart';
 import 'home_page.dart';
 
-
 class CreatePatientPage extends StatefulWidget {
   const CreatePatientPage({Key? key}) : super(key: key);
 
@@ -102,9 +101,15 @@ class _CreatePatientPage extends State<CreatePatientPage> {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: const Icon(Icons.arrow_back, color: Colors.black,),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ),
         ),
-        title: const Text('Create a new patient', style: TextStyle(color: Colors.black),),
+        title: const Text(
+          'Create a new patient',
+          style: TextStyle(color: Colors.black),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -219,7 +224,7 @@ class _CreatePatientPage extends State<CreatePatientPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.deepPurple,
+          backgroundColor: Colors.deepPurple,
           child: const Icon(Icons.check),
           onPressed: () {
             if (verifyEntries()) {
@@ -236,10 +241,8 @@ class _CreatePatientPage extends State<CreatePatientPage> {
                       ? otherPathologyTextController.text
                       : "None");
               bloc.addPatient(newPatient);
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const HomePage()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const HomePage()));
             } else {
               showDialog(
                 //if set to true allow to close popup by tapping out of the popup
@@ -363,8 +366,7 @@ class _CreatePatientPage extends State<CreatePatientPage> {
                   borderRadius: BorderRadius.circular(50),
                   boxShadow: const <BoxShadow>[
                     BoxShadow(
-                        color: Color.fromRGBO(0, 0, 0, 0.57),
-                        blurRadius: 5)
+                        color: Color.fromRGBO(0, 0, 0, 0.57), blurRadius: 5)
                   ]),
               child: Padding(
                 padding: const EdgeInsets.only(left: 30, right: 30),

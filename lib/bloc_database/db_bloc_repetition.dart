@@ -1,10 +1,7 @@
-
 import 'dart:async';
 
 import '../models/repetition.dart';
 import '../repositories/repetition_repository.dart';
-
-
 
 class DataBaseBlocRepetition {
   final _repetitionRepository = RepetitionRepository();
@@ -34,5 +31,4 @@ class DataBaseBlocRepetition {
   dispose() {
     _controller.close();
   }
-
 }

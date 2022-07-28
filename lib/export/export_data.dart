@@ -19,8 +19,6 @@ class ExportDataBloc {
   final _repetitionRepository = RepetitionRepository();
   String folderName = "";
 
-
-
   /// creates a folder at app root and returns its name
   static Future<String> _createFolderInAppDocDir(String folderName) async {
     //Get this App Document Directory
@@ -41,16 +39,19 @@ class ExportDataBloc {
   }
 
   export(int patientId) async {
-    List<Patient> patientList = await _patientRepository.getPatientById(id: patientId);
+    List<Patient> patientList =
+        await _patientRepository.getPatientById(id: patientId);
     Patient patient = patientList.first;
-    List<Score> scoresList = await _scoreRepository.getScoreByPatientId(id: patientId);
+    List<Score> scoresList =
+        await _scoreRepository.getScoreByPatientId(id: patientId);
 
     String patientFolderName = "${patient.name}_${patient.firstName}";
 
     await _createFolderInAppDocDir(patientFolderName);
 
     for (int i = 0; i < scoresList.length; ++i) {
-      String folderScore = await _createFolderInAppDocDir("$patientFolderName/score${i+1}");
+      String folderScore =
+          await _createFolderInAppDocDir("$patientFolderName/score${i + 1}");
       List<List<String>> data = [
         [
           "Patient name",
@@ -76,9 +77,11 @@ class ExportDataBloc {
       final File file = File(path);
       await file.writeAsString(csvData);
 
-      List<Repetition> repetitionList = await _repetitionRepository.getRepetitionsByScoreId(id: scoresList[i].id!);
+      List<Repetition> repetitionList = await _repetitionRepository
+          .getRepetitionsByScoreId(id: scoresList[i].id!);
       List<List<String>> data2 = [
-        ["No",
+        [
+          "No",
           "RangeAccBackCoordX",
           "RangeAccBackCoordY",
           "RangeAccBackCoordZ",
@@ -97,7 +100,7 @@ class ExportDataBloc {
       ];
       for (int i = 0; i < repetitionList.length; ++i) {
         List<String> tmp = [
-          "${i+1}",
+          "${i + 1}",
           repetitionList[i].rangeAccBackCoordX.toString(),
           repetitionList[i].rangeAccBackCoordY.toString(),
           repetitionList[i].rangeAccBackCoordZ.toString(),
@@ -116,21 +119,22 @@ class ExportDataBloc {
         data2.add(tmp);
       }
       String csvData2 = const ListToCsvConverter().convert(data2);
-      final path2 = "$folderScore/csv-repetitions_score${i+1}.csv";
+      final path2 = "$folderScore/csv-repetitions_score${i + 1}.csv";
       final File file2 = File(path2);
       await file2.writeAsString(csvData2);
     }
 
     //zip folder
     final Directory _appDocDir = await getApplicationDocumentsDirectory();
-    final Directory _appDocDirFolder = Directory('${_appDocDir.path}/$patientFolderName/');
+    final Directory _appDocDirFolder =
+        Directory('${_appDocDir.path}/$patientFolderName/');
     var encoder = ZipFileEncoder();
-    encoder.zipDirectory(_appDocDirFolder, filename: '${_appDocDirFolder.path}/$patientFolderName.zip');
+    encoder.zipDirectory(_appDocDirFolder,
+        filename: '${_appDocDirFolder.path}/$patientFolderName.zip');
 
     //share file
-    await Share.shareFiles(['${_appDocDirFolder.path}/$patientFolderName.zip'], text: 'All scores for patient');
+    await Share.shareFiles(['${_appDocDirFolder.path}/$patientFolderName.zip'],
+        text: 'All scores for patient');
     _appDocDirFolder.deleteSync(recursive: true);
   }
-
-
 }

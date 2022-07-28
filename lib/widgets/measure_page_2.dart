@@ -39,21 +39,17 @@ class _Measure2 extends State<MeasurePage2> {
     timerLaunched = false;
   }
 
-
   final player = AudioPlayer();
 
-  playSoundTransition() async
-  {
+  playSoundTransition() async {
     await player.play(AssetSource('sounds/bip_sound.mp3'));
   }
 
   final player2 = AudioPlayer();
 
-  playSoundMeasurePages() async
-  {
+  playSoundMeasurePages() async {
     await player2.play(AssetSource('sounds/validation_sound.mp3'));
   }
-
 
   void startTimer() {
     timerLaunched = true;
@@ -358,17 +354,19 @@ class _Measure2 extends State<MeasurePage2> {
                                 width: 30,
                               ),
                               if (!exceptionCalculation)
-                              ElevatedButton(
-                                  style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            Colors.green),
-                                  ),
-                                  onPressed: () {
-                                    measureBloc.launchSide(widget.nbRepetition,
-                                        widget.duration, false);
-                                  },
-                                  child: const Text("Continue")),
+                                ElevatedButton(
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              Colors.green),
+                                    ),
+                                    onPressed: () {
+                                      measureBloc.launchSide(
+                                          widget.nbRepetition,
+                                          widget.duration,
+                                          false);
+                                    },
+                                    child: const Text("Continue")),
                             ],
                           ),
                         ),
@@ -958,8 +956,7 @@ class _Measure2 extends State<MeasurePage2> {
                                           value: values[2] > 180
                                               ? 180
                                               : (values[2]).toDouble(),
-                                          title:
-                                              "",
+                                          title: "",
                                           radius: 10,
                                           titleStyle: const TextStyle(
                                               fontSize: 20,
@@ -1029,8 +1026,7 @@ class _Measure2 extends State<MeasurePage2> {
                                           value: values[1] > 180
                                               ? 180
                                               : (values[1]).toDouble(),
-                                          title:
-                                              "",
+                                          title: "",
                                           radius: 10,
                                           titleStyle: const TextStyle(
                                               fontSize: 20,

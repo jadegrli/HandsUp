@@ -4,10 +4,7 @@ import 'package:sensors_plus/sensors_plus.dart';
 
 import '../models/measure.dart';
 
-
-
 class SensorsRepository {
-
   final _streamSubscriptions = <StreamSubscription<dynamic>>[];
   final accelValuesTab = <List<double>>[];
   final gyroValuesTab = <List<double>>[];
@@ -15,7 +12,9 @@ class SensorsRepository {
 
   Future<void> sensorsMeasure(int nbSeconds) async {
     await _runSensors(nbSeconds);
-    sensorsValues.add(Measure(accelValues: List.from(accelValuesTab), gyroValues: List.from(gyroValuesTab)));
+    sensorsValues.add(Measure(
+        accelValues: List.from(accelValuesTab),
+        gyroValues: List.from(gyroValuesTab)));
   }
 
   Future<void> _runSensors(int nbSeconds) async {
@@ -68,6 +67,7 @@ class SensorsRepository {
   void _clearAcc() {
     accelValuesTab.clear();
   }
+
   // add triplet values from gyro sensors to the tab
   void _addValToTabGyro(GyroscopeEvent event) {
     //crée une liste de double par exemple [1.2, 4.4, 3.0]
@@ -90,5 +90,4 @@ class SensorsRepository {
     _clearGyro();
     sensorsValues.clear();
   }
-
 }

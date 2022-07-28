@@ -3,7 +3,6 @@ import 'dart:async';
 import '../database/database.dart';
 import '../models/score.dart';
 
-
 class ScoreDao {
   final dbProvider = DatabaseProvider.dbProvider;
 
@@ -36,7 +35,10 @@ class ScoreDao {
 
     List<Map<String, dynamic>> result = [];
     result = await db.query(scoreTABLE,
-        columns: Score.columns, where: 'Patient_id = ? ', whereArgs: [id], orderBy: "id ASC");
+        columns: Score.columns,
+        where: 'Patient_id = ? ',
+        whereArgs: [id],
+        orderBy: "id ASC");
 
     List<Score> scoresList = result.isNotEmpty
         ? result.map((item) => Score.fromDatabaseJson(item)).toList()
@@ -49,7 +51,10 @@ class ScoreDao {
 
     List<Map<String, dynamic>> result = [];
     result = await db.query(scoreTABLE,
-        columns: Score.columns, where: 'Patient_id = ? AND isExcluded = 0', whereArgs: [id], orderBy: "id ASC");
+        columns: Score.columns,
+        where: 'Patient_id = ? AND isExcluded = 0',
+        whereArgs: [id],
+        orderBy: "id ASC");
 
     List<Score> scoresList = result.isNotEmpty
         ? result.map((item) => Score.fromDatabaseJson(item)).toList()

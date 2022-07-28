@@ -1,4 +1,3 @@
-
 class Measure {
   final List<List<double>> accelValues;
   final List<List<double>> gyroValues;
