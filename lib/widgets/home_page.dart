@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:hands_up/widgets/all_scores_of_patient_page.dart';
 import 'package:hands_up/widgets/measure_page_2.dart';
 import 'package:hands_up/widgets/overall_patient_page.dart';
-import 'package:hands_up/widgets/page_test.dart';
-import 'package:hands_up/widgets/patient_page.dart';
 
 import '../bloc_database/db_bloc_patient.dart';
 import '../models/patient.dart';
 import 'add_patient_page.dart';
-import 'all_scores_page.dart';
 import 'all_scores_without_patient.dart';
-import 'measure_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -143,52 +138,6 @@ class _HomePage extends State<HomePage> {
                         Text("QUICK START",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
-                        /*IconButton(
-                          icon: const Icon(Icons.quiz_outlined),
-                          color: Colors.deepPurpleAccent,
-                          iconSize: 25,
-                          onPressed: () {
-                            showDialog(
-                              //if set to true allow to close popup by tapping out of the popup
-                              barrierDismissible: true,
-                              context: context,
-                              builder: (BuildContext context) => AlertDialog(
-                                title: const Center(
-                                  child: Text("Measure information"),
-                                ),
-                                content: SingleChildScrollView(
-                                  child: Column(
-                                    children: const <Widget>[
-                                      Align(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          "INFO",
-                                          style: TextStyle(fontSize: 18.0),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                actions: [
-                                  Center(
-                                    child: TextButton(
-                                        child: const Text(
-                                          "Close",
-                                          style: TextStyle(
-                                              color: Colors.deepPurpleAccent),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.of(context).pop(true);
-                                        }),
-                                  ),
-                                ],
-                                elevation: 24,
-                              ),
-                            );
-                          },
-                        ),*/
                       ],
                     ),
                     const SizedBox(height: 15),
@@ -309,7 +258,6 @@ class _HomePage extends State<HomePage> {
                           padding: MaterialStateProperty.all<EdgeInsets>(
                               const EdgeInsets.only(left: 50, right: 50))),
                       onPressed: () {
-                        //TODO pages with all score with id patient = 0 -> no patient
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -395,52 +343,6 @@ class _HomePage extends State<HomePage> {
                               ),
                             ),
                           ),
-                          /*IconButton(
-                            icon: const Icon(Icons.quiz_outlined),
-                            color: Colors.deepPurpleAccent,
-                            iconSize: 25,
-                            onPressed: () {
-                              showDialog(
-                                //if set to true allow to close popup by tapping out of the popup
-                                barrierDismissible: true,
-                                context: context,
-                                builder: (BuildContext context) => AlertDialog(
-                                  title: const Center(
-                                    child: Text("Measure information"),
-                                  ),
-                                  content: SingleChildScrollView(
-                                    child: Column(
-                                      children: const <Widget>[
-                                        Align(
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            "INFO",
-                                            style: TextStyle(fontSize: 18.0),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  actions: [
-                                    Center(
-                                      child: TextButton(
-                                          child: const Text(
-                                            "Close",
-                                            style: TextStyle(
-                                                color: Colors.deepPurpleAccent),
-                                          ),
-                                          onPressed: () {
-                                            Navigator.of(context).pop(true);
-                                          }),
-                                    ),
-                                  ],
-                                  elevation: 24,
-                                ),
-                              );
-                            },
-                          ),*/
                         ],
                       ),
                     ),
@@ -512,36 +414,35 @@ class _HomePage extends State<HomePage> {
                             String name = controller.text;
                             bloc.getPatientsByName(query: name);
                           }
-                          //bloc.getAllPatientPathology("Humerus fracture");
                           if (snapshot.data != null &&
                               snapshot.data!.isNotEmpty) {
                             return ListView.builder(
                               primary:
-                                  false, //sinon ça scroll pas à cause du SingleChildScrollView
+                                  false, //if true doesn't scroll because of SingleChildScrollView
                               scrollDirection: Axis.vertical,
                               shrinkWrap: true,
                               itemCount: snapshot.data?.length,
                               itemBuilder: (context, index) {
                                 return ListTile(
                                   title: Row(
-                                    children: [
-                                      CircleAvatar(
-                                        backgroundColor:
-                                            const Color(0xff8cc0cc),
-                                        child: Text(
-                                          snapshot.data![index].name
-                                              .substring(0, 1)
-                                              .toUpperCase(),
-                                          style: const TextStyle(
-                                              color: Colors.white),
+                                      children: [
+                                        CircleAvatar(
+                                          backgroundColor:
+                                          const Color(0xff8cc0cc),
+                                          child: Text(
+                                            snapshot.data![index].name
+                                                .substring(0, 1)
+                                                .toUpperCase(),
+                                            style: const TextStyle(
+                                                color: Colors.white),
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Text(snapshot.data![index].name),
-                                      const SizedBox(width: 5),
-                                      Text(snapshot.data![index].firstName),
-                                    ],
-                                  ),
+                                        const SizedBox(width: 10),
+                                        Text(snapshot.data![index].name),
+                                        const SizedBox(width: 5),
+                                        Text(snapshot.data![index].firstName),
+                                      ],
+                                    ),
                                   onTap: () {
                                     Navigator.push(
                                         context,
@@ -580,26 +481,10 @@ class _HomePage extends State<HomePage> {
           width: 70.0,
           child: FloatingActionButton(
             onPressed: () {
-              /*Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const PageTest()));*/
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => const CreatePatientPage()));
-              //addPatient();
-              /*showDialog(
-                context: context,
-                builder: (context) {
-                  return const AlertDialog(
-                    // Retrieve the text that the user has entered by using the
-                    // TextEditingController.
-                    //content: Text(controller.text),
-                    content: Text("Patient added!"),
-                  );
-                },
-              );*/
             },
             backgroundColor: const Color(0xff8cc0cc), //ok
             child: const Icon(
@@ -608,21 +493,7 @@ class _HomePage extends State<HomePage> {
             ),
           ),
         )
-        // This trailing comma makes auto-formatting nicer for build methods.
         );
   }
 
-  void addPatient() {
-    final patient = Patient(
-        name: "Doe",
-        firstName: "Jane",
-        dateOfBirth: "01.01.1990",
-        email: "jane.doe@gmail.com",
-        notes: "pas disponible en juillet",
-        creationDate: "06.06.2021",
-        isRightReferenceOrHealthy: true,
-        healthCondition: "frozen shoulder",
-        otherPathology: "none");
-    bloc.addPatient(patient);
-  }
 }

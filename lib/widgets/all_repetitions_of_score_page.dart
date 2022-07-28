@@ -3,7 +3,7 @@ import 'package:hands_up/widgets/repetition_page.dart';
 
 import '../bloc_database/db_bloc_repetition.dart';
 
-
+//TODO remove
 class AllRepetitionsOfScorePage extends StatefulWidget {
   const AllRepetitionsOfScorePage({Key? key, required this.scoreId}) : super(key: key);
 
@@ -20,7 +20,6 @@ class _AllRepetitionsOfScorePage extends State<AllRepetitionsOfScorePage> {
   @override
   void initState() {
     super.initState();
-    //bloc.getRepetitionsByScoreId(widget.scoreId);
     bloc.getRepetitionsByScoreId(widget.scoreId);
   }
 
@@ -34,7 +33,7 @@ class _AllRepetitionsOfScorePage extends State<AllRepetitionsOfScorePage> {
             bloc.getRepetitionsByScoreId(widget.scoreId);
             if (snapshot.data != null && snapshot.data!.isNotEmpty) {
               return ListView.builder(
-                primary: false, //sinon ça scroll pas à cause du SingleChildScrollView
+                primary: false, //if true doesn't scroll because of SingleChildScrollView
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
                 itemCount: snapshot.data?.length,

@@ -23,6 +23,7 @@ class DataBaseBlocPatient {
     _controller.sink.add(list);
   }
 
+  /// sort a list of patient with the same name by first name
   List<Patient> sortByFirstNameWhenSameName(List<Patient> list) {
     var tmp = <Patient>[];
     var result = <Patient>[];
@@ -37,7 +38,6 @@ class DataBaseBlocPatient {
             break;
         }
       }
-
       tmp.sort((a, b) => a.firstName.toLowerCase().compareTo(b.firstName.toLowerCase()));
       result.addAll(tmp);
       tmp.clear();
@@ -47,6 +47,7 @@ class DataBaseBlocPatient {
     return result;
   }
 
+  /// sort list in none alphabetical order : name and then first name
   getAllPatientsZA() async {
     List<Patient> list = await _patientRepository.getAllPatients();
     list.sort((a,b) => b.name.toLowerCase().compareTo(a.name.toLowerCase()));
@@ -55,6 +56,7 @@ class DataBaseBlocPatient {
     //_controller.sink.add(await _patientRepository.getAllPatients());
   }
 
+  /// returns all patient with a specific pathology
   getAllPatientPathology(String pathology) async {
     List<Patient> list = await _patientRepository.getAllPatients();
     List<Patient> listPatholgy = list.where((i) => i.healthCondition == pathology).toList();

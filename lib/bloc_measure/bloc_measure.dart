@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../models/measure.dart';
 import '../repositories/sensors_repository.dart';
 
+//TODO remove this file
+
 class MeasureBloc extends Bloc<MeasureEvents, MeasureStates> {
   final SensorsRepository sensorsRepository = SensorsRepository();
 
@@ -77,7 +79,7 @@ class EventLaunchSecondSide extends MeasureEvents {
 
 class EventEnd extends MeasureEvents {}
 
-//STATES
+
 abstract class MeasureStates {
   const MeasureStates();
 }

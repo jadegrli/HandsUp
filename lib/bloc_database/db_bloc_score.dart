@@ -18,6 +18,7 @@ class DataBaseBlocScore {
     _controller.sink.add(await _scoreRepository.getAllScores());
   }
 
+  /// returns all scores of a patient
   getScoreByPatientId(int id) async {
     if (id == 0) {
       getScoreWithNoPatient();
@@ -29,6 +30,7 @@ class DataBaseBlocScore {
     }
   }
 
+  /// returns all score that are not excluded from the graph
   getScoreByPatientIdExcluded(int id) async {
     if (id == 0) {
       getScoreWithNoPatient();
@@ -56,6 +58,7 @@ class DataBaseBlocScore {
   }
 
 
+  /// create a new score and create all the repetitions of the score
   addScoreWithRepetition(Score score, List<List<double>> allRangesAcc, List<List<double>> allRangesGyro,
       double elevationInjured, double elevationHealthy) async {
     List<int> id = await _scoreRepository.insertScore(score);

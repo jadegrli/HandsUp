@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +13,7 @@ import '../models/score.dart';
 import '../score_calculation/angle_score_live.dart';
 import '../score_calculation/p_score_live.dart';
 
+//TODO remove
 class MeasurePage extends StatefulWidget {
   const MeasurePage(
       {Key? key,
@@ -105,7 +105,6 @@ class _Measure extends State<MeasurePage> {
   @override
   void dispose() {
     super.dispose();
-    //_timer.cancel();
     //unhide the bottom system navigation bar
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
@@ -121,9 +120,7 @@ class _Measure extends State<MeasurePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocListener<MeasureBloc, MeasureStates>(
-          listener: (context, state) => print(detectState(state)),
-          child: BlocBuilder<MeasureBloc, MeasureStates>(
+      body: BlocBuilder<MeasureBloc, MeasureStates>(
             builder: (context, state) {
               if (state is StateReady) {
                 return Center(
@@ -281,7 +278,6 @@ class _Measure extends State<MeasurePage> {
               );
             },
           ),
-        ),
     );
   }
 
@@ -376,32 +372,24 @@ class _Measure extends State<MeasurePage> {
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       primary: Colors.green,
-                      //background color of button
                       side: const BorderSide(width: 3, color: Colors.green),
-                      //border width and color
                       elevation: 3,
-                      //elevation of button
                       shape: RoundedRectangleBorder(
-                          //to set border radius to button
                           borderRadius: BorderRadius.circular(30)),
                       padding: const EdgeInsets.all(
-                          20) //content padding inside button
+                          20)
                       ),
                   onPressed: () {},
                   child: const Text("CONTINUE")),
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       primary: Colors.red,
-                      //background color of button
                       side: const BorderSide(width: 3, color: Colors.red),
-                      //border width and color
                       elevation: 3,
-                      //elevation of button
                       shape: RoundedRectangleBorder(
-                          //to set border radius to button
                           borderRadius: BorderRadius.circular(30)),
                       padding: const EdgeInsets.all(
-                          20) //content padding inside button
+                          20)
                       ),
                   onPressed: () {},
                   child: const Text("CANCEL")),
@@ -595,7 +583,7 @@ class _Measure extends State<MeasurePage> {
               ),
               const Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text(/*"$_start"*/ "Counter",
+                child: Text("Counter",
                     style: TextStyle(
                         fontSize: 120.0,
                         fontWeight: FontWeight.w900,
@@ -606,18 +594,16 @@ class _Measure extends State<MeasurePage> {
           const SizedBox(height: 20),
           ElevatedButton(
               style: ElevatedButton.styleFrom(
-                  primary: Colors.red, //background color of button
+                  primary: Colors.red,
                   side: const BorderSide(
-                      width: 3, color: Colors.red), //border width and color
-                  elevation: 3, //elevation of button
+                      width: 3, color: Colors.red),
+                  elevation: 3,
                   shape: RoundedRectangleBorder(
-                      //to set border radius to button
                       borderRadius: BorderRadius.circular(30)),
                   padding:
-                      const EdgeInsets.all(20) //content padding inside button
+                      const EdgeInsets.all(20)
                   ),
               onPressed: () {
-                //context.read<MeasureBloc>().add(EventEnd());
                 if (widget.patientID == 0) {
                   Navigator.pushReplacement(
                       context,

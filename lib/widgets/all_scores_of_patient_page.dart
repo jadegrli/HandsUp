@@ -23,7 +23,6 @@ class _AllScoresOfPatientPage extends State<AllScoresOfPatientPage> {
   void initState() {
     super.initState();
     bloc.getScoreByPatientId(widget.patientID);
-    //bloc.getAllScore();
   }
 
   @override
@@ -34,7 +33,7 @@ class _AllScoresOfPatientPage extends State<AllScoresOfPatientPage> {
                   bloc.getScoreByPatientId(widget.patientID);
                   if (snapshot.data != null && snapshot.data!.isNotEmpty) {
                     return ListView.builder(
-                      primary: true, //sinon ça scroll pas à cause du SingleChildScrollView
+                      primary: true, //if true doesn't scroll because of SingleChildScrollView
                       scrollDirection: Axis.vertical,
                       shrinkWrap: true,
                       itemCount: snapshot.data?.length,

@@ -14,7 +14,6 @@ class RepetitionDao {
     return id;
   }
 
-  //FOR TEST
   Future<List<Repetition>> getAllRepetitions() async {
     final db = await dbProvider.database;
 
@@ -22,7 +21,7 @@ class RepetitionDao {
     result = await db.query(repetitionTABLE,
         columns: Repetition.columns,
         orderBy:
-            "id ASC"); //TODO check orderBy and after order by name order by firstName
+            "id ASC");
 
     List<Repetition> repetitionsList = result.isNotEmpty
         ? result.map((item) => Repetition.fromDatabaseJson(item)).toList()

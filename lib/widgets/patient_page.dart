@@ -33,7 +33,7 @@ class _PatientPage extends State<PatientPage> {
   bool isTextFieldPatientClear = true;
   String movementDuration = "8";
   String nbRepetition = "3";
-  var itemsTest = ["3", "4", "5", "6", "7", "8", "9"];
+  var itemsTest = ["3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"];
   var itemsNbRepetitions = ["2", "3", "4", "5"];
 
   String getMonth(String month) {
@@ -392,20 +392,14 @@ class _PatientPage extends State<PatientPage> {
                                   const Text("Number of repetition :",
                                       style: TextStyle(fontSize: 18)),
                                   DecoratedBox(
-                                    // to style the dropdown button
                                     decoration: BoxDecoration(
                                         color: Colors.white,
-                                        //background color of dropdown button
                                         borderRadius: BorderRadius.circular(50),
-                                        //border radius of dropdown button
                                         boxShadow: const <BoxShadow>[
-                                          //apply shadow on Dropdown button
                                           BoxShadow(
                                               color:
                                                   Color.fromRGBO(0, 0, 0, 0.57),
-                                              //shadow for button
                                               blurRadius: 5)
-                                          //blur radius of shadow
                                         ]),
                                     child: Padding(
                                       padding: const EdgeInsets.only(
@@ -462,7 +456,6 @@ class _PatientPage extends State<PatientPage> {
                                   );
                                 },
                               ),
-                              //const SizedBox(height: 10),
                             ],
                           ),
                         ),
@@ -503,10 +496,6 @@ class _PatientPage extends State<PatientPage> {
                                         .getScoreByPatientId(widget.patientId);
                                     if (snapshot.data != null &&
                                         snapshot.data!.isNotEmpty) {
-                                      /*print((snapshot.data!.last.elevationAngleInjured * 100 ~/ 180).toDouble().toString());
-                                      print((snapshot.data!.last.elevationAngleInjured).toDouble().toString());
-                                      print((100 - snapshot.data!.last.elevationAngleInjured * 100 ~/ 180).toDouble().toString());
-                                      print((180 - snapshot.data!.last.elevationAngleInjured).toDouble().toString());*/
                                       return Column(
                                         children: [
                                           Text(
@@ -584,7 +573,7 @@ class _PatientPage extends State<PatientPage> {
                                                                     value: snapshot.data!.first.elevationAngleInjured > 180 ? 180 : (snapshot.data!.first.elevationAngleInjured)
                                                                         .toDouble(),
                                                                     title:
-                                                                        "", //(snapshot.data!.last.elevationAngleInjured ~/ 1).toString(),
+                                                                        "",
                                                                     radius: 10,
                                                                     titleStyle: const TextStyle(
                                                                         fontSize:
@@ -602,7 +591,6 @@ class _PatientPage extends State<PatientPage> {
                                                                         snapshot.data!.first.elevationAngleInjured)
                                                                         .toDouble(),
                                                                     title: "",
-                                                                    /*((180 - snapshot.data!.last.elevationAngleInjured ~/ 1)).toString(),*/
                                                                     radius: 10,
                                                                     titleStyle: const TextStyle(
                                                                         fontSize:
@@ -625,7 +613,6 @@ class _PatientPage extends State<PatientPage> {
                                                           "Injured shoulder", style: TextStyle(fontSize: 13)),
                                                     ],
                                                   ),
-                                                  //TODO ajouter securité pour si angle + grand que 180 ou plus petit que 0 -> ramener tout a 0 ou 180
                                                   Column(
                                                     children: [
                                                       Container(
@@ -677,7 +664,7 @@ class _PatientPage extends State<PatientPage> {
                                                                     value: snapshot.data!.first.elevationAngleHealthy > 180 ? 180 : (snapshot.data!.first.elevationAngleHealthy)
                                                                         .toDouble(),
                                                                     title:
-                                                                        "", //(snapshot.data!.last.elevationAngleInjured ~/ 1).toString(),
+                                                                        "",
                                                                     radius: 10,
                                                                     titleStyle: const TextStyle(
                                                                         fontSize:
@@ -695,7 +682,6 @@ class _PatientPage extends State<PatientPage> {
                                                                             snapshot.data!.first.elevationAngleHealthy)
                                                                         .toDouble(),
                                                                     title: "",
-                                                                    /*((180 - snapshot.data!.last.elevationAngleInjured ~/ 1)).toString(),*/
                                                                     radius: 10,
                                                                     titleStyle: const TextStyle(
                                                                         fontSize:

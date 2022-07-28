@@ -38,6 +38,7 @@ class MeasureBloc2  {
   }
 
 
+  /// launches the measure for a shoulder
   launchSide(int nbRepetition, int movementDuration, bool firstSide) async {
     _measureController.sink.add(StateLoading([], [], [], 0));
     if (firstSide) sensorsRepository.initSensor();
@@ -81,6 +82,7 @@ class MeasureBloc2  {
     }
   }
 
+  ///saves the score and all the repetitions to database
   saveToDataBase(int patientID) async {
     _measureController.sink.add(StateLoading([], [], [], 0));
     final newScore = patientID == 0
@@ -112,6 +114,7 @@ class MeasureBloc2  {
     endMeasure();
   }
 
+  ///computes all the ranges after the first shoulder is completed
   midResult(List<Measure> measure, int nbRepetition) {
     final score = PScoreLive(allMeasures: measure);
     int errorType = 0;
@@ -131,6 +134,7 @@ class MeasureBloc2  {
     return errorType;
   }
 
+  ///computes the B-B Score and the elevation angles at the end of the measure
   finalResult(List<Measure> measures, int nbRepetition) {
     int errorType = 0;
     if (nbRepetition * 4 == measures.length) {
@@ -155,12 +159,14 @@ class MeasureBloc2  {
     return errorType;
   }
 
+  ///cancels the measure during a movement
   cancelMeasure() {
     isCanceled = true;
     //throw loading state of canceling
     _measureController.sink.add(StateAllMeasuresLoadingOfCancel([], [], [], 0));
   }
 
+  ///reset the BLoC values
   endMeasure() async {
     _measureController.sink.add(StateReady([], [], [], 0));
     sensorsRepository.reset();
@@ -182,7 +188,7 @@ class MeasureBloc2  {
 
 
 
-//STATES
+/// All the States
 abstract class MeasureStates {
   MeasureStates(this.allResultsAcc, this.allResultsGyro, this.values, this.error);
   final List<List<double>> allResultsAcc;

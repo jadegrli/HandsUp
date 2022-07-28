@@ -17,6 +17,7 @@ class DataBaseBlocRepetition {
     _controller.sink.add(await _repetitionRepository.getAllRepetitions());
   }
 
+  /// get all repetitions af a score
   getRepetitionsByScoreId(int id) async {
     _controller.sink
         .add(await _repetitionRepository.getRepetitionsByScoreId(id: id));

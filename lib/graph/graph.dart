@@ -38,8 +38,8 @@ class _LineChartSample extends State<LineChartSample> {
     blocScore.getScoreByPatientIdExcluded(widget.patientId);
   }
 
-//for all the score took during the same day we make an average of the B-B Score and we take one of the epochDate.
-// With those two value we create a new Score and remove the 2 others from the list
+///for all the score took during the same day we make an average of the B-B Score and we take one of the epochDate.
+/// With all those values we create a new Score and remove the others from the list
   List<Score> sortScoreDayBBScore(List<Score> values) {
     List<Score> list = List.from(values);
     List<Score> tmp = <Score>[];
@@ -79,6 +79,8 @@ class _LineChartSample extends State<LineChartSample> {
     return result;
   }
 
+  ///for all the score took during the same day we make an average of the elevation angles and we take one of the epochDate.
+/// With all those values we create a new Score and remove the others from the list
   List<Score> sortScoreDayAngle(List<Score> values, bool isHealthy) {
     List<Score> list = List.from(values);
     List<Score> tmp = <Score>[];
@@ -118,6 +120,7 @@ class _LineChartSample extends State<LineChartSample> {
     return result;
   }
 
+  ///same as sortScoreDayBBScore but for all scores took during the same month
   List<Score> sortScoreMonthBBScore(List<Score> values) {
     List<Score> list = List.from(values);
     List<Score> tmp = <Score>[];
@@ -157,6 +160,7 @@ class _LineChartSample extends State<LineChartSample> {
     return result;
   }
 
+  ///same as sortScoreDayAngle but for all scores took during the same month
   List<Score> sortScoreMonthAngle(List<Score> values, bool isHealthy) {
     List<Score> list = List.from(values);
     List<Score> tmp = <Score>[];
@@ -219,22 +223,9 @@ class _LineChartSample extends State<LineChartSample> {
       );
     }).toList();
 
-    /*_minXBBScore = dayOrMonth == "Days" ? minX - 86400000 : minX - 2629800000; //one day/month before in ms
-    _maxXBBScore = dayOrMonth == "Days" ? maxX + 86400000 : maxX + 2629800000; //one day/month after in ms*/
     _minXBBScore =  minX;
     _maxXBBScore = maxX;
   }
-
-  /// on commence avec le premier jour ou le premier mois car trop difficile de gérer les mois (certains on 30 jours, d'autres 31, 28 ou 29 avec années bissextiles)
-  /*double monthLength(String month) {
-    if (month == "01" || month == "03" || month == "05" || month == "07" || month == "08" || month == "10" || month == "12") {
-      return 2678400000;
-    } else if (month == "02") {
-      return 2419200000;
-    } else {
-      return 2592000000;
-    }
-  }*/
 
   void getDataFromDbAngle(List<Score> scoreList) {
     double minX = double.maxFinite;
@@ -279,9 +270,7 @@ class _LineChartSample extends State<LineChartSample> {
       );
     }).toList();
 
-    /*_minXAngle = dayOrMonth == "Days" ? minX - 86400000 : minX - monthLength(max); //one day before in ms
-    _maxXAngle = dayOrMonth == "Days" ? maxX + 86400000 : maxX + monthLength(min); //one day/month after in ms*/
-    _minXAngle = minX; //one day before in ms
+    _minXAngle = minX;
     _maxXAngle = maxX;
   }
   
@@ -300,20 +289,14 @@ class _LineChartSample extends State<LineChartSample> {
                     const Text("Choose interval : ", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
                     const SizedBox(width: 20,),
                     DecoratedBox(
-                      // to style the dropdown button
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          //background color of dropdown button
                           borderRadius: BorderRadius.circular(30),
-                          //border raiuds of dropdown button
                           boxShadow: const <BoxShadow>[
-                            //apply shadow on Dropdown button
                             BoxShadow(
                                 color:
                                 Color.fromRGBO(0, 0, 0, 0.57),
-                                //shadow for button
                                 blurRadius: 5)
-                            //blur radius of shadow
                           ]),
                       child: Padding(
                         padding: const EdgeInsets.only(
@@ -533,7 +516,6 @@ class _LineChartSample extends State<LineChartSample> {
     return Center(
       child: LineChart(
         sampleDataBBScore,
-        //swapAnimationDuration: const Duration(milliseconds: 250),
       ),
     );
   }
@@ -542,7 +524,6 @@ class _LineChartSample extends State<LineChartSample> {
     return Center(
       child: LineChart(
         sampleDataAngle,
-        //swapAnimationDuration: const Duration(milliseconds: 250),
       ),
     );
   }

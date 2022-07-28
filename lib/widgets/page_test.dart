@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PageTest extends StatefulWidget {
@@ -107,14 +106,13 @@ class _PageTest extends State<PageTest> {
           const SizedBox(height: 20),
           ElevatedButton(
               style: ElevatedButton.styleFrom(
-                  primary: Colors.red, //background color of button
+                  primary: Colors.red,
                   side: const BorderSide(
-                      width: 3, color: Colors.red), //border width and color
-                  elevation: 3, //elevation of button
+                      width: 3, color: Colors.red),
+                  elevation: 3,
                   shape: RoundedRectangleBorder(
-                      //to set border radius to button
                       borderRadius: BorderRadius.circular(30)),
-                  padding: const EdgeInsets.all(20) //content padding inside button
+                  padding: const EdgeInsets.all(20)
                   ),
               onPressed: () {},
               child: const Text("CANCEL")),

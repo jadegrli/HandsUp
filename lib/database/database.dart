@@ -26,7 +26,7 @@ class DatabaseProvider {
 
   createDatabase() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    //"HandsUp.db" is our database instance name
+    //"HandsUp.db" is the database instance name
     String path = join(documentsDirectory.path, "HandsUp.db");
 
     var database = await openDatabase(path,
@@ -34,7 +34,7 @@ class DatabaseProvider {
     return database;
   }
 
-  //This is optional, and only used for changing DB schema migrations
+  //This is optional, and only used for changing DB schema migrations but not used in this project
   void onUpgrade(Database database, int oldVersion, int newVersion) {
     if (newVersion > oldVersion) {}
   }

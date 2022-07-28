@@ -44,7 +44,6 @@ class _Measure2 extends State<MeasurePage2> {
 
   playSoundTransition() async
   {
-    //TODO exception ici : essayer de pause/start/stop et pas recreer et detruire a chaque fois
     await player.play(AssetSource('sounds/bip_sound.mp3'));
   }
 
@@ -52,7 +51,6 @@ class _Measure2 extends State<MeasurePage2> {
 
   playSoundMeasurePages() async
   {
-    //TODO exception ici
     await player2.play(AssetSource('sounds/validation_sound.mp3'));
   }
 
@@ -111,7 +109,6 @@ class _Measure2 extends State<MeasurePage2> {
 
   @override
   Widget build(BuildContext context) {
-    //TODO make scrollable ?
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xfff5eaf4),
@@ -962,7 +959,7 @@ class _Measure2 extends State<MeasurePage2> {
                                               ? 180
                                               : (values[2]).toDouble(),
                                           title:
-                                              "", //(snapshot.data!.last.elevationAngleInjured ~/ 1).toString(),
+                                              "",
                                           radius: 10,
                                           titleStyle: const TextStyle(
                                               fontSize: 20,
@@ -975,7 +972,6 @@ class _Measure2 extends State<MeasurePage2> {
                                               ? 0
                                               : (180 - values[2]).toDouble(),
                                           title: "",
-                                          /*((180 - snapshot.data!.last.elevationAngleInjured ~/ 1)).toString(),*/
                                           radius: 10,
                                           titleStyle: const TextStyle(
                                               fontSize: 20,
@@ -996,7 +992,6 @@ class _Measure2 extends State<MeasurePage2> {
                                 style: TextStyle(fontSize: 13)),
                           ],
                         ),
-                        //TODO ajouter securité pour si angle + grand que 180 ou plus petit que 0 -> ramener tout a 0 ou 180
                         Column(
                           children: [
                             Container(
@@ -1035,7 +1030,7 @@ class _Measure2 extends State<MeasurePage2> {
                                               ? 180
                                               : (values[1]).toDouble(),
                                           title:
-                                              "", //(snapshot.data!.last.elevationAngleInjured ~/ 1).toString(),
+                                              "",
                                           radius: 10,
                                           titleStyle: const TextStyle(
                                               fontSize: 20,
@@ -1048,7 +1043,6 @@ class _Measure2 extends State<MeasurePage2> {
                                               ? 0
                                               : (180 - values[1]).toDouble(),
                                           title: "",
-                                          /*((180 - snapshot.data!.last.elevationAngleInjured ~/ 1)).toString(),*/
                                           radius: 10,
                                           titleStyle: const TextStyle(
                                               fontSize: 20,
@@ -1159,21 +1153,6 @@ class _Measure2 extends State<MeasurePage2> {
                   ),
               onPressed: () {
                 measureBloc.cancelMeasure();
-                /*measureBloc.endMeasure();
-                if (widget.patientID == 0) {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                          const HomePage()));
-                } else {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              OverallPatientPage(
-                                  patientId: widget.patientID)));
-                }*/
               },
               child: const Text("CANCEL")),
         ],

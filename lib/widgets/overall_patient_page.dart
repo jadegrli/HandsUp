@@ -6,8 +6,6 @@ import 'package:hands_up/widgets/patient_page.dart';
 
 import '../bloc_database/db_bloc_score.dart';
 import '../graph/graph.dart';
-import '../models/repetition.dart';
-import '../models/score.dart';
 import 'all_scores_of_patient_page.dart';
 
 class OverallPatientPage extends StatefulWidget {

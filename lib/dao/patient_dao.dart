@@ -8,7 +8,7 @@ class PatientDao {
 
   Future<int> createPatient(Patient patient) async {
     final db = await dbProvider.database;
-    //return the ID of the created patient
+    //returns the ID of the created patient
     final id = await db.insert(patientTABLE, patient.toDatabaseJson());
     patient.copy(id: id);
     return id;
@@ -37,14 +37,14 @@ class PatientDao {
     if (query.isNotEmpty) {
       result = await db.query(patientTABLE,
           columns: Patient.columns,
-          where: 'name LIKE ? ', //TODO is currently case sensitive
+          where: 'name LIKE ? ',
           whereArgs: ["%$query%"],
-          orderBy: "firstName ASC");
+          orderBy: "name ASC");
     } else {
       result = await db.query(patientTABLE,
           columns: Patient.columns,
           orderBy:
-              "name ASC"); //TODO check orderBy and after order by name order by firstName
+              "name ASC");
     }
 
     List<Patient> patientsList = result.isNotEmpty
@@ -60,7 +60,7 @@ class PatientDao {
         columns: Patient.columns,
         where: 'id = ? ',
         whereArgs: [id],
-        orderBy: "firstName ASC");
+        orderBy: "name ASC");
 
     List<Patient> patientsList = result.isNotEmpty
         ? result.map((item) => Patient.fromDatabaseJson(item)).toList()

@@ -339,7 +339,6 @@ class _CreatePatientPage extends State<CreatePatientPage> {
     );
   }
 
-  //TODO mettre des enum plutot ici, + simple pour comparer
   var pathologies = [
     "Rotator cuff",
     "Humerus fracture",
@@ -359,19 +358,13 @@ class _CreatePatientPage extends State<CreatePatientPage> {
                 child: Text("Select a pathology : ",
                     style: TextStyle(fontSize: 12.0))),
             DecoratedBox(
-              // to style the dropdown button
               decoration: BoxDecoration(
                   color: Colors.white,
-                  //background color of dropdown button
                   borderRadius: BorderRadius.circular(50),
-                  //border radius of dropdown button
                   boxShadow: const <BoxShadow>[
-                    //apply shadow on Dropdown button
                     BoxShadow(
                         color: Color.fromRGBO(0, 0, 0, 0.57),
-                        //shadow for button
                         blurRadius: 5)
-                    //blur radius of shadow
                   ]),
               child: Padding(
                 padding: const EdgeInsets.only(left: 30, right: 30),

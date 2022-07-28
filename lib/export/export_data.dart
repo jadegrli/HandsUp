@@ -21,7 +21,7 @@ class ExportDataBloc {
 
 
 
-  /// create a folder at app root and return its name
+  /// creates a folder at app root and returns its name
   static Future<String> _createFolderInAppDocDir(String folderName) async {
     //Get this App Document Directory
     final Directory _appDocDir = await getApplicationDocumentsDirectory();

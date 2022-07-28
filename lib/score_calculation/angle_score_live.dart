@@ -6,8 +6,6 @@ import 'package:hands_up/score_calculation/score_live.dart';
 
 import '../models/measure.dart';
 
-//TODO regarder les commentaires
-
 
 class AngleScoreLive extends ScoreLive {
   AngleScoreLive({required List<Measure> allMeasures})
@@ -15,6 +13,7 @@ class AngleScoreLive extends ScoreLive {
 
   @override
   void computeScore() {
+    //in case we want the elevation angle for the hand back movement
     //var angularRangeBackHealthy = <double>[];
     var angularRangeUpHealthy = <double>[];
     //var angularRangeBackInjured = <double>[];
@@ -67,7 +66,6 @@ class AngleScoreLive extends ScoreLive {
     }
   }
 
-  //Angular range without filter
   double _getAngularRange(List<List<double>> values) {
     if (values.isEmpty) {
       throw Exception("Error in score calculation : getAngularRange");
@@ -77,7 +75,6 @@ class AngleScoreLive extends ScoreLive {
     const int Z = 2;
 
     final normAcc = <double>[];
-    //final angles = <double>[];
     double mNormAcc;
     double mAngleDegree;
 
@@ -109,13 +106,10 @@ class AngleScoreLive extends ScoreLive {
         throw Exception("Angle score : error in normAcc 2");
       }
       mAngleDegree = _degrees(acos(values[j][Y] / normAcc[j]));
-      //angles.add(mAngleDegree);
       if (maxAngle < mAngleDegree) maxAngle = mAngleDegree;
       if (minAngle > mAngleDegree) minAngle = mAngleDegree;
     }
 
-    //maxAngle = Collections.max(angles);
-    //minAngle = Collections.min(angles);
     angularRange = maxAngle - minAngle;
 
     return angularRange;

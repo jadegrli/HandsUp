@@ -14,7 +14,7 @@ class Patient {
   ];
 
   final int?
-      id; //if we give a value to id at the initialization -> override autoincrement in database but make sure it doesn't already exist before
+      id; //if we give a value to id at the initialization its override autoincrement in database
   final String name;
   final String firstName;
   final String dateOfBirth;

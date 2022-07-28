@@ -47,7 +47,7 @@ class _AllScoresWithoutPatientPage extends State<AllScoresWithoutPatientPage> {
                 bloc.getScoreWithNoPatient();
                 if (snapshot.data != null && snapshot.data!.isNotEmpty) {
                   return ListView.builder(
-                    primary: false, //sinon ça scroll pas à cause du SingleChildScrollView
+                    primary: false, //if true doesn't scroll because of SingleChildScrollView
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
                     itemCount: snapshot.data?.length,

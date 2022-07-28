@@ -8,31 +8,23 @@ class PScoreLive extends ScoreLive {
 
   @override
   void computeScore() {
-    //ranges pour les hand back Healthy
     final accRangeBackHealthy = <List<double>>[];
     final gyroRangeBackHealthy = <List<double>>[];
-    //range pour les hand up healthy
     final accRangeUpHealthy = <List<double>>[];
     final gyroRangeUpHealthy = <List<double>>[];
-    //range pour les hand back injured
     final accRangeBackInjured = <List<double>>[];
     final gyroRangeBackInjured = <List<double>>[];
-    //range pour les hand up injured
     final accRangeUpInjured = <List<double>>[];
     final gyroRangeUpInjured = <List<double>>[];
 
-    //met ensemble les acc et gyro de chaque mouvement côté Healthy
     final pRupHealthy = <double>[];
     final pRbackHealthy = <double>[];
-    //met ensemble les acc et gyro de chaque mouvement côté Injured
     final pRupInjured = <double>[];
     final pRbackInjured = <double>[];
 
-    //fais les ratios entre healthy et injured
     var deltaPrUp = <double>[];
     var deltaPrBack = <double>[];
 
-    //somme les deltas de chaque répétition
     double pScoreUp = 0;
     double pScoreBack = 0;
 
