@@ -1,4 +1,3 @@
-
 class Score {
   static final columns = [
     "id",
@@ -6,6 +5,7 @@ class Score {
     "ElevationAngleHealthy",
     "BBScore",
     "creationDate",
+    "isExcluded",
     "notes",
     "Patient_id",
   ];
@@ -17,10 +17,12 @@ class Score {
   final double bbScore;
   final String notes;
   final int? patientId;
+  final bool isExcluded;
 
   Score(
       {this.id,
       this.patientId,
+      required this.isExcluded,
       required this.creationDate,
       required this.elevationAngleInjured,
       required this.elevationAngleHealthy,
@@ -33,6 +35,7 @@ class Score {
       elevationAngleInjured: data['ElevationAngleInjured'],
       elevationAngleHealthy: data['ElevationAngleHealthy'],
       notes: data['notes'],
+      isExcluded: data['isExcluded'] == 1,
       patientId: data["Patient_id"],
       bbScore: data['BBScore']);
 
@@ -43,6 +46,7 @@ class Score {
         "ElevationAngleHealthy": elevationAngleHealthy,
         "BBScore": bbScore,
         "notes": notes,
+        "isExcluded": isExcluded == true ? 1 : 0,
         "Patient_id": patientId,
       };
 
@@ -53,13 +57,17 @@ class Score {
     double? elevationAngleHealthy,
     double? bbScore,
     String? notes,
+    bool? isExcluded,
     int? patientId,
   }) =>
       Score(
         id: id ?? this.id,
+        isExcluded: isExcluded ?? this.isExcluded,
         creationDate: creationDate ?? this.creationDate,
-        elevationAngleInjured: elevationAngleInjured ?? this.elevationAngleInjured,
-        elevationAngleHealthy: elevationAngleHealthy ?? this.elevationAngleHealthy,
+        elevationAngleInjured:
+            elevationAngleInjured ?? this.elevationAngleInjured,
+        elevationAngleHealthy:
+            elevationAngleHealthy ?? this.elevationAngleHealthy,
         bbScore: bbScore ?? this.bbScore,
         notes: notes ?? this.notes,
         patientId: patientId ?? this.patientId,

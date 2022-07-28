@@ -211,6 +211,7 @@ class _Measure extends State<MeasurePage> {
                                         elevationAngleInjured: elevationInjured,
                                         elevationAngleHealthy: elevationHealthy,
                                         bbScore: bbScore,
+                                        isExcluded: false,
                                         notes: "")
                                     : Score(
                                         creationDate: DateFormat("yyyy-MM-dd")
@@ -218,6 +219,7 @@ class _Measure extends State<MeasurePage> {
                                         elevationAngleInjured: elevationInjured,
                                         elevationAngleHealthy: elevationHealthy,
                                         bbScore: bbScore,
+                                        isExcluded: false,
                                         patientId: widget.patientID,
                                         notes: "");
 

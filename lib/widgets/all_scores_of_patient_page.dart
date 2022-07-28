@@ -1,7 +1,6 @@
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:hands_up/export/export_data.dart';
 import 'package:hands_up/widgets/score_page.dart';
 
 import '../bloc_database/db_bloc_score.dart';
@@ -24,6 +23,7 @@ class _AllScoresOfPatientPage extends State<AllScoresOfPatientPage> {
   void initState() {
     super.initState();
     bloc.getScoreByPatientId(widget.patientID);
+    //bloc.getAllScore();
   }
 
   @override
@@ -55,13 +55,21 @@ class _AllScoresOfPatientPage extends State<AllScoresOfPatientPage> {
                             ),
                             child: Column(
                               children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 10),
-                                  child: Text(snapshot.data![index].creationDate,
-                                      style: const TextStyle(
-                                          fontSize: 18.0,
-                                          fontWeight: FontWeight.bold)),
-                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 10),
+                                      child: Text(snapshot.data![index].creationDate,
+                                          style: const TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                    if (snapshot.data![index].isExcluded)
+                                    const Icon(Icons.hide_image),
+                                ],),
+
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [

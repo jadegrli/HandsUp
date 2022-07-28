@@ -58,7 +58,8 @@ class _ScorePage extends State<ScorePage> {
               if (snapshot.data != null && snapshot.data!.isNotEmpty) {
                 if (initOnce) {
                   initOnce = false;
-              notesTextController.text = snapshot.data!.first.notes;
+                    notesTextController.text = snapshot.data!.first.notes;
+                    isExcluded = snapshot.data!.first.isExcluded;
                 }
                 score = snapshot.data!.first;
                 return Column(
@@ -179,6 +180,25 @@ class _ScorePage extends State<ScorePage> {
                               controller: notesTextController,
                             ),
                           ),
+                          if (widget.patientId != 0)
+                          Row(
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(left: 20),
+                                child: Text("Exclude this score", style: TextStyle(fontSize: 18),),
+                              ),
+                              Checkbox(
+                                activeColor: Colors.deepPurple,
+                                checkColor: Colors.white,
+                                value: isExcluded,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    isExcluded = value!;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -197,7 +217,8 @@ class _ScorePage extends State<ScorePage> {
           backgroundColor: Colors.deepPurple,
           child: const Icon(Icons.check),
           onPressed: () {
-            final newScore = Score(id: widget.id, creationDate: score.creationDate, elevationAngleInjured: score.elevationAngleInjured, elevationAngleHealthy: score.elevationAngleHealthy, bbScore: score.bbScore, notes: notesTextController.text);
+            final newScore = widget.patientId == 0 ?  Score(id: widget.id, creationDate: score.creationDate, elevationAngleInjured: score.elevationAngleInjured, elevationAngleHealthy: score.elevationAngleHealthy, bbScore: score.bbScore, isExcluded: isExcluded, notes: notesTextController.text) :
+            Score(id: widget.id, creationDate: score.creationDate, elevationAngleInjured: score.elevationAngleInjured, elevationAngleHealthy: score.elevationAngleHealthy, bbScore: score.bbScore, isExcluded: isExcluded, notes: notesTextController.text, patientId: widget.patientId);
             bloc.updateScore(newScore);
             showDialog(
               //if set to true allow to close popup by tapping out of the popup
@@ -207,7 +228,7 @@ class _ScorePage extends State<ScorePage> {
                   AlertDialog(
                     title: const Center(
                       child: Text(
-                          "Note updated!"),
+                          "Score updated!"),
                     ),
                     shape: RoundedRectangleBorder(
                         borderRadius:

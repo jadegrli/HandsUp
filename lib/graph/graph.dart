@@ -35,7 +35,7 @@ class _LineChartSample extends State<LineChartSample> {
   void initState() {
     super.initState();
     isShowingMainData = true;
-    blocScore.getScoreByPatientId(widget.patientId);
+    blocScore.getScoreByPatientIdExcluded(widget.patientId);
   }
 
 //for all the score took during the same day we make an average of the B-B Score and we take one of the epochDate.
@@ -49,7 +49,7 @@ class _LineChartSample extends State<LineChartSample> {
     while (list.isNotEmpty) {
       score0 = list[0];
       for (int i = 1; i < list.length; ++i) {
-        if (score0.creationDate == list[i].creationDate) {
+        if (score0.creationDate.substring(0, 10) == list[i].creationDate.substring(0, 10)) {
           tmp.add(list[i]);
         }
       }
@@ -64,6 +64,7 @@ class _LineChartSample extends State<LineChartSample> {
         }
         bbScoreAverage /= tmp.length;
         result.add(Score(
+            isExcluded: false,
             creationDate: score0.creationDate,
             elevationAngleInjured: 0,
             elevationAngleHealthy: 0,
@@ -71,7 +72,7 @@ class _LineChartSample extends State<LineChartSample> {
             patientId: 0,
             notes: ""));
         list.removeWhere(
-            (element) => element.creationDate == score0.creationDate);
+            (element) => element.creationDate.substring(0, 10) == score0.creationDate.substring(0, 10));
         tmp.clear();
       }
     }
@@ -87,7 +88,7 @@ class _LineChartSample extends State<LineChartSample> {
     while (list.isNotEmpty) {
       score0 = list[0];
       for (int i = 1; i < list.length; ++i) {
-        if (score0.creationDate == list[i].creationDate) {
+        if (score0.creationDate.substring(0, 10) == list[i].creationDate.substring(0, 10)) {
           tmp.add(list[i]);
         }
       }
@@ -102,6 +103,7 @@ class _LineChartSample extends State<LineChartSample> {
         }
         angleAverage /= tmp.length;
         result.add(Score(
+          isExcluded: false,
             creationDate: score0.creationDate,
             elevationAngleInjured: angleAverage,
             elevationAngleHealthy: angleAverage,
@@ -109,7 +111,7 @@ class _LineChartSample extends State<LineChartSample> {
             patientId: 0,
             notes: ""));
         list.removeWhere(
-                (element) => element.creationDate == score0.creationDate);
+                (element) => element.creationDate.substring(0, 10) == score0.creationDate.substring(0, 10));
         tmp.clear();
       }
     }
@@ -140,6 +142,7 @@ class _LineChartSample extends State<LineChartSample> {
         }
         bbScoreAverage /= tmp.length;
         result.add(Score(
+          isExcluded: false,
             creationDate: score0.creationDate,
             elevationAngleInjured: 0,
             elevationAngleHealthy: 0,
@@ -178,6 +181,7 @@ class _LineChartSample extends State<LineChartSample> {
         }
         angleAverage /= tmp.length;
         result.add(Score(
+            isExcluded: false,
             creationDate: score0.creationDate,
             elevationAngleInjured: angleAverage,
             elevationAngleHealthy: angleAverage,
@@ -387,7 +391,7 @@ class _LineChartSample extends State<LineChartSample> {
                               child: StreamBuilder<List<Score>>(
                                   stream: blocScore.data,
                                   builder: (context, snapshot) {
-                                    blocScore.getScoreByPatientId(widget.patientId);
+                                    blocScore.getScoreByPatientIdExcluded(widget.patientId);
                                     if (snapshot.data != null &&
                                         snapshot.data!.isNotEmpty) {
                                       getDataFromDbBBScore(snapshot.data!);
@@ -495,7 +499,7 @@ class _LineChartSample extends State<LineChartSample> {
                               child: StreamBuilder<List<Score>>(
                                   stream: blocScore.data,
                                   builder: (context, snapshot) {
-                                    blocScore.getScoreByPatientId(widget.patientId);
+                                    blocScore.getScoreByPatientIdExcluded(widget.patientId);
                                     if (snapshot.data != null &&
                                         snapshot.data!.isNotEmpty) {
                                       getDataFromDbAngle(snapshot.data!);

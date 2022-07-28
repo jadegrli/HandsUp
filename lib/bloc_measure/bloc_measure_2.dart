@@ -85,6 +85,7 @@ class MeasureBloc2  {
     _measureController.sink.add(StateLoading([], [], [], 0));
     final newScore = patientID == 0
         ? Score(
+        isExcluded: false,
         creationDate: DateFormat("yyyy-MM-dd HH:mm")
             .format(DateTime.now()),
         elevationAngleInjured: elevationAngleInjured,
@@ -92,6 +93,7 @@ class MeasureBloc2  {
         bbScore: bbScore,
         notes: "")
         : Score(
+        isExcluded: false,
         creationDate: DateFormat("yyyy-MM-dd HH:mm")
             .format(DateTime.now()),
         elevationAngleInjured: elevationAngleInjured,

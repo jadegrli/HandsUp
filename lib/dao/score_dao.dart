@@ -44,6 +44,19 @@ class ScoreDao {
     return scoresList;
   }
 
+  Future<List<Score>> getScoreFromPatientIDExcluded({required int id}) async {
+    final db = await dbProvider.database;
+
+    List<Map<String, dynamic>> result = [];
+    result = await db.query(scoreTABLE,
+        columns: Score.columns, where: 'Patient_id = ? AND isExcluded = 0', whereArgs: [id], orderBy: "id ASC");
+
+    List<Score> scoresList = result.isNotEmpty
+        ? result.map((item) => Score.fromDatabaseJson(item)).toList()
+        : [];
+    return scoresList;
+  }
+
   Future<List<Score>> getScoreFromId({required int id}) async {
     final db = await dbProvider.database;
 

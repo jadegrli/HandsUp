@@ -60,6 +60,7 @@ class DatabaseProvider {
         "ElevationAngleHealthy REAL, "
         "BBScore REAL, "
         "notes TEXT, "
+        "isExcluded INTEGER, "
         "Patient_id INTEGER,"
         "FOREIGN KEY (Patient_id) REFERENCES $patientTABLE(id) ON DELETE CASCADE"
         ")");
