@@ -4,6 +4,7 @@ import 'package:hands_up/widgets/all_scores_without_patient.dart';
 import '../bloc_database/db_bloc_score.dart';
 import '../models/score.dart';
 import 'all_scores_of_patient_page.dart';
+import 'overall_patient_page.dart';
 
 class ScorePage extends StatefulWidget {
   final int id;
@@ -130,7 +131,7 @@ class _ScorePage extends State<ScorePage> {
                                                                     MaterialPageRoute(
                                                                         builder:
                                                                             (context) =>
-                                                                            AllScoresOfPatientPage(patientID: widget.patientId,)));
+                                                                                OverallPatientPage(patientId: widget.patientId,)));
                                                               } else {
                                                                 Navigator.push(
                                                                     context,
