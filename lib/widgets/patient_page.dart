@@ -7,7 +7,7 @@ import '../bloc_database/db_bloc_patient.dart';
 import '../models/patient.dart';
 import '../models/score.dart';
 import 'home_page.dart';
-import 'measure_page_2.dart';
+import 'measure_page.dart';
 
 class PatientPage extends StatefulWidget {
   final int patientId;
@@ -464,7 +464,7 @@ class _PatientPage extends State<PatientPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => MeasurePage2(
+                                      builder: (context) => MeasurePage(
                                           nbRepetition: int.parse(nbRepetition),
                                           duration: int.parse(movementDuration),
                                           patientID: snapshot.data!.first.id!)),
@@ -502,7 +502,6 @@ class _PatientPage extends State<PatientPage> {
                                 ),
                               ],
                             ),
-                            //TODO change type dynamic
                             StreamBuilder<List<Score>>(
                                 stream: blocScore.data,
                                 builder: (context, snapshot) {

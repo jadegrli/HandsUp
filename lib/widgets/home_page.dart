@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hands_up/widgets/measure_page_2.dart';
+import 'package:hands_up/widgets/measure_page.dart';
 import 'package:hands_up/widgets/overall_patient_page.dart';
 
 import '../bloc_database/db_bloc_patient.dart';
@@ -260,7 +260,7 @@ class _HomePage extends State<HomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => MeasurePage2(
+                              builder: (context) => MeasurePage(
                                   nbRepetition: int.parse(nbRepetition),
                                   duration: int.parse(movementDuration),
                                   patientID: 0)),

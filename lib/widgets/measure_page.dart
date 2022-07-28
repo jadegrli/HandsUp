@@ -1,18 +1,13 @@
+import 'dart:async';
+
+import 'package:audioplayers/audioplayers.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hands_up/bloc_measure/bloc_measure.dart';
 import 'package:hands_up/widgets/home_page.dart';
 import 'package:hands_up/widgets/overall_patient_page.dart';
-import 'package:intl/intl.dart';
 
-import '../bloc_database/db_bloc_score.dart';
-import '../bloc_measure/bloc_measure.dart';
-import '../models/measure.dart';
-import '../models/score.dart';
-import '../score_calculation/angle_score_live.dart';
-import '../score_calculation/p_score_live.dart';
-
-//TODO remove
 class MeasurePage extends StatefulWidget {
   const MeasurePage(
       {Key? key,
@@ -29,46 +24,35 @@ class MeasurePage extends StatefulWidget {
   State<MeasurePage> createState() => _Measure();
 }
 
-String detectState(MeasureStates state) {
-  if (state is StateReady) {
-    return "Ready";
-  }
-  if (state is StateLoading) {
-    return "Loading";
-  }
-  if (state is StateRest) {
-    return "Rest";
-  }
-  if (state is StateHandBack) {
-    return "Hand back";
-  }
-  if (state is StateHandUp) {
-    return "Hand up";
-  }
-  if (state is StateAllMeasuresFirstSide) {
-    return "All measure";
-  }
-  if (state is StateError) {
-    return "Error";
-  }
-  return "No State";
-}
-
 class _Measure extends State<MeasurePage> {
-  final allRangesAcc = <List<double>>[];
-  final allRangesGyro = <List<double>>[];
-  double bbScore = 0;
-  double elevationInjured = 0;
-  double elevationHealthy = 0;
   bool exceptionCalculation = false;
-  /*late Timer _timer;
-  late int _start = widget.duration;*/
 
-  final DataBaseBlocScore blocScore = DataBaseBlocScore();
+  final MeasureBloc measureBloc = MeasureBloc();
 
-  String previousState = "Ready";
+  late Timer _timer;
+  late int _start;
+  bool timerLaunched = false;
+  String lastState = "Ready";
 
-  /* void startTimer() {
+  void stopTimer() {
+    _timer.cancel();
+    timerLaunched = false;
+  }
+
+  final player = AudioPlayer();
+
+  playSoundTransition() async {
+    await player.play(AssetSource('sounds/bip_sound.mp3'));
+  }
+
+  final player2 = AudioPlayer();
+
+  playSoundMeasurePages() async {
+    await player2.play(AssetSource('sounds/validation_sound.mp3'));
+  }
+
+  void startTimer() {
+    timerLaunched = true;
     _start = widget.duration;
     const oneSec = Duration(seconds: 1);
     _timer = Timer.periodic(
@@ -76,7 +60,8 @@ class _Measure extends State<MeasurePage> {
       (Timer timer) {
         if (_start == 0) {
           setState(() {
-            timer.cancel();
+            _timer.cancel();
+            timerLaunched = false;
           });
         } else {
           setState(() {
@@ -86,11 +71,11 @@ class _Measure extends State<MeasurePage> {
       },
     );
   }
-*/
 
   @override
   void initState() {
     super.initState();
+    _start = widget.duration;
     //hide the bottom system navigation bar
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
       SystemUiOverlay.top,
@@ -104,6 +89,8 @@ class _Measure extends State<MeasurePage> {
   @override
   void dispose() {
     super.dispose();
+    player.dispose();
+    player2.dispose();
     //unhide the bottom system navigation bar
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
@@ -119,405 +106,963 @@ class _Measure extends State<MeasurePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<MeasureBloc, MeasureStates>(
-        builder: (context, state) {
-          if (state is StateReady) {
-            return Center(
-              child: ElevatedButton(
-                  onPressed: () {
-                    context.read<MeasureBloc>().add(EventLaunchFirstSide(
-                        nbRepetition: widget.nbRepetition,
-                        movementDuration: widget.duration));
-                  },
-                  child: const Text("Launch")),
-            );
-          }
+      appBar: AppBar(
+        backgroundColor: const Color(0xfff5eaf4),
+        title: const Text("Measure", style: TextStyle(color: Colors.black)),
+        automaticallyImplyLeading: false,
+      ),
+      body: SingleChildScrollView(
+        child: StreamBuilder<MeasureStates>(
+            stream: measureBloc.measurePhase,
+            builder: (context, snapshot) {
+              if (snapshot.data != null) {
+                if (snapshot.data is StateReady) {
+                  lastState = "Ready";
+                  return Column(
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height / 3.5,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 30),
+                        child: Text("Start a new measure",
+                            style: TextStyle(
+                                fontSize: 30.0,
+                                fontWeight: FontWeight.w900,
+                                color: Colors.black)),
+                      ),
+                      const Padding(
+                        padding:
+                            EdgeInsets.only(bottom: 40, left: 20, right: 20),
+                        child: Text(
+                            "Please attach the phone on your arm and the begin the measure",
+                            textAlign: TextAlign.center,
+                            style:
+                                TextStyle(fontSize: 20.0, color: Colors.black)),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        Colors.red),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop(true);
+                              },
+                              child: const Text("Cancel")),
+                          const SizedBox(
+                            width: 40,
+                          ),
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        Colors.green),
+                              ),
+                              onPressed: () {
+                                measureBloc.launchSide(
+                                    widget.nbRepetition, widget.duration, true);
+                              },
+                              child: const Text("Launch")),
+                        ],
+                      ),
+                    ],
+                  );
+                }
 
-          if (state is StateLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+                if (snapshot.data is StateLoading) {
+                  lastState = "Loading";
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-          if (state is StateRest) {
-            return movement(context, "Rest");
-          }
+                if (snapshot.data is StateRest) {
+                  if (lastState != "Rest") {
+                    playSoundTransition();
+                    if (timerLaunched) stopTimer();
+                    startTimer();
+                  }
+                  lastState = "Rest";
+                  return movement(context, "Rest");
+                }
 
-          if (state is StateHandBack) {
-            return movement(context, "Hand back");
-          }
+                if (snapshot.data is StateHandBack) {
+                  if (lastState != "Hand back") {
+                    playSoundTransition();
+                    if (timerLaunched) stopTimer();
+                    startTimer();
+                  }
+                  lastState = "Hand back";
+                  return movement(context, "Hand back");
+                }
 
-          if (state is StateHandUp) {
-            return movement(context, "Hand up");
-          }
+                if (snapshot.data is StateHandUp) {
+                  if (lastState != "Hand up") {
+                    playSoundTransition();
+                    if (timerLaunched) stopTimer();
+                    startTimer();
+                  }
+                  lastState = "Hand up";
+                  return movement(context, "Hand up");
+                }
 
-          if (state is StateAllMeasuresFirstSide) {
-            return SingleChildScrollView(
-              child: Center(
-                child: Column(
-                  children: [
-                    const Text("All measures"),
-                    ElevatedButton(
-                        onPressed: () {
-                          context.read<MeasureBloc>().add(EventEnd());
-                          if (widget.patientID == 0) {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const HomePage()));
-                          } else {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => OverallPatientPage(
-                                        patientId: widget.patientID)));
-                          }
-                        },
-                        child: const Text("Cancel")),
-                    ElevatedButton(
-                        onPressed: () {
-                          context.read<MeasureBloc>().add(EventLaunchSecondSide(
-                              nbRepetition: widget.nbRepetition,
-                              movementDuration: widget.duration));
-                        },
-                        child: const Text("Continue measure")),
-                    midResult(state.allMeasures),
-                  ],
-                ),
-              ),
-            );
-          }
+                if (snapshot.data is StateAllMeasuresLoadingOfCancel) {
+                  lastState = "Cancelling";
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height / 3.5,
+                        ),
+                        const CircularProgressIndicator(),
+                        const Padding(
+                          padding:
+                              EdgeInsets.only(left: 20, right: 20, top: 30),
+                          child: Text("Canceling measure...",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 20.0, color: Colors.black)),
+                        ),
+                      ],
+                    ),
+                  );
+                }
 
-          if (state is StateAllMeasuresSecondSide) {
-            return SingleChildScrollView(
-              child: Center(
-                child: Column(
-                  children: [
-                    const Text("All measures"),
-                    finalResults(state.allMeasures),
-                    if (!exceptionCalculation)
-                      ElevatedButton(
-                          onPressed: () async {
-                            final newScore = widget.patientID == 0
-                                ? Score(
-                                    creationDate: DateFormat("yyyy-MM-dd")
-                                        .format(DateTime.now()),
-                                    elevationAngleInjured: elevationInjured,
-                                    elevationAngleHealthy: elevationHealthy,
-                                    bbScore: bbScore,
-                                    isExcluded: false,
-                                    notes: "")
-                                : Score(
-                                    creationDate: DateFormat("yyyy-MM-dd")
-                                        .format(DateTime.now()),
-                                    elevationAngleInjured: elevationInjured,
-                                    elevationAngleHealthy: elevationHealthy,
-                                    bbScore: bbScore,
-                                    isExcluded: false,
-                                    patientId: widget.patientID,
-                                    notes: "");
+                if (snapshot.data is StateAllMeasuresCanceled) {
+                  lastState = "Canceled";
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height / 3.5,
+                        ),
+                        const Padding(
+                          padding:
+                              EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                          child: Text("The measure is canceled",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 20.0, color: Colors.black)),
+                        ),
+                        ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  Colors.deepPurple),
+                            ),
+                            onPressed: () {
+                              measureBloc.endMeasure();
+                              if (widget.patientID == 0) {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const HomePage()));
+                              } else {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            OverallPatientPage(
+                                                patientId: widget.patientID)));
+                              }
+                            },
+                            child: const Text("Go back!"))
+                      ],
+                    ),
+                  );
+                }
 
-                            await blocScore.addScoreWithRepetition(
-                                newScore,
-                                List.from(allRangesAcc),
-                                List.from(allRangesGyro),
-                                elevationInjured,
-                                elevationHealthy);
+                if (snapshot.data is StateAllMeasuresFirstSide) {
+                  lastState = "Mid result";
+                  playSoundMeasurePages();
+                  return SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(20.0),
+                          margin: const EdgeInsets.all(20),
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                            color: Color(0xfff5eaf4),
+                            boxShadow: <BoxShadow>[
+                              BoxShadow(
+                                  color: Colors.black54,
+                                  blurRadius: 15.0,
+                                  offset: Offset(0.0, 0.75))
+                            ],
+                          ),
+                          child: Column(
+                            children: const [
+                              Padding(
+                                padding: EdgeInsets.all(0),
+                                child: Text(
+                                  "Values for the first shoulder",
+                                  style: TextStyle(fontSize: 23),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 10),
+                                child: Text(
+                                  "Please verify the values. \nBefore you continue the measure, please attach the phone on the other arm",
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        midResult(
+                            snapshot.data!.allResultsAcc,
+                            snapshot.data!.allResultsGyro,
+                            snapshot.data!.error),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 50, bottom: 50),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            Colors.red),
+                                  ),
+                                  onPressed: () {
+                                    measureBloc.endMeasure();
+                                    if (widget.patientID == 0) {
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const HomePage()));
+                                    } else {
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  OverallPatientPage(
+                                                      patientId:
+                                                          widget.patientID)));
+                                    }
+                                  },
+                                  child: const Text("Cancel")),
+                              const SizedBox(
+                                width: 30,
+                              ),
+                              if (!exceptionCalculation)
+                                ElevatedButton(
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              Colors.green),
+                                    ),
+                                    onPressed: () {
+                                      measureBloc.launchSide(
+                                          widget.nbRepetition,
+                                          widget.duration,
+                                          false);
+                                    },
+                                    child: const Text("Continue")),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
 
-                            context.read<MeasureBloc>().add(EventEnd());
-
-                            if (widget.patientID == 0) {
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const HomePage()));
-                            } else {
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => OverallPatientPage(
-                                          patientId: widget.patientID)));
-                            }
-                          },
-                          child: const Text("Validate")),
-                    ElevatedButton(
-                        onPressed: () async {
-                          context.read<MeasureBloc>().add(EventEnd());
-
-                          if (widget.patientID == 0) {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const HomePage()));
-                          } else {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => OverallPatientPage(
-                                        patientId: widget.patientID)));
-                          }
-                        },
-                        child: const Text("Cancel")),
-                  ],
-                ),
-              ),
-            );
-          }
-
-          if (state is StateError) {
-            return const Center(
-              child: Text("Error"),
-            );
-          }
-
-          return const Center(
-            child: Text("NO STATE !"),
-          );
-        },
+                if (snapshot.data is StateAllMeasuresSecondSide) {
+                  lastState = "Final result";
+                  playSoundMeasurePages();
+                  return SingleChildScrollView(
+                    child: Center(
+                      child: Column(
+                        children: [
+                          finalResults(
+                              snapshot.data!.error, snapshot.data!.values),
+                          const SizedBox(
+                            height: 25,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            Colors.red),
+                                  ),
+                                  onPressed: () {
+                                    measureBloc.endMeasure();
+                                    if (widget.patientID == 0) {
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const HomePage()));
+                                    } else {
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  OverallPatientPage(
+                                                      patientId:
+                                                          widget.patientID)));
+                                    }
+                                  },
+                                  child: const Text("Cancel")),
+                              if (!exceptionCalculation)
+                                ElevatedButton(
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              Colors.green),
+                                    ),
+                                    onPressed: () {
+                                      measureBloc
+                                          .saveToDataBase(widget.patientID);
+                                      if (widget.patientID == 0) {
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const HomePage()));
+                                      } else {
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    OverallPatientPage(
+                                                        patientId:
+                                                            widget.patientID)));
+                                      }
+                                    },
+                                    child: const Text("Validate")),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+              }
+              return const Center(
+                child: Text("NO STATE !"),
+              );
+            }),
       ),
     );
   }
 
-  Widget midResult2(List<Measure> measure) {
-    final allResultsAcc = <List<double>>[];
-    final allResultsGyro = <List<double>>[];
-    final score = PScoreLive(allMeasures: measure);
-    final String length = measure.length.toString();
-
-    if (widget.nbRepetition * 2 == measure.length) {
-      try {
-        for (int i = 0; i < widget.nbRepetition * 2; i++) {
-          allResultsAcc.add(score.getRanges(measure[i].accelValues));
-          allResultsGyro.add(score.getRanges(measure[i].gyroValues));
-        }
-      } catch (exception) {
-        exceptionCalculation = true;
-        return Column(
-          children: const [
-            Center(
-              child: Text(
-                  "Error in calculation, it can happen when the smartphone is not moving during the measure. Please try again."),
-            ),
-          ],
-        );
-      }
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Text("Measure validation",
-                style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.w900)),
-          ),
-          const SizedBox(height: 20),
-          ListView(
-            children: [
-              for (int i = 0; i < widget.nbRepetition * 2 - 1; i += 2)
-                Container(
-                  margin: const EdgeInsets.all(8.0),
-                  child: Card(
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                    child: Column(
-                      children: [
-                        //tab here
-                        Text(
-                          "Ranges for Repetition ${i ~/ 2 + 1}",
-                          style: const TextStyle(
-                              fontSize: 18.0, fontWeight: FontWeight.w900),
-                        ),
-                        Text(
-                            "Hand Back, Accelerometer, X Axis : ${allResultsAcc[i][0]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Back, Accelerometer, Y Axis : ${allResultsAcc[i][1]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Back, Accelerometer, Z Axis : ${allResultsAcc[i][2]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Back, Gyroscope, X Axis : ${allResultsGyro[i][0]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Back, Gyroscope, Y Axis : ${allResultsGyro[i][1]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Back, Gyroscope, Z Axis : ${allResultsGyro[i][2]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Up, Accelerometer, X Axis : ${allResultsAcc[i + 1][0]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Up, Accelerometer, Y Axis : ${allResultsAcc[i + 1][1]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Up, Accelerometer, Z Axis : ${allResultsAcc[i + 1][2]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Up, Gyroscope, X Axis : ${allResultsGyro[i + 1][0]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Up, Gyroscope, Y Axis : ${allResultsGyro[i + 1][1]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                        Text(
-                            "Hand Up, Gyroscope, Z Axis : ${allResultsGyro[i + 1][2]}",
-                            style: const TextStyle(fontSize: 20.0)),
-                      ],
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      primary: Colors.green,
-                      side: const BorderSide(width: 3, color: Colors.green),
-                      elevation: 3,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30)),
-                      padding: const EdgeInsets.all(20)),
-                  onPressed: () {},
-                  child: const Text("CONTINUE")),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      primary: Colors.red,
-                      side: const BorderSide(width: 3, color: Colors.red),
-                      elevation: 3,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30)),
-                      padding: const EdgeInsets.all(20)),
-                  onPressed: () {},
-                  child: const Text("CANCEL")),
-            ],
-          ),
-        ],
+  Widget midResult(List<List<double>> allResultsAcc,
+      List<List<double>> allResultsGyro, int error) {
+    if (error == 2) {
+      exceptionCalculation = true;
+      return const Padding(
+        padding: EdgeInsets.all(10.0),
+        child: Text(
+          "Error while calculating middle score, length error in data lists",
+          style: TextStyle(fontSize: 18.0),
+        ),
       );
-    }
-    return Text(
-        "Error while calculating middle score, length : $length, nbRepetition : ${widget.nbRepetition}");
-  }
-
-  Widget midResult(List<Measure> measure) {
-    final allResultsAcc = <List<double>>[];
-    final allResultsGyro = <List<double>>[];
-    final score = PScoreLive(allMeasures: measure);
-    final String length = measure.length.toString();
-
-    if (widget.nbRepetition * 2 == measure.length) {
-      try {
-        for (int i = 0; i < widget.nbRepetition * 2; i++) {
-          allResultsAcc.add(score.getRanges(measure[i].accelValues));
-          allResultsGyro.add(score.getRanges(measure[i].gyroValues));
-        }
-      } catch (exception) {
-        exceptionCalculation = true;
-        return Column(
-          children: const [
-            Center(
-              child: Text(
-                  "Error in calculation, it can happen when the smartphone is not moving during the measure. Please try again."),
-            ),
-          ],
-        );
-      }
-      return Column(
-        children: [
-          for (int i = 0; i < widget.nbRepetition * 2 - 1; i += 2)
-            Column(
-              children: [
-                Text(
-                  "Ranges for Repetition ${i ~/ 2 + 1}",
-                  style: const TextStyle(
-                      fontSize: 18.0, fontWeight: FontWeight.w900),
-                ),
-                Text(
-                    "Hand Back, Accelerometer, X Axis : ${allResultsAcc[i][0]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text(
-                    "Hand Back, Accelerometer, Y Axis : ${allResultsAcc[i][1]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text(
-                    "Hand Back, Accelerometer, Z Axis : ${allResultsAcc[i][2]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text("Hand Back, Gyroscope, X Axis : ${allResultsGyro[i][0]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text("Hand Back, Gyroscope, Y Axis : ${allResultsGyro[i][1]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text("Hand Back, Gyroscope, Z Axis : ${allResultsGyro[i][2]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text(
-                    "Hand Up, Accelerometer, X Axis : ${allResultsAcc[i + 1][0]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text(
-                    "Hand Up, Accelerometer, Y Axis : ${allResultsAcc[i + 1][1]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text(
-                    "Hand Up, Accelerometer, Z Axis : ${allResultsAcc[i + 1][2]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text("Hand Up, Gyroscope, X Axis : ${allResultsGyro[i + 1][0]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text("Hand Up, Gyroscope, Y Axis : ${allResultsGyro[i + 1][1]}",
-                    style: const TextStyle(fontSize: 20.0)),
-                Text("Hand Up, Gyroscope, Z Axis : ${allResultsGyro[i + 1][2]}",
-                    style: const TextStyle(fontSize: 20.0)),
-              ],
-            ),
-        ],
-      );
-    }
-    return Text(
-        "Error while calculating middle score, length : $length, nbRepetition : ${widget.nbRepetition}");
-  }
-
-  int _calculateScores(List<Measure> measures) {
-    if (widget.nbRepetition * 4 == measures.length) {
-      try {
-        final mpScoreLive = PScoreLive(allMeasures: measures);
-        for (int i = 0; i < widget.nbRepetition * 4; i++) {
-          allRangesAcc.add(mpScoreLive.getRanges(measures[i].accelValues));
-          allRangesGyro.add(mpScoreLive.getRanges(measures[i].gyroValues));
-        }
-        mpScoreLive.computeScore();
-        bbScore = mpScoreLive.bbScore;
-        final mAngleScoreLive = AngleScoreLive(allMeasures: measures);
-        mAngleScoreLive.computeScore();
-        elevationInjured = mAngleScoreLive.elevationInjured;
-        elevationHealthy = mAngleScoreLive.elevationHealthy;
-        return 1;
-      } catch (exception) {
-        exceptionCalculation = true;
-        return -1;
-      }
-    }
-    return 0;
-  }
-
-  Widget finalResults(List<Measure> measures) {
-    if (_calculateScores(measures) == 1) {
-      return Column(
-        children: [
-          Text("BBScore : $bbScore", style: const TextStyle(fontSize: 20.0)),
-          Text("Elevation Angle Healthy : $elevationHealthy",
-              style: const TextStyle(fontSize: 20.0)),
-          Text("Elevation Angle Injured : $elevationInjured",
-              style: const TextStyle(fontSize: 20.0)),
-        ],
-      );
-    } else if (_calculateScores(measures) == 0) {
+    } else if (error == 1) {
+      exceptionCalculation = true;
       return Column(
         children: const [
-          Text("Error in score calculation!", style: TextStyle(fontSize: 20.0)),
+          Center(
+            child: Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Text(
+                "Error in calculation, it can happen when the smartphone is not moving during the measure. Please try again.",
+                style: TextStyle(fontSize: 18.0),
+              ),
+            ),
+          ),
         ],
       );
     } else {
       return Column(
+        children: [
+          for (int i = 0; i < widget.nbRepetition * 2 - 1; i += 2)
+            Container(
+              padding: const EdgeInsets.all(20.0),
+              margin: const EdgeInsets.all(20),
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                color: Color(0xfff5eaf4),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                      color: Colors.black54,
+                      blurRadius: 15.0,
+                      offset: Offset(0.0, 0.75))
+                ],
+              ),
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "Ranges for Repetition ${i ~/ 2 + 1}",
+                    style: const TextStyle(
+                        fontSize: 18.0, fontWeight: FontWeight.w900),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 20, bottom: 10),
+                    child: Text("Hand Back : ",
+                        style: TextStyle(
+                            fontSize: 18.0, fontWeight: FontWeight.w900)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Table(
+                      border: TableBorder.all(
+                          width: 2.0,
+                          color: Colors.deepPurple,
+                          style: BorderStyle.solid),
+                      children: [
+                        const TableRow(
+                          decoration: BoxDecoration(
+                            color: Color(0xff8cc0cc),
+                          ),
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                "Accelerometer",
+                                style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w900),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text("", style: TextStyle(fontSize: 20.0)),
+                            )
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                "X Axis",
+                                style: TextStyle(fontSize: 20.0),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  "${double.parse((allResultsAcc[i][0].toDouble()).toStringAsFixed(3))}",
+                                  style: const TextStyle(fontSize: 20.0)),
+                            )
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                "Y Axis",
+                                style: TextStyle(fontSize: 20.0),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  "${double.parse((allResultsAcc[i][1].toDouble()).toStringAsFixed(3))}" /*yA.toStringAsFixed(2)*/,
+                                  style: const TextStyle(fontSize: 20.0)),
+                            )
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                "Z Axis",
+                                style: TextStyle(fontSize: 20.0),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  "${double.parse((allResultsAcc[i][2].toDouble()).toStringAsFixed(3))}",
+                                  style: const TextStyle(fontSize: 20.0)),
+                            )
+                          ],
+                        ),
+                        const TableRow(
+                          decoration: BoxDecoration(
+                            color: Color(0xff8cc0cc),
+                          ),
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                "Gyroscope",
+                                style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w900),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text("", style: TextStyle(fontSize: 20.0)),
+                            )
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                "X Axis",
+                                style: TextStyle(fontSize: 20.0),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  "${double.parse((allResultsGyro[i][0].toDouble()).toStringAsFixed(3))}",
+                                  style: const TextStyle(fontSize: 20.0)),
+                            )
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                "Y Axis",
+                                style: TextStyle(fontSize: 20.0),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  "${double.parse((allResultsGyro[i][1].toDouble()).toStringAsFixed(3))}" /*yA.toStringAsFixed(2)*/,
+                                  style: const TextStyle(fontSize: 20.0)),
+                            )
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                "Z Axis",
+                                style: TextStyle(fontSize: 20.0),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  " ${double.parse((allResultsGyro[i][2].toDouble()).toStringAsFixed(3))}",
+                                  style: const TextStyle(fontSize: 20.0)),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 20, bottom: 10),
+                    child: Text("Hand Up : ",
+                        style: TextStyle(
+                            fontSize: 18.0, fontWeight: FontWeight.w900)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Table(
+                      border: TableBorder.all(
+                          width: 2.0,
+                          color: Colors.deepPurple,
+                          style: BorderStyle.solid),
+                      children: [
+                        const TableRow(
+                          decoration: BoxDecoration(
+                            color: Color(0xff8cc0cc),
+                          ),
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                "Accelerometer",
+                                style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w900),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text("", style: TextStyle(fontSize: 20.0)),
+                            )
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                "X Axis",
+                                style: TextStyle(fontSize: 20.0),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  "${double.parse((allResultsAcc[i + 1][0].toDouble()).toStringAsFixed(3))}",
+                                  style: const TextStyle(fontSize: 20.0)),
+                            )
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                "Y Axis",
+                                style: TextStyle(fontSize: 20.0),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  " ${double.parse((allResultsAcc[i + 1][1].toDouble()).toStringAsFixed(3))}" /*yA.toStringAsFixed(2)*/,
+                                  style: const TextStyle(fontSize: 20.0)),
+                            )
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                "Z Axis",
+                                style: TextStyle(fontSize: 20.0),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  "${double.parse((allResultsAcc[i + 1][2].toDouble()).toStringAsFixed(3))}",
+                                  style: const TextStyle(fontSize: 20.0)),
+                            )
+                          ],
+                        ),
+                        const TableRow(
+                          decoration: BoxDecoration(
+                            color: Color(0xff8cc0cc),
+                          ),
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                "Gyroscope",
+                                style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w900),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text("", style: TextStyle(fontSize: 20.0)),
+                            )
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                "X Axis",
+                                style: TextStyle(fontSize: 20.0),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  "${double.parse((allResultsGyro[i + 1][0].toDouble()).toStringAsFixed(3))}",
+                                  style: const TextStyle(fontSize: 20.0)),
+                            )
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                "Y Axis",
+                                style: TextStyle(fontSize: 20.0),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  "${double.parse((allResultsGyro[i + 1][1].toDouble()).toStringAsFixed(3))}" /*yA.toStringAsFixed(2)*/,
+                                  style: const TextStyle(fontSize: 20.0)),
+                            )
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                "Z Axis",
+                                style: TextStyle(fontSize: 20.0),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  " ${double.parse((allResultsGyro[i + 1][2].toDouble()).toStringAsFixed(3))}",
+                                  style: const TextStyle(fontSize: 20.0)),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      );
+    }
+  }
+
+  Widget finalResults(int error, List<double> values) {
+    if (error == 1) {
+      exceptionCalculation = true;
+      return Column(
         children: const [
           Center(
-            child: Text(
-                "Error in calculation, it can happen when the smartphone is not moving during the measure. Please try again."),
+            child: Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Text(
+                "Error in calculation, it can happen when the smartphone is not moving during the measure. Please try again.",
+                style: TextStyle(fontSize: 18.0),
+              ),
+            ),
+          ),
+        ],
+      );
+    } else if (error == 2) {
+      exceptionCalculation = true;
+      return Column(
+        children: const [
+          Center(
+            child: Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Text(
+                "Error while calculating final score, length error in data lists",
+                style: TextStyle(fontSize: 18.0),
+              ),
+            ),
+          ),
+        ],
+      );
+    } else {
+      return Column(
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height / 5,
+          ),
+          Container(
+            padding: const EdgeInsets.all(15.0),
+            margin: const EdgeInsets.all(20),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+              color: Color(0xff9abdda),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                    color: Colors.black54,
+                    blurRadius: 15.0,
+                    offset: Offset(0.0, 0.75))
+              ],
+            ),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: const [
+                    Text("Result of the measure",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Column(
+                          children: [
+                            const SizedBox(height: 25),
+                            Text(
+                              values[0] > 135 ? ">135%" : "${values[0] ~/ 1}%",
+                              style: const TextStyle(
+                                  color: Colors.deepPurple,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 40),
+                            const Text(
+                              "B-B Score",
+                              style: TextStyle(fontSize: 14),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Container(
+                              width: 100,
+                              height: 100,
+                              padding: const EdgeInsets.all(20.0),
+                              margin: const EdgeInsets.all(10),
+                              decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                                color: Color(0xff9abdda),
+                              ),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Text(
+                                    values[2] > 180
+                                        ? ">180°"
+                                        : "${values[2] ~/ 1}°",
+                                    style: const TextStyle(
+                                        color: Colors.deepPurple,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  PieChart(
+                                    PieChartData(
+                                      borderData: FlBorderData(
+                                        show: false,
+                                      ),
+                                      sectionsSpace: 0,
+                                      centerSpaceRadius: 30,
+                                      sections: [
+                                        PieChartSectionData(
+                                          color: Colors.deepPurple,
+                                          value: values[2] > 180
+                                              ? 180
+                                              : (values[2]).toDouble(),
+                                          title: "",
+                                          radius: 10,
+                                          titleStyle: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xffffffff)),
+                                        ),
+                                        PieChartSectionData(
+                                          color: const Color(0xff7699b7),
+                                          value: values[2] > 180
+                                              ? 0
+                                              : (180 - values[2]).toDouble(),
+                                          title: "",
+                                          radius: 10,
+                                          titleStyle: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xffffffff)),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Text(
+                              "Elevation Angle",
+                              style: TextStyle(fontSize: 13),
+                            ),
+                            const Text("Injured shoulder",
+                                style: TextStyle(fontSize: 13)),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Container(
+                              width: 100,
+                              height: 100,
+                              padding: const EdgeInsets.all(20.0),
+                              margin: const EdgeInsets.all(10),
+                              decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                                color: Color(0xff9abdda),
+                              ),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Text(
+                                    values[1] > 180
+                                        ? ">180°"
+                                        : "${values[1] ~/ 1}°",
+                                    style: const TextStyle(
+                                        color: Colors.deepPurple,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  PieChart(
+                                    PieChartData(
+                                      borderData: FlBorderData(
+                                        show: false,
+                                      ),
+                                      sectionsSpace: 0,
+                                      centerSpaceRadius: 30,
+                                      sections: [
+                                        PieChartSectionData(
+                                          color: Colors.deepPurple,
+                                          value: values[1] > 180
+                                              ? 180
+                                              : (values[1]).toDouble(),
+                                          title: "",
+                                          radius: 10,
+                                          titleStyle: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xffffffff)),
+                                        ),
+                                        PieChartSectionData(
+                                          color: const Color(0xff7699b7),
+                                          value: values[1] > 180
+                                              ? 0
+                                              : (180 - values[1]).toDouble(),
+                                          title: "",
+                                          radius: 10,
+                                          titleStyle: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xffffffff)),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Text("Elevation Angle",
+                                style: TextStyle(fontSize: 13)),
+                            const Text("Healthy shoulder",
+                                style: TextStyle(fontSize: 13)),
+                          ],
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       );
@@ -543,7 +1088,7 @@ class _Measure extends State<MeasurePage> {
     }
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
+      height: MediaQuery.of(context).size.height / 1.2,
       padding: const EdgeInsets.all(20),
       margin: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -575,14 +1120,14 @@ class _Measure extends State<MeasurePage> {
                     borderRadius: BorderRadius.all(Radius.circular(8.0))),
                 child: Image.asset(
                   imagePath,
-                  height: MediaQuery.of(context).size.height / 1.5,
+                  height: MediaQuery.of(context).size.height / 1.7,
                   fit: BoxFit.fitHeight,
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text("Counter",
-                    style: TextStyle(
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("$_start",
+                    style: const TextStyle(
                         fontSize: 120.0,
                         fontWeight: FontWeight.w900,
                         color: Colors.black)),
@@ -592,25 +1137,18 @@ class _Measure extends State<MeasurePage> {
           const SizedBox(height: 20),
           ElevatedButton(
               style: ElevatedButton.styleFrom(
-                  primary: Colors.red,
-                  side: const BorderSide(width: 3, color: Colors.red),
-                  elevation: 3,
+                  primary: Colors.red, //background color of button
+                  side: const BorderSide(
+                      width: 3, color: Colors.red), //border width and color
+                  elevation: 3, //elevation of button
                   shape: RoundedRectangleBorder(
+                      //to set border radius to button
                       borderRadius: BorderRadius.circular(30)),
-                  padding: const EdgeInsets.all(20)),
+                  padding:
+                      const EdgeInsets.all(20) //content padding inside button
+                  ),
               onPressed: () {
-                if (widget.patientID == 0) {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const HomePage()));
-                } else {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              OverallPatientPage(patientId: widget.patientID)));
-                }
+                measureBloc.cancelMeasure();
               },
               child: const Text("CANCEL")),
         ],
