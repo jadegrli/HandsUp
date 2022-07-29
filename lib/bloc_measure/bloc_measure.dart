@@ -156,7 +156,7 @@ class MeasureBloc {
   ///cancels the measure during a movement
   cancelMeasure() {
     isCanceled = true;
-    //throw loading state of canceling
+    //set loading state of canceling
     _measureController.sink.add(StateAllMeasuresLoadingOfCancel([], [], [], 0));
   }
 
